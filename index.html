@@ -1,0 +1,167 @@
+<!doctype html>
+<!-- Pocket Arcade - console picker. Copyright (C) 2026 the Pocket Arcade authors. GPL-3.0-or-later; see LICENSE. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14161b">
+  <meta name="description" content="Tiny handheld consoles, emulated in your browser. Bring your own BIOS and games; nothing is uploaded.">
+  <title>Pocket Arcade</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314161b'/%3E%3Crect x='6' y='4' width='20' height='24' rx='5' fill='%23ffcb3d'/%3E%3Crect x='9' y='7' width='14' height='10' rx='1.5' fill='%23b4bea2'/%3E%3Ccircle cx='12' cy='22' r='2.4' fill='%232e3340'/%3E%3Ccircle cx='20' cy='22' r='2.4' fill='%232e3340'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #14161b; --panel: #1e2128; --line: #323744; --text: #eceef3; --muted: #9aa1b2;
+      --accent: #ffcb3d; --accent-ink: #2a1f00; --lcd: #b4bea2; --ink: #1c2417;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { min-height: 100dvh; display: flex; flex-direction: column;
+      background: radial-gradient(90% 60% at 50% 0%, #262a35 0%, var(--bg) 70%) no-repeat, var(--bg); }
+    a { color: var(--accent); }
+    .wrap { width: 100%; max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+    header.wrap { padding: calc(env(safe-area-inset-top) + 44px) 20px 8px; text-align: center; }
+    .logo { display: inline-grid; grid-template-columns: repeat(5, 9px); gap: 3px; margin-bottom: 18px; }
+    .logo i { width: 9px; height: 9px; border-radius: 2px; background: #2c313c; }
+    .logo i.on { background: var(--accent); }
+    h1 { font-size: clamp(30px, 7vw, 44px); line-height: 1.1; margin: 0; letter-spacing: -.02em; }
+    .tag { color: var(--muted); margin: 10px auto 0; max-width: 34em; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin: 34px 0 10px; }
+    .card { position: relative; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line);
+      border-radius: 22px; overflow: hidden; text-decoration: none; color: inherit;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+    .card:hover, .card:focus-visible { transform: translateY(-3px); border-color: #4a5266; box-shadow: 0 18px 40px rgba(0,0,0,.4); outline: none; }
+    .card:active { transform: scale(.985); }
+    .stage { height: 210px; display: grid; place-items: center; background: linear-gradient(160deg, var(--s1), var(--s2)); position: relative; overflow: hidden; }
+    .stage::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 80% at 50% 110%, rgba(0,0,0,.35), transparent 70%); pointer-events: none; }
+    .stage svg { height: 168px; width: auto; filter: drop-shadow(0 14px 18px rgba(0,0,0,.4)); transition: transform .25s ease; position: relative; z-index: 1; }
+    .card:hover .stage svg { transform: translateY(-4px) rotate(-2deg); }
+    .mini { --s1: #24374a; --s2: #182430; }
+    .pocket { --s1: #3a3d46; --s2: #23252c; }
+    .info { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .info h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
+    .meta { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 99px; background: #2b3140; color: #b9c2d6; }
+    .info p { margin: 0; color: var(--muted); font-size: 15px; }
+    .go { margin-top: auto; padding-top: 10px; display: flex; align-items: center; justify-content: space-between; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 800;
+      padding: 10px 20px; border-radius: 12px; }
+    .need { font-size: 13px; color: var(--muted); }
+
+    /* little LCD animations */
+    .blink { animation: blink 2.4s steps(1) infinite; }
+    @keyframes blink { 0%, 86% { opacity: 1; } 87%, 100% { opacity: 0; } }
+    .bob { animation: bob 1.6s steps(2) infinite; }
+    @keyframes bob { 0% { transform: translateY(0); } 50% { transform: translateY(2px); } }
+    @media (prefers-reduced-motion: reduce) { .blink, .bob { animation: none; } .card, .stage svg { transition: none; } }
+
+    .how { margin: 26px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .how div { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
+    .how h3 { margin: 0 0 4px; font-size: 15px; }
+    .how p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    footer.wrap { margin-top: auto; padding: 34px 20px calc(env(safe-area-inset-bottom) + 28px); color: var(--muted); font-size: 13px; text-align: center; }
+    footer p { margin: 6px auto; max-width: 56em; }
+    .src:empty { display: none; }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <div class="logo" aria-hidden="true">
+      <i></i><i class="on"></i><i></i><i class="on"></i><i></i>
+      <i></i><i class="on"></i><i></i><i class="on"></i><i></i>
+      <i class="on"></i><i></i><i></i><i></i><i class="on"></i>
+      <i></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i>
+    </div>
+    <h1>Pocket Arcade</h1>
+    <p class="tag">Two of the smallest game consoles ever made, running in your browser. Pick one.</p>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <!-- To host the apps somewhere else, change these two links. -->
+      <a class="card mini" href="../web-pokemini/" data-repo="web-pokemini">
+        <div class="stage">
+          <svg viewBox="0 0 200 250" role="img" aria-label="A small blue handheld console">
+            <defs><linearGradient id="g1" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#8cc8f2"/><stop offset=".45" stop-color="#5aa6e0"/><stop offset="1" stop-color="#3a82bd"/></linearGradient></defs>
+            <rect x="8" y="10" width="184" height="234" rx="34" fill="#2f6d9f"/>
+            <rect x="8" y="4" width="184" height="234" rx="34" fill="url(#g1)"/>
+            <rect x="26" y="24" width="148" height="104" rx="13" fill="#3a3f48"/>
+            <rect x="38" y="35" width="124" height="82" rx="3" fill="#b4bea2"/>
+            <g fill="#1c2417">
+              <g class="bob"><rect x="62" y="58" width="10" height="10"/><rect x="72" y="48" width="10" height="10"/><rect x="82" y="58" width="10" height="10"/>
+              <rect x="108" y="48" width="10" height="10"/><rect x="118" y="58" width="10" height="10"/><rect x="128" y="48" width="10" height="10"/></g>
+              <rect x="62" y="90" width="76" height="6" opacity=".55"/>
+              <rect class="blink" x="142" y="90" width="6" height="6"/>
+            </g>
+            <g fill="#2e3340">
+              <rect x="42" y="158" width="20" height="60" rx="5"/><rect x="22" y="178" width="60" height="20" rx="5"/>
+              <circle cx="158" cy="176" r="17"/><circle cx="126" cy="200" r="17"/><circle cx="168" cy="148" r="9"/>
+            </g>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>Pokémon mini</h2>
+          <div class="meta"><span class="pill">2001</span><span class="pill">96 × 64 pixels</span><span class="pill">rumble + shake</span></div>
+          <p>The cartridge handheld that fits in a palm: d-pad, three buttons, a shake sensor and a rumble motor. With save states, sound and a sideways layout.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs your BIOS + game files</span></div>
+        </div>
+      </a>
+
+      <a class="card pocket" href="../web-pocketstation/" data-repo="web-pocketstation">
+        <div class="stage">
+          <svg viewBox="0 0 170 250" role="img" aria-label="A small white memory-card console">
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f6f2"/><stop offset=".5" stop-color="#e9e9e4"/><stop offset="1" stop-color="#d4d4cd"/></linearGradient></defs>
+            <rect x="8" y="10" width="154" height="234" rx="24" fill="#b3b3ab"/>
+            <rect x="8" y="4" width="154" height="234" rx="24" fill="url(#g2)"/>
+            <circle cx="30" cy="24" r="4" fill="#ff4b4b" class="blink"/>
+            <rect x="30" y="36" width="110" height="110" rx="10" fill="#5d6168"/>
+            <rect x="42" y="48" width="86" height="86" rx="3" fill="#a8b39a"/>
+            <g fill="#1d2418" class="bob">
+              <rect x="64" y="70" width="10" height="10"/><rect x="96" y="70" width="10" height="10"/>
+              <rect x="60" y="96" width="8" height="8"/><rect x="68" y="104" width="34" height="8"/><rect x="102" y="96" width="8" height="8"/>
+            </g>
+            <g fill="#fbfbf8" stroke="#a9a9a1" stroke-width="2">
+              <rect x="46" y="162" width="18" height="18" rx="5"/><rect x="46" y="202" width="18" height="18" rx="5"/>
+              <rect x="26" y="182" width="18" height="18" rx="5"/><rect x="66" y="182" width="18" height="18" rx="5"/>
+              <circle cx="124" cy="192" r="17"/>
+            </g>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>PocketStation</h2>
+          <div class="meta"><span class="pill">1999</span><span class="pill">32 × 32 pixels</span><span class="pill">memory card</span></div>
+          <p>The memory card with a screen. Plays the mini-games that PlayStation titles saved onto it, straight from your own memory card files.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs your BIOS + memory card</span></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="how">
+      <div><h3>Bring your own files</h3><p>No BIOS and no games are included. Each console asks for your own dumps the first time.</p></div>
+      <div><h3>Nothing is uploaded</h3><p>Your files, saves and progress stay in this browser's storage on this device.</p></div>
+      <div><h3>Works like an app</h3><p>Use your browser's “Add to Home Screen” inside a console to install it and play offline.</p></div>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <p class="src" id="src"></p>
+    <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company or Sony Interactive Entertainment. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
+  </footer>
+
+  <script>
+    // On github.io, link to the source of each project (same account, repo named after the folder).
+    (function () {
+      var m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+      if (!m) return;
+      var links = [].map.call(document.querySelectorAll('.card[data-repo]'), function (c) {
+        return '<a href="https://github.com/' + m[1] + '/' + c.dataset.repo + '">' + c.querySelector('h2').textContent + '</a>';
+      });
+      document.getElementById('src').innerHTML = 'Free software (GPL-3.0). Source code: ' + links.join(' · ');
+    })();
+  </script>
+</body>
+</html>
