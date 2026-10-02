@@ -41,15 +41,16 @@
     .card:hover .stage svg { transform: translateY(-4px) rotate(-2deg); }
     .mini { --s1: #24374a; --s2: #182430; }
     .pocket { --s1: #3a3d46; --s2: #23252c; }
+    .brick { --s1: #4b4a3c; --s2: #2b2a22; }
     .info { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .info h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
     .meta { display: flex; gap: 6px; flex-wrap: wrap; }
     .pill { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 99px; background: #2b3140; color: #b9c2d6; }
     .info p { margin: 0; color: var(--muted); font-size: 15px; }
-    .go { margin-top: auto; padding-top: 10px; display: flex; align-items: center; justify-content: space-between; }
-    .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 800;
+    .go { margin-top: auto; padding-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 800; white-space: nowrap; flex: none;
       padding: 10px 20px; border-radius: 12px; }
-    .need { font-size: 13px; color: var(--muted); }
+    .need { font-size: 13px; color: var(--muted); text-align: right; line-height: 1.3; }
 
     /* little LCD animations */
     .blink { animation: blink 2.4s steps(1) infinite; }
@@ -77,12 +78,12 @@
       <i></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i>
     </div>
     <h1>Pocket Arcade</h1>
-    <p class="tag">Two of the smallest game consoles ever made, running in your browser. Pick one.</p>
+    <p class="tag">Some of the smallest game consoles ever made, running in your browser. Pick one.</p>
   </header>
 
   <main class="wrap">
     <div class="grid">
-      <!-- To host the apps somewhere else, change these two links. -->
+      <!-- To host the apps somewhere else, change these links. -->
       <a class="card mini" href="../web-pokemini/" data-repo="web-pokemini">
         <div class="stage">
           <svg viewBox="0 0 200 250" role="img" aria-label="A small blue handheld console">
@@ -138,6 +139,38 @@
           <div class="go"><span class="btn">Play ›</span><span class="need">needs your BIOS + memory card</span></div>
         </div>
       </a>
+
+      <a class="card brick" href="../web-brick/" data-repo="web-brick">
+        <div class="stage">
+          <svg viewBox="0 0 130 250" role="img" aria-label="A tall pale brick game handheld">
+            <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eceadd"/><stop offset=".5" stop-color="#dedbcb"/><stop offset="1" stop-color="#c9c6b4"/></linearGradient></defs>
+            <rect x="8" y="10" width="114" height="234" rx="14" fill="#a9a695"/>
+            <rect x="8" y="4" width="114" height="234" rx="14" fill="url(#g3)"/>
+            <rect x="22" y="16" width="86" height="104" rx="5" fill="#f2d21c"/>
+            <rect x="27" y="21" width="76" height="94" rx="3" fill="#a8b39a"/>
+            <rect x="31" y="25" width="48" height="86" fill="none" stroke="#1d2418" stroke-width="1.5"/>
+            <g fill="#1d2418">
+              <g class="bob"><rect x="47" y="31" width="7" height="7"/><rect x="55" y="31" width="7" height="7"/><rect x="63" y="31" width="7" height="7"/><rect x="55" y="39" width="7" height="7"/></g>
+              <rect x="33" y="102" width="7" height="7"/><rect x="41" y="102" width="7" height="7"/><rect x="49" y="102" width="7" height="7"/><rect x="65" y="102" width="7" height="7"/>
+              <rect x="33" y="94" width="7" height="7"/><rect x="41" y="94" width="7" height="7"/><rect x="65" y="94" width="7" height="7"/>
+              <rect x="33" y="86" width="7" height="7"/><rect x="65" y="86" width="7" height="7"/>
+              <rect x="84" y="28" width="14" height="5" opacity=".55"/><rect x="84" y="38" width="8" height="8"/><rect class="blink" x="92" y="46" width="8" height="8"/>
+              <rect x="84" y="68" width="14" height="5" opacity=".55"/><rect x="84" y="92" width="14" height="5" opacity=".55"/>
+            </g>
+            <g fill="#f7dc1e" stroke="#b79d12" stroke-width="1.5">
+              <circle cx="42" cy="146" r="5"/><circle cx="62" cy="146" r="5"/><circle cx="82" cy="146" r="5"/>
+              <circle cx="32" cy="178" r="10"/><circle cx="60" cy="178" r="10"/><circle cx="46" cy="200" r="10"/>
+              <circle cx="96" cy="188" r="15"/>
+            </g>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>Brick games</h2>
+          <div class="meta"><span class="pill">1990s</span><span class="pill">LCD segments</span><span class="pill">10 handhelds</span></div>
+          <p>The 96-in-1 brick game and its keychain cousins, shown with their real faceplates and run from their original chip programs. More LCD handhelds are on the way.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs ROM files</span></div>
+        </div>
+      </a>
     </div>
 
     <div class="how">
@@ -149,7 +182,7 @@
 
   <footer class="wrap">
     <p class="src" id="src"></p>
-    <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company or Sony Interactive Entertainment. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
+    <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company, Sony Interactive Entertainment or the makers of any other handheld shown. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
   </footer>
 
   <script>
