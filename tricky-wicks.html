@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tricky Wicks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,500;0,600;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#c3c7cd; --shell:#e6e8eb; --shell-edge:#aeb3ba; --ink:#2f3033; --muted:#5d5e60;
+  --bezel:#444444; --pad:#444444; --pad-ink:#a2a7af; --pill:#8f8f8f; --pill-ink:#1f2022;
+  --a:#f77622; --a-ink:#2a1203; --b:#124e89; --b-ink:#e6eef6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#121314; --shell:#28292c; --shell-edge:#17181a; --ink:#e3e5e8; --muted:#a2a7af;
+    --bezel:#0d0d0e; --pad:#5d5e60; --pad-ink:#e3e5e8; --pill:#444548; --pill-ink:#e3e5e8;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#121314; --shell:#28292c; --shell-edge:#17181a; --ink:#e3e5e8; --muted:#a2a7af;
+  --bezel:#0d0d0e; --pad:#5d5e60; --pad-ink:#e3e5e8; --pill:#444548; --pill-ink:#e3e5e8;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  height:100%;margin:0;background:var(--shell);color:var(--ink);
+  font-family:"Barlow Semi Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  display:flex;justify-content:center;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;
+}
+.unit{
+  width:100%;max-width:30rem;height:100%;min-height:31rem;
+  display:flex;flex-direction:column;gap:.75rem;padding:.75rem .75rem .9rem;background:var(--shell);
+}
+.screen{flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center}
+.bezel{background:var(--bezel);padding:10px;border-radius:10px 10px 24px 10px;line-height:0}
+canvas{display:block;touch-action:none;image-rendering:pixelated;background:#a2a7af}
+
+.controls{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 .35rem}
+button{font:inherit;color:inherit;border:0;margin:0;padding:0;cursor:pointer;touch-action:none}
+button:focus-visible{outline:3px solid var(--a);outline-offset:3px}
+
+.dpad{display:grid;grid-template-columns:repeat(3,3rem);grid-template-rows:repeat(3,3rem)}
+.dpad button,.dpad i{background:var(--pad);color:var(--pad-ink);display:grid;place-items:center}
+.dpad svg{width:1.05rem;height:1.05rem;fill:currentColor}
+.dpad .up{grid-area:1/2;border-radius:.55rem .55rem 0 0}
+.dpad .left{grid-area:2/1;border-radius:.55rem 0 0 .55rem}
+.dpad i{grid-area:2/2}
+.dpad .right{grid-area:2/3;border-radius:0 .55rem .55rem 0}
+.dpad .down{grid-area:3/2;border-radius:0 0 .55rem .55rem}
+.dpad button.on{filter:brightness(1.35)}
+
+.ab{display:flex;gap:.9rem;align-items:center;transform:rotate(-18deg);padding-right:.2rem}
+.ab button{width:3.75rem;height:3.75rem;border-radius:50%;font-weight:600;font-style:italic;font-size:1.35rem;
+  box-shadow:0 3px 0 rgba(0,0,0,.28)}
+.ab .a{background:var(--a);color:var(--a-ink)}
+.ab .b{background:var(--b);color:var(--b-ink)}
+.ab button.on{transform:translateY(3px);box-shadow:none}
+
+.pills{flex:0 0 auto;display:flex;justify-content:center;gap:.75rem}
+.pills button{background:var(--pill);color:var(--pill-ink);border-radius:999px;padding:.4rem 1.05rem;
+  font-weight:600;font-size:.95rem;min-width:6.2rem}
+.pills button.on{filter:brightness(1.2)}
+
+.how{flex:0 0 auto;margin:0;text-align:center;font-weight:500;font-size:.9rem;line-height:1.35;color:var(--muted)}
+.how .keys{display:none}
+@media (hover:hover) and (pointer:fine){ .how .keys{display:inline} }
+
+@media (min-width:36rem){
+  body{background:var(--page)}
+  .unit{max-width:34rem;height:min(100%,48rem);margin:auto;border-radius:1rem 1rem 3.5rem 1rem;border:1px solid var(--shell-edge);padding:1.1rem 1.1rem 1.3rem}
+}
+</style>
+</head>
+<body>
+<main class="unit">
+  <div class="screen" id="screen">
+    <div class="bezel"><canvas id="lcd" width="160" height="144" aria-label="Tricky Wicks game screen"></canvas></div>
+  </div>
+
+  <div class="controls">
+    <div class="dpad">
+      <button class="up" data-k="up" aria-label="Drop the block"><svg viewBox="0 0 10 10"><path d="M5 1 9 8H1z"/></svg></button>
+      <button class="left" data-k="left" aria-label="Move left"><svg viewBox="0 0 10 10"><path d="M1 5 8 1v8z"/></svg></button>
+      <i></i>
+      <button class="right" data-k="right" aria-label="Move right"><svg viewBox="0 0 10 10"><path d="M9 5 2 1v8z"/></svg></button>
+      <button class="down" data-k="down" aria-label="Fall faster"><svg viewBox="0 0 10 10"><path d="M5 9 9 2H1z"/></svg></button>
+    </div>
+    <div class="ab">
+      <button class="b" data-k="b" aria-label="Turn left">B</button>
+      <button class="a" data-k="a" aria-label="Turn right">A</button>
+    </div>
+  </div>
+
+  <div class="pills">
+    <button id="snd" data-k="sound" aria-pressed="true">Sound on</button>
+    <button data-k="start">Start</button>
+  </div>
+
+  <p class="how">Run a wick from a flame to a bomb. Up drops the block, A and B turn it.<span class="keys"> On a keyboard: arrows, Z and X, Enter to start or pause.</span></p>
+</main>
+
+<script>
+(() => {
+'use strict';
+const ATLAS_SRC = 'data:image/png;base64,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';
+const FONT = {"A":[14,17,17,31,17,17,17],"B":[30,17,17,30,17,17,30],"C":[14,17,16,16,16,17,14],"D":[30,17,17,17,17,17,30],"E":[31,16,16,30,16,16,31],"F":[31,16,16,30,16,16,16],"G":[14,17,16,23,17,17,15],"H":[17,17,17,31,17,17,17],"I":[14,4,4,4,4,4,14],"J":[7,2,2,2,2,18,12],"K":[17,18,20,24,20,18,17],"L":[16,16,16,16,16,16,31],"M":[17,27,21,21,17,17,17],"N":[17,25,21,19,17,17,17],"O":[14,17,17,17,17,17,14],"P":[30,17,17,30,16,16,16],"Q":[14,17,17,17,21,18,13],"R":[30,17,17,30,20,18,17],"S":[15,16,16,14,1,1,30],"T":[31,4,4,4,4,4,4],"U":[17,17,17,17,17,17,14],"V":[17,17,17,17,17,10,4],"W":[17,17,17,21,21,27,17],"X":[17,17,10,4,10,17,17],"Y":[17,17,10,4,4,4,4],"Z":[31,1,2,4,8,16,31],"0":[14,17,19,21,25,17,14],"1":[4,12,4,4,4,4,14],"2":[14,17,1,2,4,8,31],"3":[14,17,1,6,1,17,14],"4":[2,6,10,18,31,2,2],"5":[31,16,30,1,1,17,14],"6":[14,16,16,30,17,17,14],"7":[31,1,2,4,8,8,8],"8":[14,17,17,14,17,17,14],"9":[14,17,17,15,1,1,14],"x":[0,0,17,10,4,10,17],"!":[4,4,4,4,4,0,4],"-":[0,0,0,14,0,0,0],".":[0,0,0,0,0,0,4]};
+
+/* ---------- constants ---------- */
+const W = 160, H = 144, TS = 16, COLS = 6, ROWS = 8, FX = 8, FY = 8, PX = 112, PC = 136;
+const C0 = '#a2a7af', C1 = '#8f8f8f', C2 = '#5d5e60', C3 = '#444444';
+const U = 1, R = 2, D = 4, L = 8;
+// Which sides each of the 16 rope tiles has an end on (the orange marks).
+const ENDS = [L|R, U|D, D|R, L|D, U|L, U|R, L|R|D, U|L|D, U|L|R, U|D|R, 15, L|R|D, U|L|D, U|L|R, U|D|R, 15];
+// Red / blue dot at each end, in U R D L order (r, b, or . for no end).
+const POL = ['.b.r','r.b.','.br.','..br','r..b','br..','.bbr','r.bb','br.b','bbr.','rbbr','.brr','r.br','rr.b','brr.','bbrr'];
+const ROT_CW = [1,0,3,4,5,2,7,8,9,6,15,12,13,14,11,10];
+const ROT_CCW = ROT_CW.map((_, i) => ROT_CW.indexOf(i));
+// Same shape, other red/blue layout (the two T sets and the two crosses).
+const ALT = [-1,-1,-1,-1,-1,-1,11,12,13,14,15,6,7,8,9,10];
+//            bit dr dc opp idx oppIdx
+const DIRS = [[U,-1,0,D,0,2],[R,0,1,L,1,3],[D,1,0,U,2,0],[L,0,-1,R,3,1]];
+const SRC = { bomb:[64,112], block:[32,128], fire:[0,152], corner:[0,144], hb:[8,144], vb:[16,144], thin:[24,144] };
+const BAG = 'SSSSCCCTTXBBFFF';
+const VERSION = '1.1';
+// Solid blocks: none in the first few pieces, then a short cooldown and a 1-in-16 roll (about one per 28 pieces).
+const BLOCK_FIRST = 6, BLOCK_GAP = 12, BLOCK_ODDS = 16, BLOCK_FADE = 18;
+const BLAST = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]; // cells a bomb can knock a solid block out of
+const SPREAD = 9, BURN = 22, BOOM_AT = 14, BOOM_END = 34, LOCK = 20, SPAWN_COL = 2;
+const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- canvases ---------- */
+const cv = document.getElementById('lcd'), out = cv.getContext('2d');
+const buf = document.createElement('canvas'); buf.width = W; buf.height = H;
+const g = buf.getContext('2d'); g.imageSmoothingEnabled = false;
+const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
+const atlas = new Image();
+let K = 1;
+
+function fit() {
+  const box = document.getElementById('screen'), dpr = window.devicePixelRatio || 1;
+  const aw = box.clientWidth - 20, ah = box.clientHeight - 20;
+  K = Math.max(Math.ceil(dpr), Math.floor(Math.min(aw / W, ah / H, 4) * dpr));
+  cv.width = W * K; cv.height = H * K;
+  cv.style.width = (W * K / dpr) + 'px'; cv.style.height = (H * K / dpr) + 'px';
+  out.imageSmoothingEnabled = false;
+}
+
+/* ---------- drawing helpers ---------- */
+function spr(c, sx, sy, dx, dy, s, flip) {
+  s = s || TS;
+  if (flip) { c.save(); c.translate(dx + s, dy); c.scale(-1, 1); c.drawImage(atlas, sx, sy, s, s, 0, 0, s, s); c.restore(); }
+  else c.drawImage(atlas, sx, sy, s, s, dx, dy, s, s);
+}
+function rope(c, t, dx, dy) { spr(c, (t & 7) * 16, (t >> 3) * 16, dx, dy); }
+function textW(s, sc) { return s.length * 6 * (sc || 1) - (sc || 1); }
+function text(c, s, x, y, col, sc) {
+  sc = sc || 1; c.fillStyle = col || C3;
+  for (const ch of s) {
+    const gl = FONT[ch];
+    if (gl) for (let r = 0; r < 7; r++) for (let b = 0; b < 5; b++)
+      if (gl[r] & (16 >> b)) c.fillRect(x + b * sc, y + r * sc, sc, sc);
+    x += 6 * sc;
+  }
+}
+function textC(c, s, cx, y, col, sc) { text(c, s, Math.round(cx - textW(s, sc) / 2), y, col, sc); }
+function textO(c, s, cx, y) { // dark text with a light outline, for popups over tiles
+  const x = Math.round(cx - textW(s) / 2);
+  for (const [ox, oy] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]]) text(c, s, x + ox, y + oy, C0);
+  text(c, s, x, y, C3);
+}
+function disc(cx, cy, r, col) {
+  if (r <= 0) return; g.fillStyle = col;
+  for (let dy = -r; dy < r; dy++) {
+    const w = Math.round(Math.sqrt(r * r - (dy + .5) * (dy + .5)));
+    if (w > 0) g.fillRect(cx - w, cy + dy, w * 2, 1);
+  }
+}
+function star(cx, cy, r, col, spin) { // spiky blob, plotted per pixel so it stays on-palette
+  if (r <= 0) return; g.fillStyle = col;
+  for (let dy = -r; dy < r; dy++) for (let dx = -r; dx < r; dx++) {
+    const x = dx + .5, y = dy + .5;
+    if (Math.hypot(x, y) <= r * (.62 + .38 * Math.abs(Math.cos(4 * Math.atan2(y, x) + spin)))) g.fillRect(cx + dx, cy + dy, 1, 1);
+  }
+}
+function burst(cx, cy, t) { // t: 0..19
+  if (t < 14) {
+    const r = Math.min(13, 6 + t), spin = (t >> 1 & 1) * .8;
+    star(cx, cy, r, C3, spin); star(cx, cy, r - 2, t < 9 ? C1 : C0, spin);
+    if (t < 9) star(cx, cy, r - 5, C0, spin);
+  }
+  if (t >= 4) { // sparks
+    const d = 7 + t; g.fillStyle = C3;
+    for (const [ax, ay] of [[1,0],[-1,0],[0,1],[0,-1],[.7,.7],[-.7,.7],[.7,-.7],[-.7,-.7]])
+      g.fillRect(Math.round(cx + ax * d) - 1, Math.round(cy + ay * d) - 1, 2, 2);
+  }
+}
+function buildBg() {
+  const c = bg.getContext('2d'); c.imageSmoothingEnabled = false;
+  c.fillStyle = C0; c.fillRect(0, 0, W, H);
+  for (let x = 8; x < 104; x += 8) { spr(c, ...SRC.hb, x, 0, 8); spr(c, ...SRC.hb, x, 136, 8); }
+  for (let y = 8; y < 136; y += 8) { spr(c, ...SRC.vb, 0, y, 8); spr(c, ...SRC.vb, 104, y, 8); }
+  for (const [x, y] of [[0,0],[104,0],[0,136],[104,136]]) spr(c, ...SRC.corner, x, y, 8);
+  for (const y of [0, 42, 98, 136]) for (let x = PX; x < W; x += 8) spr(c, ...SRC.thin, x, y, 8);
+  textC(c, 'NEXT', PC, 12);
+  textC(c, 'SCORE', PC, 54);
+  textC(c, 'BEST', PC, 77);
+  textC(c, 'WICK', PC, 121);
+}
+
+/* ---------- sound ---------- */
+let ac = null, soundOn = true, noiseBuf = null;
+function wake() {
+  if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; } }
+  if (ac && ac.state === 'suspended') ac.resume();
+}
+function beep(f, dur, vol, to) {
+  if (!soundOn || !ac) return;
+  const t = ac.currentTime, o = ac.createOscillator(), a = ac.createGain();
+  o.type = 'square'; o.frequency.setValueAtTime(f, t);
+  if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+  a.gain.setValueAtTime(vol || .05, t); a.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(a); a.connect(ac.destination); o.start(t); o.stop(t + dur + .02);
+}
+function noise(dur, vol) {
+  if (!soundOn || !ac) return;
+  if (!noiseBuf) {
+    noiseBuf = ac.createBuffer(1, ac.sampleRate * .5, ac.sampleRate);
+    const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  const t = ac.currentTime, s = ac.createBufferSource(), a = ac.createGain();
+  s.buffer = noiseBuf; a.gain.setValueAtTime(vol, t); a.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  s.connect(a); a.connect(ac.destination); s.start(t); s.stop(t + dur);
+}
+function jingle(notes, step) { notes.forEach((f, i) => setTimeout(() => beep(f, .09, .05), i * step)); }
+
+/* ---------- game state ---------- */
+let state = 'title', paused = false, frame = 0;
+let grid, piece, next, bag, score, best = 0, level, placed, bestWick, wick;
+let phase, lockT, fallAcc, softOK, das, dasDir, fx, shake, overT, burnIdle, drawn, sinceBlock;
+try { best = parseInt(localStorage.getItem('tricky-wicks-best'), 10) || 0; } catch (e) { best = 0; }
+
+const cell = (r, c) => (r >= 0 && r < ROWS && c >= 0 && c < COLS) ? grid[r][c] : null;
+const rnd = n => Math.floor(Math.random() * n);
+
+function drawPiece() {
+  drawn++; sinceBlock++;
+  if (drawn > BLOCK_FIRST && sinceBlock > BLOCK_GAP && rnd(BLOCK_ODDS) === 0) { sinceBlock = 0; return { k: 'block' }; }
+  if (!bag.length) { bag = BAG.split(''); for (let i = bag.length - 1; i > 0; i--) { const j = rnd(i + 1); [bag[i], bag[j]] = [bag[j], bag[i]]; } }
+  switch (bag.pop()) {
+    case 'S': return { k: 'rope', t: rnd(2) };
+    case 'C': return { k: 'rope', t: 2 + rnd(4) };
+    case 'T': return { k: 'rope', t: 6 + rnd(4) };
+    case 'X': return { k: 'rope', t: 10 };
+    case 'B': return { k: 'bomb' };
+    default:  return { k: 'fire' };
+  }
+}
+function newGame() {
+  grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+  bag = []; drawn = 0; sinceBlock = 0; score = 0; level = 1; placed = 0; bestWick = 0; wick = 0; fx = []; shake = 0; overT = 0;
+  next = drawPiece(); state = 'play'; paused = false;
+  jingle([330, 440, 660], 80);
+  spawn();
+}
+function spawn() {
+  if (grid[0][SPAWN_COL]) return gameOver();
+  piece = next; next = drawPiece();
+  piece.col = SPAWN_COL; piece.py = -TS;
+  lockT = 0; fallAcc = 0; softOK = false; das = 0; dasDir = 0; phase = 'fall';
+}
+function gameOver() {
+  state = 'over'; overT = 0; piece = null;
+  if (score > best) { best = score; try { localStorage.setItem('tricky-wicks-best', String(best)); } catch (e) {} }
+  jingle([440, 330, 247, 165], 140);
+}
+function free(col, py) {
+  if (col < 0 || col >= COLS) return false;
+  const rows = [Math.floor(py / TS), Math.ceil(py / TS)];
+  if (py < 0) rows.push(0);
+  for (const r of rows) { if (r >= ROWS) return false; if (r >= 0 && grid[r][col]) return false; }
+  return true;
+}
+function tryMove(d) { if (free(piece.col + d, piece.py)) { piece.col += d; beep(220, .03, .03); } }
+function rotate(dir) {
+  if (piece.k !== 'rope') return;
+  piece.t = (dir > 0 ? ROT_CW : ROT_CCW)[piece.t]; beep(330, .04, .03);
+}
+function speed() { return Math.min(2, .3 + .07 * (level - 1)); }
+
+function stepFall() {
+  if (pressed.a) rotate(1);
+  if (pressed.b) rotate(-1);
+  const dir = (held.right ? 1 : 0) - (held.left ? 1 : 0);
+  if (pressed.left) { tryMove(-1); das = 0; dasDir = -1; }
+  else if (pressed.right) { tryMove(1); das = 0; dasDir = 1; }
+  else if (dir && dir === dasDir) { if (++das >= 12 && (das - 12) % 4 === 0) tryMove(dir); }
+  else if (!dir) dasDir = 0;
+  if (pressed.down) softOK = true;
+  if (pressed.up) { while (free(piece.col, piece.py + 1)) piece.py++; return lock(); }
+  const soft = held.down && softOK;
+  fallAcc += soft ? 4 : speed();
+  while (fallAcc >= 1) {
+    fallAcc -= 1;
+    if (free(piece.col, piece.py + 1)) { piece.py++; lockT = 0; } else { fallAcc = 0; break; }
+  }
+  if (!free(piece.col, piece.py + 1)) { if (++lockT >= LOCK || soft) lock(); }
+}
+function lock() {
+  const r = Math.round(piece.py / TS);
+  if (r < 0) return gameOver();
+  grid[r][piece.col] = piece.k === 'rope' ? { k: 'rope', t: piece.t } : { k: piece.k };
+  piece = null; placed++; wick = 0;
+  const lv = 1 + Math.floor(placed / 12);
+  if (lv > level) { level = lv; jingle([523, 784], 90); } else beep(110, .07, .06);
+  phase = 'resolve';
+}
+
+// Twist matching. On the sheet a rope join is pixel-perfect exactly when a red end meets a blue end.
+// Straights and corners exist in one layout each; Ts and crosses come in two, so those are the tiles
+// the game can swap. seams() counts the same-colour (off by one pixel) joins a tile would have here.
+function seams(t, r, c) {
+  let m = 0;
+  for (const [bit, dr, dc, opp, i, oi] of DIRS) {
+    if (!(ENDS[t] & bit)) continue;
+    const n = cell(r + dr, c + dc);
+    if (n && n.k === 'rope' && (ENDS[n.t] & opp) && POL[t][i] === POL[n.t][oi]) m++;
+  }
+  return m;
+}
+function touching(a, b) {
+  for (const [bit, dr, dc, opp] of DIRS)
+    if (a.r + dr === b.r && a.c + dc === b.c) return !!(ENDS[a.x.t] & bit) && !!(ENDS[b.x.t] & opp);
+  return false;
+}
+function retile() {
+  const swap = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x = grid[r][c];
+    if (x && x.k === 'rope' && x.lit == null && ALT[x.t] >= 0) swap.push({ r, c, x });
+  }
+  const seen = new Set();
+  for (const s of swap) {
+    if (seen.has(s)) continue;
+    const grp = [], q = [s]; seen.add(s);
+    while (q.length) {
+      const a = q.pop(); grp.push(a);
+      for (const b of swap) if (!seen.has(b) && touching(a, b)) { seen.add(b); q.push(b); }
+    }
+    settle(grp);
+  }
+}
+// Try every combination for a cluster of swappable tiles that share joins and keep the best one.
+function settle(grp) {
+  const cost = () => grp.reduce((n, s) => n + seams(s.x.t, s.r, s.c), 0);
+  if (grp.length > 12) { // too many to try them all: improve one tile at a time
+    for (let pass = 0, moved = true; moved && pass < 8; pass++) {
+      moved = false;
+      for (const s of grp) if (seams(ALT[s.x.t], s.r, s.c) < seams(s.x.t, s.r, s.c)) { s.x.t = ALT[s.x.t]; moved = true; }
+    }
+    return;
+  }
+  const base = grp.map(s => s.x.t);
+  let best = 0, bestCost = cost();
+  for (let m = 1; m < (1 << grp.length) && bestCost > 0; m++) {
+    grp.forEach((s, i) => { s.x.t = (m >> i) & 1 ? ALT[base[i]] : base[i]; });
+    const k = cost();
+    if (k < bestCost) { bestCost = k; best = m; }
+  }
+  grp.forEach((s, i) => { s.x.t = (best >> i) & 1 ? ALT[base[i]] : base[i]; });
+}
+function gravity() {
+  let moved = false;
+  for (let c = 0; c < COLS; c++) {
+    let w = ROWS - 1;
+    for (let r = ROWS - 1; r >= 0; r--) {
+      const x = grid[r][c]; if (!x) continue;
+      if (w !== r) { grid[w][c] = x; grid[r][c] = null; x.off = (w - r) * TS; moved = true; }
+      w--;
+    }
+  }
+  return moved;
+}
+// A resting flame lights any rope END pointing at it, or a bomb right next to it.
+function canLight(n, opp) { return n && ((n.k === 'rope' && n.lit == null && (ENDS[n.t] & opp)) || (n.k === 'bomb' && n.boom == null)); }
+function ignite() {
+  let any = false;
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x = grid[r][c];
+    if (!x || x.k !== 'fire' || x.lit != null) continue;
+    if (DIRS.some(([, dr, dc, opp]) => canLight(cell(r + dr, c + dc), opp))) { x.lit = 0; any = true; }
+  }
+  if (any) { burnIdle = 0; noise(.12, .05); }
+  return any;
+}
+function resolve() {
+  if (gravity()) { phase = 'settle'; return; }
+  retile();
+  if (ignite()) { phase = 'burn'; return; }
+  spawn();
+}
+function stepSettle() {
+  let busy = false;
+  for (const row of grid) for (const x of row) if (x && x.off > 0) { x.off = Math.max(0, x.off - 4); if (x.off > 0) busy = true; }
+  if (!busy) { beep(110, .05, .05); phase = 'resolve'; }
+}
+function spreadFrom(r, c, x) {
+  const ends = x.k === 'fire' ? 15 : ENDS[x.t];
+  for (const [bit, dr, dc, opp] of DIRS) {
+    if (!(ends & bit)) continue;
+    const n = cell(r + dr, c + dc);
+    if (!n) continue;
+    if (n.k === 'rope' && n.lit == null && (ENDS[n.t] & opp)) { n.lit = 0; wick++; beep(500 + Math.min(wick, 16) * 45, .05, .03); }
+    else if (n.k === 'bomb' && n.boom == null) { n.boom = 0; n.mult = Math.max(1, wick); }
+  }
+}
+function stepBurn() {
+  const lit = [], booms = [], crumbs = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x = grid[r][c]; if (!x) continue;
+    if (x.lit != null) lit.push([r, c, x]); else if (x.boom != null) booms.push([r, c, x]); else if (x.gone != null) crumbs.push([r, c, x]);
+  }
+  for (const [r, c, x] of lit) {
+    x.lit++;
+    if (x.lit === SPREAD) spreadFrom(r, c, x);
+    if (x.lit >= BURN) { grid[r][c] = null; if (x.k === 'rope') score += 10; }
+  }
+  for (const [r, c, x] of booms) {
+    x.boom++;
+    if (x.boom === BOOM_AT) {
+      score += 100 * x.mult; bestWick = Math.max(bestWick, x.mult);
+      const px = FX + c * TS + 8, py = FY + r * TS + 8;
+      fx.push({ k: 'boom', x: px, y: py, t: 0 }, { k: 'pop', x: px, y: py - 4, t: 0, s: 'x' + x.mult });
+      if (!reduce) shake = 8;
+      noise(.4, .16); beep(120, .3, .08, 40);
+      for (const [dr, dc] of BLAST) { // the blast leaves ropes, flames and other bombs alone
+        const n = cell(r + dr, c + dc);
+        if (n && n.k === 'block' && n.gone == null) { n.gone = 0; score += 50; }
+      }
+    }
+    if (x.boom >= BOOM_END) grid[r][c] = null;
+  }
+  for (const [r, c, x] of crumbs) if (++x.gone >= BLOCK_FADE) grid[r][c] = null;
+  if (!lit.length && !booms.length && !crumbs.length) { if (++burnIdle > 6) phase = 'resolve'; } else burnIdle = 0;
+}
+
+function step() {
+  frame++;
+  if (pressed.sound) toggleSound();
+  if (state === 'title') { if (pressed.start || pressed.a) newGame(); }
+  else if (state === 'over') { overT++; if (overT > 50 && (pressed.start || pressed.a)) newGame(); }
+  else {
+    if (pressed.start) { paused = !paused; beep(paused ? 440 : 660, .08, .05); }
+    if (!paused) {
+      if (phase === 'fall') stepFall();
+      else if (phase === 'burn') stepBurn();
+      else if (phase === 'settle') stepSettle();
+      if (phase === 'resolve') resolve();
+      for (const f of fx) f.t++;
+      fx = fx.filter(f => f.t < (f.k === 'boom' ? 20 : 60));
+      if (shake > 0) shake--;
+      if (score > 999999) score = 999999;
+    }
+  }
+  for (const k in pressed) pressed[k] = false;
+}
+
+/* ---------- render ---------- */
+function drawCell(x, dx, dy) {
+  const flick = (frame >> 3) & 1;
+  if (x.k === 'rope') {
+    rope(g, x.t, dx, dy);
+    if (x.lit != null && ((x.lit >> 1) & 1) === 0) spr(g, ...SRC.fire, dx, dy, TS, (frame >> 2) & 1);
+  } else if (x.k === 'fire') spr(g, ...SRC.fire, dx, dy, TS, flick);
+  else if (x.k === 'bomb') {
+    if (x.boom == null) spr(g, ...SRC.bomb, dx, dy);
+    else if (x.boom < BOOM_AT && ((x.boom >> 1) & 1)) spr(g, ...SRC.bomb, dx, dy);
+  } else if (x.k === 'block') {
+    if (x.gone == null || ((x.gone >> 1) & 1)) spr(g, ...SRC.block, dx, dy);
+  }
+}
+function box(x, y, w, h) {
+  g.fillStyle = C3; g.fillRect(x, y, w, h);
+  g.fillStyle = C0; g.fillRect(x + 1, y + 1, w - 2, h - 2);
+  g.fillStyle = C1; g.fillRect(x + 2, y + h - 3, w - 4, 1);
+}
+function drawTitle() {
+  const cx = FX + 48;
+  textC(g, 'TRICKY', cx, 24, C3, 2);
+  textC(g, 'WICKS', cx, 42, C3, 2);
+  const y = 70, x0 = FX + 8, t = reduce ? 0 : frame % 170;
+  const item = (i, start) => { // returns lit age or -1 if untouched, null if burned away
+    if (t < start) return -1; if (t >= start + BURN) return null; return t - start;
+  };
+  const f = item(0, 30);
+  if (f !== null) spr(g, ...SRC.fire, x0, y, TS, (frame >> 3) & 1);
+  for (let i = 0; i < 3; i++) {
+    const a = item(i, 30 + SPREAD * (i + 1)), dx = x0 + TS * (i + 1);
+    if (a === null) continue;
+    rope(g, 0, dx, y);
+    if (a >= 0 && ((a >> 1) & 1) === 0) spr(g, ...SRC.fire, dx, y, TS, (frame >> 2) & 1);
+  }
+  const b0 = 30 + SPREAD * 4, bx = x0 + TS * 4;
+  if (t < b0 || (t < b0 + BOOM_AT && ((t >> 1) & 1))) spr(g, ...SRC.bomb, bx, y);
+  else if (t >= b0 + BOOM_AT && t < b0 + BOOM_AT + 20) burst(bx + 8, y + 8, t - b0 - BOOM_AT);
+  if (reduce || ((frame >> 5) & 1) === 0) textC(g, 'PRESS START', cx, 104);
+  textC(g, 'V' + VERSION, cx, 124, C2);
+}
+function render() {
+  g.drawImage(bg, 0, 0);
+  // right panel values
+  if (next && state !== 'title') { if (next.k === 'rope') rope(g, next.t, PC - 8, 22); else spr(g, ...SRC[next.k], PC - 8, 22); }
+  textC(g, String(score || 0).padStart(6, '0'), PC, 64);
+  textC(g, String(best).padStart(6, '0'), PC, 87);
+  textC(g, 'LV ' + String(level || 1).padStart(2, '0'), PC, 109);
+  textC(g, 'x' + String(bestWick || 0).padStart(2, '0'), PC, 129);
+
+  g.save(); g.beginPath(); g.rect(FX, FY, COLS * TS, ROWS * TS); g.clip();
+  if (state === 'title') drawTitle();
+  else {
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const x = grid[r][c]; if (x) drawCell(x, FX + c * TS, FY + r * TS - (x.off || 0));
+    }
+    if (piece) drawCell(piece, FX + piece.col * TS, FY + piece.py);
+    for (const f of fx) if (f.k === 'boom') burst(f.x, f.y, f.t);
+    for (const f of fx) if (f.k === 'pop' && f.t >= 8) { const hw = textW(f.s) / 2 + 2; textO(g, f.s, Math.max(FX + hw, Math.min(FX + COLS * TS - hw, f.x)), f.y - Math.min(14, f.t >> 1)); }
+    if (state === 'over') {
+      const rows = Math.min(ROWS, Math.floor(overT / 4));
+      for (let i = 0; i < rows; i++) for (let c = 0; c < COLS; c++) spr(g, ...SRC.block, FX + c * TS, FY + (ROWS - 1 - i) * TS);
+      if (overT > 40) {
+        box(FX + 8, 44, 80, 58);
+        textC(g, 'GAME', FX + 48, 50, C3, 2); textC(g, 'OVER', FX + 48, 67, C3, 2);
+        if (reduce || ((frame >> 5) & 1) === 0) textC(g, 'PRESS START', FX + 48, 89);
+      }
+    } else if (paused) {
+      box(FX + 16, 58, 64, 26); textC(g, 'PAUSE', FX + 48, 64, C3, 2);
+    }
+  }
+  g.restore();
+
+  const ox = shake > 0 && !paused ? ((shake & 2) ? 1 : -1) : 0;
+  out.fillStyle = C0; out.fillRect(0, 0, cv.width, cv.height);
+  out.drawImage(buf, 0, 0, W, H, ox * K, 0, W * K, H * K);
+}
+
+/* ---------- input ---------- */
+const held = {}, pressed = {};
+function down(k) { wake(); if (!held[k]) pressed[k] = true; held[k] = true; }
+function up(k) { held[k] = false; }
+const KEYS = { ArrowLeft:'left', ArrowRight:'right', ArrowDown:'down', ArrowUp:'up', Space:'up',
+  KeyX:'a', KeyZ:'b', Enter:'start', KeyP:'start', KeyM:'sound' };
+addEventListener('keydown', e => { const k = KEYS[e.code]; if (!k || e.metaKey || e.ctrlKey || e.altKey) return; e.preventDefault(); if (!e.repeat) down(k); });
+addEventListener('keyup', e => { const k = KEYS[e.code]; if (k) up(k); });
+for (const b of document.querySelectorAll('button[data-k]')) {
+  const k = b.dataset.k;
+  const off = () => { up(k); b.classList.remove('on'); };
+  let touched = -1e9;
+  b.addEventListener('pointerdown', e => { e.preventDefault(); touched = performance.now(); down(k); b.classList.add('on'); try { b.setPointerCapture(e.pointerId); } catch (_) {} });
+  b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('lostpointercapture', off);
+  b.addEventListener('contextmenu', e => e.preventDefault());
+  b.addEventListener('click', () => { if (performance.now() - touched > 800) { down(k); setTimeout(() => up(k), 60); } }); // activation without a pointer
+}
+function toggleSound() {
+  soundOn = !soundOn;
+  const b = document.getElementById('snd'); b.textContent = soundOn ? 'Sound on' : 'Sound off'; b.setAttribute('aria-pressed', String(soundOn));
+  if (soundOn) beep(660, .06, .05);
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play') paused = true; for (const k in held) held[k] = false; });
+
+/* ---------- main loop (fixed 60 Hz, like the hardware) ---------- */
+let last = 0, acc = 0, hold = false;
+function loop(ts) {
+  if (!last) last = ts;
+  acc += Math.min(100, ts - last); last = ts;
+  let n = 0;
+  while (acc >= 1000 / 60 && n < 5) { if (!hold) step(); acc -= 1000 / 60; n++; }
+  render();
+  requestAnimationFrame(loop);
+}
+atlas.onload = () => {
+  buildBg(); fit();
+  if (window.ResizeObserver) new ResizeObserver(fit).observe(document.getElementById('screen')); else addEventListener('resize', fit);
+  requestAnimationFrame(loop);
+};
+atlas.src = ATLAS_SRC;
+
+})();
+</script>
+</body>
+</html>

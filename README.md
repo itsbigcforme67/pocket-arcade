@@ -8,7 +8,9 @@ A one-page console picker that links to five browser emulators:
 * **Web VMU** (`../web-vmu/`): the Dreamcast Visual Memory Unit
 * **Web P/ECE** (`../web-piece/`): the Aquaplus P/ECE
 
-It is a single static file, `index.html`, with no build step and no dependencies.
+It also lists one game that needs no files: **Tricky Wicks** (`tricky-wicks.html`), a falling-block puzzle kept in this repo as a single self-contained page. To update it, replace that file with a newer build.
+
+The picker itself is a single static file, `index.html`, with no build step and no dependencies.
 
 ## How the addresses fit together
 
