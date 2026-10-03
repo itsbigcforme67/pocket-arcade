@@ -42,6 +42,9 @@
     .mini { --s1: #24374a; --s2: #182430; }
     .pocket { --s1: #3a3d46; --s2: #23252c; }
     .brick { --s1: #4b4a3c; --s2: #2b2a22; }
+    .vmu { --s1: #27424a; --s2: #182a30; }
+    .piece { --s1: #343a52; --s2: #1f2233; }
+    .piece .stage svg { height: 118px; }
     .info { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .info h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
     .meta { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -183,6 +186,74 @@
           <div class="go"><span class="btn">Play ›</span><span class="need">needs ROM files</span></div>
         </div>
       </a>
+
+      <a class="card vmu" href="../web-vmu/" data-repo="web-vmu">
+        <div class="stage">
+          <svg viewBox="0 0 150 250" role="img" aria-label="A white memory unit with a small screen, a direction pad and two buttons">
+            <defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f6f2"/><stop offset=".55" stop-color="#e9e7e0"/><stop offset="1" stop-color="#d6d3ca"/></linearGradient></defs>
+            <path d="M24 10h102a14 14 0 0 1 14 14v196a24 24 0 0 1-24 24H34a24 24 0 0 1-24-24V24a14 14 0 0 1 14-14z" fill="#b3b0a6"/>
+            <path d="M24 4h102a14 14 0 0 1 14 14v196a24 24 0 0 1-24 24H34a24 24 0 0 1-24-24V18a14 14 0 0 1 14-14z" fill="url(#g4)"/>
+            <rect x="32" y="4" width="86" height="12" rx="4" fill="#d5d2c8"/>
+            <rect x="22" y="28" width="106" height="84" rx="9" fill="#3c4047"/>
+            <rect x="31" y="36" width="88" height="68" rx="3" fill="#b7c4ab"/>
+            <g fill="#1b2518">
+              <g class="bob">
+                <rect x="67" y="46" width="6" height="6"/><rect x="79" y="46" width="6" height="6"/>
+                <rect x="61" y="52" width="30" height="6"/><rect x="55" y="58" width="42" height="12"/>
+                <rect x="61" y="70" width="6" height="6"/><rect x="85" y="70" width="6" height="6"/>
+              </g>
+              <rect x="38" y="82" width="74" height="2" opacity=".5"/>
+              <rect x="47" y="90" width="7" height="9" fill="none" stroke="#1b2518" stroke-width="1.4" opacity=".25"/>
+              <rect x="66" y="90" width="7" height="9" rx="1.5" fill="none" stroke="#1b2518" stroke-width="1.4"/><rect x="68" y="93" width="3" height="3" class="blink"/>
+              <circle cx="88" cy="94.5" r="4" fill="none" stroke="#1b2518" stroke-width="1.4" opacity=".25"/>
+              <path d="M106 89l-4 6h3l-1 5 5-7h-3z" opacity=".25"/>
+            </g>
+            <rect x="80" y="128" width="20" height="8" rx="4" fill="#7d828b"/><rect x="106" y="128" width="20" height="8" rx="4" fill="#7d828b"/>
+            <g fill="#50555d">
+              <rect x="38" y="150" width="14" height="52" rx="4"/><rect x="19" y="169" width="52" height="14" rx="4"/>
+              <circle cx="94" cy="190" r="12"/><circle cx="120" cy="168" r="12"/>
+            </g>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>VMU</h2>
+          <div class="meta"><span class="pill">1998</span><span class="pill">48 × 32 pixels</span><span class="pill">memory card</span></div>
+          <p>The Dreamcast's memory card with a screen. Plays the mini-games Dreamcast titles put on it, from your own game or memory card files. No BIOS needed.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs your game files</span></div>
+        </div>
+      </a>
+
+      <a class="card piece" href="../web-piece/" data-repo="web-piece">
+        <div class="stage">
+          <svg viewBox="0 0 280 170" role="img" aria-label="A wide silver handheld with a small screen in the middle">
+            <defs><linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8eaee"/><stop offset=".55" stop-color="#d0d3d9"/><stop offset="1" stop-color="#b6bac2"/></linearGradient></defs>
+            <rect x="6" y="14" width="268" height="150" rx="26" fill="#8f939c"/>
+            <rect x="6" y="8" width="268" height="150" rx="26" fill="url(#g5)"/>
+            <rect x="80" y="22" width="120" height="96" rx="9" fill="#2b2e34"/>
+            <rect x="90" y="31" width="100" height="70" rx="3" fill="#d9dfd2"/>
+            <g fill="#161b15">
+              <g class="bob">
+                <rect x="126" y="46" width="6" height="6"/><rect x="144" y="46" width="6" height="6"/>
+                <rect x="120" y="52" width="36" height="6"/><rect x="114" y="58" width="48" height="12"/>
+                <rect x="120" y="70" width="6" height="6"/><rect x="150" y="70" width="6" height="6"/>
+              </g>
+              <rect x="94" y="35" width="92" height="5" opacity=".7"/><rect x="94" y="92" width="92" height="5" opacity=".7"/>
+              <rect class="blink" x="170" y="80" width="6" height="6" fill="#5b6257"/>
+            </g>
+            <g fill="#3c4047">
+              <rect x="34" y="50" width="16" height="58" rx="5"/><rect x="13" y="71" width="58" height="16" rx="5"/>
+              <circle cx="226" cy="92" r="15"/><circle cx="252" cy="64" r="15"/>
+            </g>
+            <rect x="108" y="130" width="28" height="10" rx="5" fill="#6f747d"/><rect x="144" y="130" width="28" height="10" rx="5" fill="#6f747d"/>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>P/ECE</h2>
+          <div class="meta"><span class="pill">2001</span><span class="pill">128 × 88 pixels</span><span class="pill">4 greys</span></div>
+          <p>Aquaplus's open handheld, the one hobbyists wrote a hundred games for. Runs the real system and real P/ECE programs, straight from their original downloads.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs the system file + games</span></div>
+        </div>
+      </a>
     </div>
 
     <div class="how">
@@ -201,7 +272,7 @@
   <footer class="wrap">
     <p class="visits" id="visits" hidden><b id="visits-n"></b> <span>visits so far, counted without cookies by <a href="https://www.goatcounter.com/" rel="noopener">GoatCounter</a></span></p>
     <p class="src" id="src"></p>
-    <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company, Sony Interactive Entertainment or the makers of any other handheld shown. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
+    <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company, Sony Interactive Entertainment, SEGA, Aquaplus or the makers of any other handheld shown. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
   </footer>
 
   <script>

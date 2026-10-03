@@ -1,25 +1,29 @@
 # Pocket Arcade
 
-A one-page console picker that links to three browser emulators:
+A one-page console picker that links to five browser emulators:
 
 * **Web Pokémon mini** (`../web-pokemini/`)
 * **Web PocketStation** (`../web-pocketstation/`)
 * **Web Brick** (`../web-brick/`): brick games and LCD handhelds
+* **Web VMU** (`../web-vmu/`): the Dreamcast Visual Memory Unit
+* **Web P/ECE** (`../web-piece/`): the Aquaplus P/ECE
 
 It is a single static file, `index.html`, with no build step and no dependencies.
 
 ## How the addresses fit together
 
-GitHub Pages serves every public repo of an account under one address, so with the four repos published you get:
+GitHub Pages serves every public repo of an account under one address, so with the six repos published you get:
 
 ```
 https://YOU.github.io/pocket-arcade/        this page
 https://YOU.github.io/web-pokemini/         Pokémon mini
 https://YOU.github.io/web-pocketstation/    PocketStation
 https://YOU.github.io/web-brick/            brick games
+https://YOU.github.io/web-vmu/              VMU
+https://YOU.github.io/web-piece/            P/ECE
 ```
 
-The cards link to `../web-pokemini/`, `../web-pocketstation/` and `../web-brick/`, so they work without knowing your user name. If you rename an app's repo, change the matching `href` (and `data-repo`) in `index.html`.
+The cards link to `../web-pokemini/`, `../web-pocketstation/`, `../web-brick/`, `../web-vmu/` and `../web-piece/`, so they work without knowing your user name. If you rename an app's repo, change the matching `href` (and `data-repo`) in `index.html`.
 
 Want the picker at the very top, `https://YOU.github.io/`? Name this repo `YOU.github.io` instead (`bash publish.sh YOU.github.io`). The links still work.
 
