@@ -64,6 +64,18 @@
     .how h3 { margin: 0 0 4px; font-size: 15px; }
     .how p { margin: 0; color: var(--muted); font-size: 14px; }
 
+    .talk { margin: 34px 0 0; }
+    .talk[hidden] { display: none; }
+    .talk h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; }
+    .talk > p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .talk .box { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; min-height: 120px; }
+    .talk .giscus, .talk .giscus-frame { width: 100%; }
+
+    .visits { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 10px; }
+    .visits[hidden] { display: none; }
+    .visits b { font: 700 15px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .12em; color: var(--ink);
+      background: var(--lcd); border-radius: 6px; padding: 5px 8px 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,.35); }
+
     footer.wrap { margin-top: auto; padding: 34px 20px calc(env(safe-area-inset-bottom) + 28px); color: var(--muted); font-size: 13px; text-align: center; }
     footer p { margin: 6px auto; max-width: 56em; }
     .src:empty { display: none; }
@@ -178,12 +190,74 @@
       <div><h3>Nothing is uploaded</h3><p>Your files, saves and progress stay in this browser's storage on this device.</p></div>
       <div><h3>Works like an app</h3><p>Use your browser's “Add to Home Screen” inside a console to install it and play offline.</p></div>
     </div>
+
+    <section class="talk" id="talk" hidden aria-labelledby="talk-h">
+      <h2 id="talk-h">Comments</h2>
+      <p>Say hello, report a problem or ask for a console. Posting needs a GitHub account; the comments are kept in this project's <a id="talk-link" href="#">GitHub Discussions</a>.</p>
+      <div class="box"><div class="giscus"></div></div>
+    </section>
   </main>
 
   <footer class="wrap">
+    <p class="visits" id="visits" hidden><b id="visits-n"></b> <span>visits so far, counted without cookies by <a href="https://www.goatcounter.com/" rel="noopener">GoatCounter</a></span></p>
     <p class="src" id="src"></p>
     <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company, Sony Interactive Entertainment or the makers of any other handheld shown. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
   </footer>
+
+  <script>
+    // Visitor counter and comments. Both are off until their values are filled in, and both only
+    // run on the site named in `host`, so a copy or a fork never counts or posts as this one.
+    var EXTRAS = {
+      host: 'itsbigcforme67.github.io',   // where the real site lives
+      goatcounter: 'pocketarcade',       // visitor counter: the NAME in NAME.goatcounter.com
+      giscusRepo: 'itsbigcforme67/pocket-arcade',   // comments: the repo whose Discussions hold them
+      giscusRepoId: 'R_kgDOU4AA-g',      //   the data-repo-id value giscus.app shows you
+      giscusCategory: 'Announcements',
+      giscusCategoryId: 'DIC_kwDOU4AA-s4DG7TQ'   //   the data-category-id value giscus.app shows you
+    };
+    (function () {
+      var x = EXTRAS;
+      if (!x.host || location.hostname.toLowerCase() !== x.host.toLowerCase()) return;
+
+      // Counter: GoatCounter counts the visit (no cookies) and tells us the running total.
+      if (/^[a-z0-9-]+$/i.test(x.goatcounter)) {
+        var base = 'https://' + x.goatcounter + '.goatcounter.com';
+        var gc = document.createElement('script');
+        gc.async = true; gc.src = 'https://gc.zgo.at/count.js';
+        gc.setAttribute('data-goatcounter', base + '/count');
+        document.head.appendChild(gc);
+        fetch(base + '/counter/TOTAL.json')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            var n = d ? String(d.count).replace(/[^0-9]/g, '') : '';   // arrives formatted, e.g. "1,234"
+            if (!n) return;
+            document.getElementById('visits-n').textContent = Number(n).toLocaleString('en-US');
+            document.getElementById('visits').hidden = false;
+          })
+          .catch(function () {});   // blocked or offline: just leave the counter out
+      }
+
+      // Comments: giscus shows one GitHub Discussions thread. Loaded only when scrolled into view.
+      if (x.giscusRepo && x.giscusRepoId && x.giscusCategoryId) {
+        var talk = document.getElementById('talk');
+        document.getElementById('talk-link').href = 'https://github.com/' + x.giscusRepo + '/discussions';
+        talk.hidden = false;
+        var load = function () {
+          var g = document.createElement('script');
+          g.async = true; g.src = 'https://giscus.app/client.js'; g.crossOrigin = 'anonymous';
+          var a = { repo: x.giscusRepo, 'repo-id': x.giscusRepoId, category: x.giscusCategory, 'category-id': x.giscusCategoryId,
+                    mapping: 'specific', term: 'Pocket Arcade comments', strict: '1', 'reactions-enabled': '1', 'emit-metadata': '0',
+                    'input-position': 'top', theme: 'dark', lang: 'en', loading: 'lazy' };
+          for (var k in a) g.setAttribute('data-' + k, a[k]);
+          talk.appendChild(g);
+        };
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '400px' });
+          io.observe(talk);
+        } else load();
+      }
+    })();
+  </script>
 
   <script>
     // On github.io, link to the source of each project (same account, repo named after the folder).
