@@ -87,58 +87,58 @@ try {
 } catch (e) {}
 
 /* ---------------------------------------------------------------------
-   ROM TABLES. The decomp reads these from ov006 .data; the values are not in
-   the decomp repo, so everything in this block is a PLACEHOLDER until they are
-   read from a ROM. Each comment names the EU-ROM symbol it stands in for.
+   ROM TABLES, read from overlay 6 of the EU ROM (ASMP). These are the game's
+   own numbers; each comment names the symbol they come from.
    --------------------------------------------------------------------- */
-// Movers. The decomp's handler table (data_ov006_02142254) is indexed by
-// mKind: 0 = RestartPicture, 9 = TickPictureFlash, 1..8 = the movers. Their
-// order inside 1..8 is a guess until the table is read.
-const STOP = 0, BOUNCE = 1, SWAY = 2, DRIFT_RANDOM = 3, DRIFT_ROW = 4, DRIFT_COL = 5, DRIFT_LEVEL = 6, DRIFT_FIXED = 7;
+// Movers, in the order of the handler table data_ov006_02142254 (filled by
+// __sinit_ov006_02130f64): mKind 0 = RestartPicture, 9 = TickPictureFlash,
+// and a board's mover m runs as mKind m + 1.
+const STOP = 0, DRIFT_FIXED = 1, DRIFT_LEVEL = 2, DRIFT_COL = 3, DRIFT_ROW = 4, DRIFT_RANDOM = 5, SWAY = 6, BOUNCE = 7;
 // One row per board (board = level for levels 0..19, then a random 10..19).
 //   mode:  data_ov006_0213ce98  0 scatter, 1 2x2 grid, 2 4x4 grid, 3 8x6 grid, 4 a row of 8
 //   first: data_ov006_0213ce84  scatter: the wanted face is slot 0 (drawn under the rest)
 //   mover: data_ov006_0213ceac  how this board's faces move
 //   count: data_ov006_0213cee0  scatter: how many faces
 const BOARDS = [
-  { mode: 0, first: 0, mover: STOP,         count: 4   },  // 0
-  { mode: 0, first: 0, mover: STOP,         count: 8   },  // 1
-  { mode: 0, first: 1, mover: STOP,         count: 16  },  // 2
-  { mode: 1, first: 0, mover: BOUNCE,       count: 4   },  // 3
-  { mode: 0, first: 1, mover: DRIFT_RANDOM, count: 12  },  // 4
-  { mode: 0, first: 1, mover: STOP,         count: 32  },  // 5
-  { mode: 2, first: 0, mover: DRIFT_ROW,    count: 16  },  // 6
-  { mode: 0, first: 0, mover: BOUNCE,       count: 20  },  // 7
-  { mode: 3, first: 0, mover: DRIFT_COL,    count: 48  },  // 8
-  { mode: 0, first: 1, mover: STOP,         count: 60  },  // 9  (always Luigi: ChooseTarget)
-  { mode: 4, first: 0, mover: DRIFT_COL,    count: 8   },  // 10
-  { mode: 0, first: 1, mover: DRIFT_LEVEL,  count: 40  },  // 11
-  { mode: 0, first: 1, mover: SWAY,         count: 30  },  // 12
-  { mode: 3, first: 0, mover: DRIFT_ROW,    count: 48  },  // 13
-  { mode: 0, first: 0, mover: DRIFT_FIXED,  count: 50  },  // 14 (special: a decoy sits 20 px above)
-  { mode: 0, first: 1, mover: BOUNCE,       count: 40  },  // 15
-  { mode: 0, first: 0, mover: DRIFT_RANDOM, count: 60  },  // 16 (special)
-  { mode: 0, first: 0, mover: STOP,         count: 100 },  // 17 (special)
-  { mode: 2, first: 0, mover: DRIFT_COL,    count: 16  },  // 18
-  { mode: 0, first: 0, mover: DRIFT_LEVEL,  count: 80  },  // 19 (special)
+  { mode: 1, first: 0, mover: STOP,        count: 4   },  // 0  2x2
+  { mode: 2, first: 0, mover: STOP,        count: 16  },  // 1  4x4
+  { mode: 3, first: 0, mover: STOP,        count: 48  },  // 2  8x6
+  { mode: 0, first: 1, mover: STOP,        count: 80  },  // 3
+  { mode: 0, first: 1, mover: STOP,        count: 100 },  // 4
+  { mode: 3, first: 0, mover: DRIFT_COL,   count: 48  },  // 5  8x6, columns sliding
+  { mode: 0, first: 0, mover: STOP,        count: 80  },  // 6
+  { mode: 0, first: 0, mover: STOP,        count: 100 },  // 7
+  { mode: 0, first: 0, mover: STOP,        count: 100 },  // 8
+  { mode: 4, first: 0, mover: STOP,        count: 8   },  // 9  a row along the top edge; always Luigi (ChooseTarget)
+  { mode: 0, first: 0, mover: DRIFT_LEVEL, count: 80  },  // 10
+  { mode: 0, first: 0, mover: SWAY,        count: 80  },  // 11
+  { mode: 0, first: 0, mover: STOP,        count: 100 },  // 12
+  { mode: 0, first: 0, mover: BOUNCE,      count: 80  },  // 13
+  { mode: 0, first: 0, mover: STOP,        count: 100 },  // 14 special: a decoy sits 20 px above the wanted face
+  { mode: 0, first: 0, mover: DRIFT_LEVEL, count: 90  },  // 15
+  { mode: 0, first: 0, mover: STOP,        count: 100 },  // 16 special
+  { mode: 0, first: 0, mover: STOP,        count: 110 },  // 17 special
+  { mode: 0, first: 0, mover: SWAY,        count: 90  },  // 18
+  { mode: 0, first: 0, mover: STOP,        count: 110 },  // 19 special
 ];
 // Speed tables, one value per character (20.12 px per step).
-const SPD_COL   = [0x0c00, 0x0c00, 0x0c00, 0x0c00];  // data_ov006_0212e858
-const SPD_ROW   = [0x1000, 0x1000, 0x1000, 0x1000];  // data_ov006_0212e868
-const SPD_RAND  = [0x0c00, 0x0c00, 0x0c00, 0x0c00];  // data_ov006_0212e878
-const SWAY_VX   = [0x2000, 0x2000, 0x2000, 0x2000];  // data_ov006_0212e888 top x speed
-const SWAY_VY   = [0x0800, 0x0800, 0x0800, 0x0800];  // data_ov006_0212e898 y speed
-const SWAY_ACC  = [0x0080, 0x0080, 0x0080, 0x0080];  // data_ov006_0212e8a8 x acceleration
-const SPD_BOUNCE= [0x1000, 0x1400, 0x1800, 0x1c00];  // data_ov006_0212e8b8
-const SPD_FIXED = [0x1000, 0x1000, 0x1000, 0x1000];  // data_ov006_0212e8c8
-const SPD_LEVEL = [0x0800, 0x0c00, 0x1000, 0x1400];  // data_ov006_0212e8d8
+const SPD_COL   = [0x0e00, 0x0e00, 0x0e00, 0x0e00];  // data_ov006_0212e858
+const SPD_ROW   = [0x0e00, 0x0e00, 0x0e00, 0x0e00];  // data_ov006_0212e868
+const SPD_RAND  = [0x0e00, 0x0a00, 0x0600, 0x0c00];  // data_ov006_0212e878
+const SWAY_VX   = [0x1000, 0x0c00, 0x0800, 0x0e00];  // data_ov006_0212e888 top x speed
+const SWAY_VY   = [-0x0e00, 0x0a00, 0x0800, 0x0c00]; // data_ov006_0212e898 y speed
+const SWAY_ACC  = [0x00c0, 0x0080, 0x0040, 0x00a0];  // data_ov006_0212e8a8 x acceleration
+const SPD_BOUNCE= [0x0e00, 0x0a00, 0x0600, 0x0c00];  // data_ov006_0212e8b8
+const SPD_FIXED = [0x0e00, 0x0a00, 0x0600, 0x0c00];  // data_ov006_0212e8c8
+const SPD_LEVEL = [0x0e00, 0x0a00, 0x0600, 0x0c00];  // data_ov006_0212e8d8
 // Who is wanted: ten entries for under 10 s left, ten for 10-19 s, ten for 20 s or more.
 const WANTED_PICK = [                                  // data_ov006_0213cec0
-  0, 1, 2, 3, 0, 1, 2, 3, 0, 1,
-  0, 1, 2, 3, 0, 1, 2, 3, 2, 3,
-  0, 1, 2, 3, 0, 1, 2, 3, 1, 2,
+  0, 3, 1, 2, 0, 3, 1, 2, 3, 0,
+  2, 0, 3, 1, 2, 0, 1, 3, 2, 1,
+  3, 1, 2, 1, 0, 1, 2, 1, 1, 0,
 ];
-// Boards where the wanted face is never Yoshi and a decoy sits just above it.
+const CURTAIN_START = [-0x40, 0x140];                  // data_ov006_0212e850
+// Boards where the wanted face is never Yoshi and a decoy sits just above it (code, not a table).
 const SPECIAL = new Set([0x0e, 0x10, 0x11, 0x13]);
 /* -------------------------- end of ROM tables -------------------------- */
 
@@ -160,7 +160,7 @@ const g = {
   kind: new Uint8Array(N), started: new Uint8Array(N), active: new Uint8Array(N), chr: new Uint8Array(N), shown: new Uint8Array(N),
   grid: new Uint8Array(13 * 9 + 32), colDir: new Uint8Array(8), rowDir: new Uint8Array(6),
   penalty: Array.from({ length: 16 }, () => ({ x: 0, y: 0, velY: 0, timer: 0, active: 0, shown: 0, phase: 0 })),
-  curtain: [0, 1].map(() => ({ x: 0, velX: 0, delay: 0, count: 0, active: 0, shown: 0, state: 0 })),
+  curtain: [0, 1].map(() => ({ x: 0, velX: 0, delay: 0, count: 0, active: 0, shown: 0, state: 0, phase: 0 })),
   reward: { x: 0, y: 0, velY: 0, timer: 0, active: 0, phase: 0, sparks: 0, shown: 0 },
   iris: { active: 0, state: 0, radius: 0 },
   state: 0, iconOn: 0, iconX: 0x80, iconY: 0x60, catchWait: 0,
@@ -221,41 +221,62 @@ function updateReward() {
   r.active = 0;
 }
 
-/* --- the iris: a circle that opens from the middle of the touch screen at the catch --- */
+/* --- the iris: a circle that opens from the middle of the touch screen at the catch.
+   Steps (data_ov006_021421ec): 0 IrisHold, 1 IrisGrow, 2 IrisStop. --- */
 function startIris() { Object.assign(g.iris, { active: 1, state: 0, radius: 0x40000 }); }
 function updateIris() {
   const s = g.iris;
   if (!s.active) return;
   if (s.state === 1) { s.radius += 0x2000; if ((s.radius >> 12) >= 0xa0) s.state++; }
+  else if (s.state === 2) s.active = 0;   // the window is switched off; the new backdrop stays
 }
 
-/* --- curtains: the two halves of the poster slide in to meet in the middle --- */
-const CURTAIN_START = [-96, 352];   // data_ov006_0212e850 (placeholder)
-function resetCurtains() { for (const c of g.curtain) Object.assign(c, { active: 1, state: 0, delay: 0, count: 0, shown: 0 }); }
+/* --- curtains: two copies of the poster fly in from either side and land on top
+   of each other in the middle. Motions (data_ov006_02142204): 0 CurtainStart,
+   1 CurtainUpdate, 2 CurtainStateSlow. CurtainUpdate steps through
+   (data_ov006_0214221c) 0 CurtainStateBounce, 1 CurtainStateHold, 2 CurtainStateFast. --- */
+function resetCurtains() { for (const c of g.curtain) Object.assign(c, { active: 1, state: 0, delay: 0, count: 0, shown: 0, phase: 0 }); }
+function done(c) { c.x = 0x80000; c.active = 0; c.phase = 0; }
 function curtainStart(c, i) {
   if (c.delay) { c.delay--; return; }
   c.x = CURTAIN_START[i] << 12; c.shown = 1; c.state = 1;
   c.velX = i ? -0x8000 : 0x8000;
   if (g.level % 5 !== 0) { c.state = 2; c.velX = i ? -0x7000 : 0x7000; }
 }
-function curtainSlow(c, i) {   // every fifth round: fast in, braking
+function curtainSlow(c, i) {     // most rounds: in from the side, braking to a stop
   if (++c.count === 0x1a && i === 0) sfx('thump');
   c.x += c.velX;
   const v = c.x >> 12;
   if (i === 0) { c.velX -= 0x140; if (v < 0x80 || c.velX <= 0) return; }
   else { c.velX += 0x140; if (v > 0x80 || c.velX >= 0) return; }
-  c.x = 0x80000; c.active = 0;
+  done(c);
 }
-function curtainFast(c, i) {   // other rounds: speeding up
+function curtainBounce(c, i) {   // every fifth round: overshoot to the far side...
   c.x += c.velX;
   const v = c.x >> 12;
-  if (i === 0) { c.velX += 0x140; if (!(v >= 0x80 && c.velX > 0)) return; sfx('thump'); }
-  else { c.velX -= 0x140; if (!(v <= 0x80 && c.velX < 0)) return; }
-  c.x = 0x80000; c.active = 0;
+  if (i === 0) { c.velX -= 0x100; if (v >= 0x140) { c.x = 0x140000; c.phase++; c.delay = 0x10; c.velX = -0x6000; } }
+  else { c.velX += 0x100; if (v <= -0x40) { c.x = -0x40000; c.phase++; c.delay = 0x10; c.velX = 0x6000; } }
 }
+function curtainHold(c, i) {     // ...wait, then come back to the middle
+  if (++c.count === 0x35 && i === 0) sfx('thump');
+  if (c.delay) { c.delay--; return; }
+  c.x += c.velX;
+  const v = c.x >> 12;
+  if (i === 0) { c.velX += 0x140; if (v > 0x80) return; }
+  else { c.velX -= 0x140; if (v < 0x80) return; }
+  done(c);
+}
+function curtainFast(c, i) {     // in the table, but nothing reaches it
+  c.x += c.velX;
+  const v = c.x >> 12;
+  if (i === 0) { c.velX += 0x140; if (!(v >= 0x80 && c.velX > 0)) return; }
+  else { c.velX -= 0x140; if (!(v <= 0x80 && c.velX < 0)) return; }
+  done(c);
+}
+function curtainUpdate(c, i) { [curtainBounce, curtainHold, curtainFast][c.phase](c, i); }
 function curtainsDone() {
   let n = 0;
-  g.curtain.forEach((c, i) => { if (c.active) { [curtainStart, curtainSlow, curtainFast][c.state](c, i); n++; } });
+  g.curtain.forEach((c, i) => { if (c.active) { [curtainStart, curtainUpdate, curtainSlow][c.state](c, i); n++; } });
   return n === 0;
 }
 
@@ -568,7 +589,7 @@ function text(ctx, s, x, y, size, fill, align = 'center', stroke = '#000') {
 // The poster, drawn once per round into its own canvas so the curtains can split it.
 const poster = document.createElement('canvas');
 let posterDirty = true;
-const PW = 120, PH = 140, PY = 52;   // poster size and top edge on the top screen
+const PW = 120, PH = 140, PY = 0x60 - 70;   // poster size; the curtains park its centre at y 0x60
 function buildPoster() {
   poster.width = PW * S; poster.height = PH * S;
   const p = poster.getContext('2d');
@@ -607,24 +628,16 @@ function drawTop() {
   // poster halves (the "curtains")
   if (posterDirty) buildPoster();
   const px = (W - PW) / 2;
-  const [L, R] = g.curtain;
-  c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(px, PY, PW, PH);   // empty frame
-  if (L.shown || g.state >= 2) {
-    const lx = L.shown && L.active ? (L.x >> 12) : 128;
-    c.drawImage(poster, 0, 0, PW * S / 2, PH * S, lx - PW / 2, PY, PW / 2, PH);
-  }
-  if (R.shown || g.state >= 2) {
-    const rx = R.shown && R.active ? (R.x >> 12) : 128;
-    c.drawImage(poster, PW * S / 2, 0, PW * S / 2, PH * S, rx, PY, PW / 2, PH);
-  }
+  c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(px, PY, PW, PH);   // where the poster lands
+  for (const k of g.curtain) if (k.shown) c.drawImage(poster, (k.x >> 12) - PW / 2, PY, PW, PH);
 }
 
 function drawBot() {
   const c = bctx;
   c.setTransform(S, 0, 0, S, 0, 0);
   c.fillStyle = '#183a66'; c.fillRect(0, 0, W, H);
-  if (g.iris.active && mode !== 'title') {   // the iris opens on a lighter backdrop
-    c.save(); c.beginPath(); c.arc(128, 96, g.iris.radius / 4096, 0, Math.PI * 2); c.clip();
+  if (g.iris.radius && mode !== 'title') {   // the iris opens on a new backdrop, which stays once it has opened
+    c.save(); c.beginPath(); c.arc(128, 96, g.iris.active ? g.iris.radius / 4096 : 400, 0, Math.PI * 2); c.clip();
     c.fillStyle = g.found ? '#f2c94c' : '#4a4f5c'; c.fillRect(0, 0, W, H); c.restore();
   }
   if (mode === 'title') {
