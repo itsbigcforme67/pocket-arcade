@@ -4,7 +4,7 @@ Booted by `tests/e2e.py`. None of these is a game.
 
 | File | What it is | Licence |
 |---|---|---|
-| `probe.gb`, `probe.ws`, `probe-tall.ws`, `probe.ngc` | Written for this project by `tests/make_probes.py` and `tests/probe_ws.asm`. A plain screen whose colour follows the buttons held. | GPL-3.0-or-later, like the rest of the project |
+| `probe.gb`, `probe.gba`, `probe.ws`, `probe-tall.ws`, `probe.ngc` | Written for this project by `tests/make_probes.py` and `tests/probe_ws.asm`. A plain screen whose colour follows the buttons held. | GPL-3.0-or-later, like the rest of the project |
 | `dmg-acid2.gb` | Matt Currie's Game Boy display test, v1.0, from <https://github.com/mattcurrie/dmg-acid2> | MIT (below) |
 | `cgb-acid2.gbc` | Matt Currie's Game Boy Color display test, v1.1, from <https://github.com/mattcurrie/cgb-acid2> | MIT (below) |
 

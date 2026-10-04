@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Browser test for the EmulatorJS pages (gb/, ws/, ngp/).
+"""Browser test for the EmulatorJS pages (gb/, gba/, ws/, ngp/).
 
     bash run.sh &                      # serves the site on http://localhost:8770/
     python3 tests/e2e.py [url] [folder for screenshots]
@@ -29,8 +29,9 @@ for i, a in enumerate(sys.argv):
         ALSO.append((k, v))
 os.makedirs(SHOTS, exist_ok=True)
 
-NATIVE = {"gb": (160, 144), "ws": (224, 144), "ngp": (160, 152)}
-PROBE = {"gb": "probe.gb", "ws": "probe.ws", "ngp": "probe.ngc"}
+NATIVE = {"gb": (160, 144), "gba": (240, 160), "ws": (224, 144), "ngp": (160, 152)}
+PROBE = {"gb": "probe.gb", "gba": "probe.gba", "ws": "probe.ws", "ngp": "probe.ngc"}
+EXTS = {"gb": ("gb", "gbc"), "gba": ("gba",), "ws": ("ws", "wsc"), "ngp": ("ngp", "ngc")}
 TOP, PAD_BELOW, PAD_SIDE = 40, 250, 150
 PHONE = dict(viewport={"width": 390, "height": 844}, device_scale_factor=3, is_mobile=True, has_touch=True,
              user_agent="Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36")
@@ -101,7 +102,13 @@ class Tab:
             self.page.wait_for_timeout(400)
         except Exception:
             pass
-        im = self.shot(name)
+        # The touch controls are hidden for the measurement: the Game Boy Advance's L and R sit over the
+        # canvas, below the picture. Hiding them by a style sheet leaves the layout as it was.
+        self.ev("document.head.appendChild(Object.assign(document.createElement('style'), {id: 'pa-test-hide', textContent: '#game .ejs_virtualGamepad_parent * { visibility: hidden !important; }'}))")
+        self.page.wait_for_timeout(100)
+        im = self.shot(name + "-measured")
+        self.ev("document.getElementById('pa-test-hide').remove()")
+        self.shot(name)
         g = self.ev("""() => { const c = pocketArcade.emulator.canvas, r = c.getBoundingClientRect();
             return {canvas: [c.width, c.height], css: [r.x, r.y, r.width, r.height], dpr: devicePixelRatio}; }""")
         dpr = g["dpr"]
@@ -163,7 +170,7 @@ def whole_number_scale(tab, system, name, tall=False, sideways=False, pad=True):
 
 def run(browser):
     # ---------- each console, phone held upright ----------
-    for system in ("gb", "ws", "ngp"):
+    for system in ("gb", "gba", "ws", "ngp"):
         print("\n== %s, phone upright ==" % system)
         t = Tab(browser, PHONE)
         t.open(system)
@@ -188,6 +195,16 @@ def run(browser):
             check(t.held("#game .b_dpad .ejs_dpad_main", dx=0.35)[1] == 0x10, "touch D-pad right reaches the game")
             check(t.held("#game .b_dpad .ejs_dpad_main", dy=-0.35)[1] == 0x40, "touch D-pad up reaches the game")
             check(t.save_bytes()[1] == 0, "and letting go releases it")
+        elif system == "gba":
+            check(t.held("#game .b_a")[1] == 0x01, "touch A reaches the game")
+            check(t.held("#game .b_b")[1] == 0x02, "touch B reaches the game")
+            check(t.held("#game .b_select")[1] == 0x04, "touch Select reaches the game")
+            check(t.held("#game .b_start")[1] == 0x08, "touch Start reaches the game")
+            check(t.held("#game .b_dpad .ejs_dpad_main", dx=0.35)[1] == 0x10, "touch D-pad right reaches the game")
+            check(t.held("#game .b_dpad .ejs_dpad_main", dy=-0.35)[1] == 0x40, "touch D-pad up reaches the game")
+            check(t.held("#game .b_r")[2] == 0x01, "touch R reaches the game")
+            check(t.held("#game .b_l")[2] == 0x02, "touch L reaches the game")
+            check(t.save_bytes()[1:3] == [0, 0], "and letting go releases it")
         elif system == "ws":
             check(t.held("#game .b_a")[2] == 0x04, "touch A reaches the game")
             check(t.held("#game .b_b")[2] == 0x08, "touch B reaches the game")
@@ -207,7 +224,7 @@ def run(browser):
             check(a != idle and right != idle and opt != idle and len({tuple(a), tuple(right), tuple(opt)}) == 3,
                   "touch A, D-pad right and Option each reach the game", (idle, a, right, opt))
 
-        # save state, then make sure a reload keeps both the state and (gb, ws) the cartridge save
+        # save state, then make sure a reload keeps both the state and (gb, gba, ws) the cartridge save
         before = t.save_bytes()
         t.ev("pocketArcade.emulator.elements.bottomBar.saveState[0].click()")
         t.page.wait_for_timeout(1500)
@@ -221,14 +238,14 @@ def run(browser):
         check(True, "a reload comes back to the same game, waiting for a tap")
         t.page.locator("#game .ejs_start_button").tap()
         t.wait_started()
-        if system in ("gb", "ws"):
+        if system in ("gb", "gba", "ws"):
             now = t.save_bytes()
             check(now[0] == (before[0] + 1) % 256, "cartridge save survived the reload (%s, boots %d -> %d)" % (path, before[0], now[0]), (before, now))
         size2 = t.ev("pocketArcade.emulator.storage.states.get(%r).then(s => s ? s.length : 0)" % key)
         check(size2 == size, "the save state survived the reload")
         t.ev("pocketArcade.emulator.elements.bottomBar.loadState[0].click()")
         t.page.wait_for_timeout(1500)
-        if system in ("gb", "ws"):
+        if system in ("gb", "gba", "ws"):
             back = t.save_bytes()
             check(back[0] == before[0], "Load State puts the machine back as it was saved (boots %d)" % back[0], (before, back))
         check(t.ev(STARTED) and t.errors == [], "still running after loading the state", t.errors)
@@ -274,13 +291,13 @@ def run(browser):
         t.close()
 
     # ---------- phone held sideways ----------
-    for system in ("gb", "ws", "ngp"):
+    for system in ("gb", "gba", "ws", "ngp"):
         print("\n== %s, phone sideways ==" % system)
         t = Tab(browser, SIDEWAYS)
         t.open(system)
         t.pick("probe")
         whole_number_scale(t, system, system + "-6-sideways", sideways=True)
-        if system == "gb":
+        if system in ("gb", "gba"):
             check(t.held("#game .b_start")[1] == 0x08 and t.held("#game .b_select")[1] == 0x04, "Start and Select still work in their sideways place")
         # turn the phone upright mid-game
         t.page.set_viewport_size({"width": 390, "height": 844})
@@ -325,14 +342,14 @@ def run(browser):
     t.close()
 
     # ---------- desktop, no touch ----------
-    for system in ("gb", "ws", "ngp"):
+    for system in ("gb", "gba", "ws", "ngp"):
         print("\n== %s, desktop without touch ==" % system)
         t = Tab(browser, DESKTOP)
         t.open(system)
         t.pick("probe")
         check(t.ev("getComputedStyle(pocketArcade.emulator.virtualGamepad).display") == "none", "no touch controls on a desktop")
         p = whole_number_scale(t, system, system + "-13-desktop", pad=False)
-        if system == "gb":
+        if system in ("gb", "gba"):
             t.page.keyboard.down("ArrowRight")
             t.page.wait_for_timeout(300)
             b = t.save_bytes()
@@ -411,7 +428,7 @@ def main():
         d = os.path.join(SITE, "roms", system)
         os.makedirs(d, exist_ok=True)
         for f in os.listdir(os.path.join(HERE, "probes")):
-            if f.rsplit(".", 1)[-1] in {"gb": ("gb", "gbc"), "ws": ("ws", "wsc"), "ngp": ("ngp", "ngc")}[system] and not os.path.exists(os.path.join(d, f)):
+            if f.rsplit(".", 1)[-1] in EXTS[system] and not os.path.exists(os.path.join(d, f)):
                 shutil.copy(os.path.join(HERE, "probes", f), os.path.join(d, f))
                 copied.append(os.path.join(d, f))
     try:

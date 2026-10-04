@@ -47,9 +47,10 @@
     .piece .stage svg { height: 118px; }
     .wicks { --s1: #4d3a2c; --s2: #2a201a; }
     .gb { --s1: #3d4b41; --s2: #232c26; }
+    .gba { --s1: #3c3566; --s2: #221d3d; }
     .ws { --s1: #2e4759; --s2: #1a2a35; }
     .ngp { --s1: #4b3243; --s2: #2a1c26; }
-    .ws .stage svg, .ngp .stage svg { height: 118px; }
+    .gba .stage svg, .ws .stage svg, .ngp .stage svg { height: 118px; }
     .info { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .info h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
     .meta { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -260,7 +261,7 @@
         </div>
       </a>
 
-      <!-- Game Boy, WonderSwan and Neo Geo Pocket live in this repo (gb/, ws/, ngp/) and run on EmulatorJS, so no data-repo. -->
+      <!-- Game Boy, Game Boy Advance, WonderSwan and Neo Geo Pocket live in this repo (gb/, gba/, ws/, ngp/) and run on EmulatorJS, so no data-repo. -->
       <a class="card gb" href="gb/">
         <div class="stage">
           <svg viewBox="0 0 180 250" role="img" aria-label="A grey upright handheld with a green-grey screen, a D-pad and two round buttons">
@@ -284,6 +285,32 @@
           <div class="meta"><span class="pill">1989</span><span class="pill">160 × 144 pixels</span><span class="pill">mono + Color</span></div>
           <p>The grey brick and the Game Boy Color that followed it. Drawn at exact pixel multiples, with battery saves and save states kept in your browser. Tricky Wicks comes with it, free.</p>
           <div class="go"><span class="btn">Play ›</span><span class="need">1 free game, or bring your own</span></div>
+        </div>
+      </a>
+
+      <a class="card gba" href="gba/">
+        <div class="stage">
+          <svg viewBox="0 0 280 170" role="img" aria-label="A wide purple handheld with a screen in the middle, a D-pad on the left and two buttons on the right">
+            <defs><linearGradient id="g10" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b7fd6"/><stop offset=".55" stop-color="#6f61c2"/><stop offset="1" stop-color="#5546a6"/></linearGradient></defs>
+            <path d="M40 22h200c22 0 34 18 34 46v34c0 30-18 56-50 56H56c-32 0-50-26-50-56V68c0-28 12-46 34-46z" fill="#3f3482"/>
+            <path d="M40 14h200c22 0 34 18 34 46v34c0 30-18 56-50 56H56c-32 0-50-26-50-56V60c0-28 12-46 34-46z" fill="url(#g10)"/>
+            <rect x="74" y="22" width="132" height="98" rx="8" fill="#2a2840"/>
+            <rect x="84" y="32" width="112" height="76" rx="2" fill="#bfc8d6"/>
+            <g fill="#3b4a8c">
+              <g class="bob"><rect x="128" y="50" width="24" height="6"/><rect x="122" y="56" width="36" height="6"/><rect x="116" y="62" width="48" height="12" fill="#c2405a"/><rect x="122" y="74" width="12" height="6"/><rect x="146" y="74" width="12" height="6"/></g>
+              <rect x="90" y="38" width="100" height="5" opacity=".6"/><rect x="90" y="96" width="60" height="5" opacity=".6"/>
+              <rect class="blink" x="156" y="96" width="6" height="5"/>
+            </g>
+            <g fill="#2f2a5c"><rect x="33" y="62" width="16" height="48" rx="3"/><rect x="17" y="78" width="48" height="16" rx="3"/></g>
+            <circle cx="226" cy="96" r="12" fill="#2f2a5c"/><circle cx="252" cy="76" r="12" fill="#2f2a5c"/>
+            <g fill="#4e43a0"><rect x="106" y="132" width="22" height="7" rx="3.5"/><rect x="152" y="132" width="22" height="7" rx="3.5"/></g>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>Game Boy Advance</h2>
+          <div class="meta"><span class="pill">2001</span><span class="pill">240 × 160 pixels</span><span class="pill">32,768 colours</span></div>
+          <p>The wide one with shoulder buttons. Runs on mGBA with its built-in BIOS, so all you need is the game. Battery saves and save states stay in your browser.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs your game files</span></div>
         </div>
       </a>
 

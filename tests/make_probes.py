@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the three tiny test ROMs in tests/probes/ that tests/e2e.py boots.
+"""Builds the tiny test ROMs in tests/probes/ that tests/e2e.py boots.
 
 They are written for this project (GPL-3.0-or-later, like the rest of it) so the tests need no
 game files. Each one shows a plain screen whose colour follows the buttons being held, which lets
@@ -12,6 +12,9 @@ a test (or you, on a phone) see that input reaches the emulated machine:
               Y pad (low four bits), byte 2 is Start, A and B. Built from probe_ws.asm with nasm.
   probe-tall.ws   The same program with the "hold me upright" flag set in its header.
   probe.ngc   Neo Geo Pocket Color. Blue when idle; the colour changes with the buttons.
+  probe.gba   Game Boy Advance, same idea as probe.gb, in battery-backed SRAM: byte 0 counts boots,
+              byte 1 is A, B, Select, Start and the D-pad (the low byte of KEYINPUT, 1 = held) and
+              byte 2 is R (1) and L (2). Dark blue when idle; the red and green follow the buttons.
 
 dmg-acid2.gb and cgb-acid2.gbc in the same folder are not made here: they are Matt Currie's
 display tests (MIT licence, see probes/README.md), kept so the tests also boot real programs.
@@ -89,6 +92,53 @@ def neo_geo_pocket():
     return bytes(rom)
 
 
+def game_boy_advance():
+    rom = bytearray(0x1000)
+    # ARM code, hand-assembled (cond = always). The cartridge starts with a branch to 0xC0.
+    code = [
+        0xEA00002E,   # 000: b    0x0C0
+    ]
+    body = [
+        0xE3A00404,   # 0C0: mov  r0, #0x04000000        I/O registers
+        0xE3A01B01,   # 0C4: mov  r1, #0x400
+        0xE3811003,   # 0C8: orr  r1, r1, #3             mode 3 (one colour per pixel), BG2 on
+        0xE1C010B0,   # 0CC: strh r1, [r0]               DISPCNT
+        0xE3A0240E,   # 0D0: mov  r2, #0x0E000000        SRAM
+        0xE5D23000,   # 0D4: ldrb r3, [r2]
+        0xE2833001,   # 0D8: add  r3, r3, #1
+        0xE5C23000,   # 0DC: strb r3, [r2]               count the boot
+        0xE3A04404,   # 0E0: mov  r4, #0x04000000        loop:
+        0xE2844E13,   # 0E4: add  r4, r4, #0x130
+        0xE1D450B0,   # 0E8: ldrh r5, [r4]               KEYINPUT, 0 = held
+        0xE1E05005,   # 0EC: mvn  r5, r5
+        0xE3A06B01,   # 0F0: mov  r6, #0x400
+        0xE2466001,   # 0F4: sub  r6, r6, #1
+        0xE0055006,   # 0F8: and  r5, r5, r6             ten buttons, 1 = held
+        0xE5C25001,   # 0FC: strb r5, [r2, #1]
+        0xE1A07425,   # 100: mov  r7, r5, lsr #8
+        0xE5C27002,   # 104: strb r7, [r2, #2]
+        0xE3858B11,   # 108: orr  r8, r5, #0x4400        dark blue, plus the buttons in red and green
+        0xE3A09406,   # 10C: mov  r9, #0x06000000        VRAM
+        0xE3A0AC96,   # 110: mov  r10, #0x9600           240 x 160 pixels
+        0xE0C980B2,   # 114: strh r8, [r9], #2           fill:
+        0xE25AA001,   # 118: subs r10, r10, #1
+        0x1AFFFFFC,   # 11C: bne  fill
+        0xEAFFFFEE,   # 120: b    loop
+    ]
+    struct.pack_into("<%dI" % len(code), rom, 0, *code)
+    struct.pack_into("<%dI" % len(body), rom, 0xC0, *body)
+    # 0x04-0x9F is where a licensed cartridge carries the maker's logo. Left empty: the emulator
+    # starts the cartridge itself, without the console's boot program, and does not look at it.
+    rom[0xA0:0xAC] = b"PA PROBE".ljust(12, b"\0")
+    rom[0xAC:0xB0] = b"PAPB"
+    rom[0xB0:0xB2] = b"01"
+    rom[0xB2] = 0x96
+    rom[0xBD] = (-sum(rom[0xA0:0xBD]) - 0x19) & 0xFF
+    # Emulators tell what kind of save a cartridge has from a marker the SDK libraries leave in it.
+    rom[0x200:0x20C] = b"SRAM_V113\0\0\0"
+    return bytes(rom)
+
+
 def wonderswan():
     src = os.path.join(HERE, "probe_ws.asm")
     made = []
@@ -110,4 +160,5 @@ def wonderswan():
 if __name__ == "__main__":
     open(os.path.join(OUT, "probe.gb"), "wb").write(game_boy())
     open(os.path.join(OUT, "probe.ngc"), "wb").write(neo_geo_pocket())
-    print("wrote probe.gb, probe.ngc", *wonderswan())
+    open(os.path.join(OUT, "probe.gba"), "wb").write(game_boy_advance())
+    print("wrote probe.gb, probe.ngc, probe.gba", *wonderswan())

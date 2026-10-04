@@ -1,4 +1,4 @@
-/* Pocket Arcade - the pages for the consoles that run on EmulatorJS (gb/, ws/, ngp/).
+/* Pocket Arcade - the pages for the consoles that run on EmulatorJS (gb/, gba/, ws/, ngp/).
    Copyright (C) 2026 the Pocket Arcade authors. GPL-3.0-or-later; see LICENSE.
 
    Each console's page sets window.ARCADE_SYSTEM and loads this file. It shows the list of games
@@ -31,6 +31,16 @@
       { type: 'button', text: 'A', id: 'a', location: 'right', left: 81, top: 40, bold: true, input_value: 8 },
       { type: 'button', text: 'B', id: 'b', location: 'right', left: 10, top: 70, bold: true, input_value: 0 },
       DPAD,
+      { type: 'button', text: 'Start', id: 'start', location: 'center', left: 60, fontSize: 15, block: true, input_value: 3 },
+      { type: 'button', text: 'Select', id: 'select', location: 'center', left: -5, fontSize: 15, block: true, input_value: 2 }
+    ],
+    // The Game Boy Advance adds two shoulder buttons, shown above the D-pad and the A/B buttons.
+    gba: [
+      { type: 'button', text: 'A', id: 'a', location: 'right', left: 81, top: 40, bold: true, input_value: 8 },
+      { type: 'button', text: 'B', id: 'b', location: 'right', left: 10, top: 70, bold: true, input_value: 0 },
+      DPAD,
+      { type: 'button', text: 'L', id: 'l', location: 'left', left: 3, top: -90, bold: true, block: true, input_value: 10 },
+      { type: 'button', text: 'R', id: 'r', location: 'right', right: 3, top: -90, bold: true, block: true, input_value: 11 },
       { type: 'button', text: 'Start', id: 'start', location: 'center', left: 60, fontSize: 15, block: true, input_value: 3 },
       { type: 'button', text: 'Select', id: 'select', location: 'center', left: -5, fontSize: 15, block: true, input_value: 2 }
     ],
