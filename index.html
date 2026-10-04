@@ -46,6 +46,10 @@
     .piece { --s1: #343a52; --s2: #1f2233; }
     .piece .stage svg { height: 118px; }
     .wicks { --s1: #4d3a2c; --s2: #2a201a; }
+    .gb { --s1: #3d4b41; --s2: #232c26; }
+    .ws { --s1: #2e4759; --s2: #1a2a35; }
+    .ngp { --s1: #4b3243; --s2: #2a1c26; }
+    .ws .stage svg, .ngp .stage svg { height: 118px; }
     .info { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .info h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; }
     .meta { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -256,6 +260,88 @@
         </div>
       </a>
 
+      <!-- Game Boy, WonderSwan and Neo Geo Pocket live in this repo (gb/, ws/, ngp/) and run on EmulatorJS, so no data-repo. -->
+      <a class="card gb" href="gb/">
+        <div class="stage">
+          <svg viewBox="0 0 180 250" role="img" aria-label="A grey upright handheld with a green-grey screen, a D-pad and two round buttons">
+            <defs><linearGradient id="g7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9dad6"/><stop offset=".55" stop-color="#c6c7c2"/><stop offset="1" stop-color="#abada7"/></linearGradient></defs>
+            <path d="M24 10h132a12 12 0 0 1 12 12v184a38 38 0 0 1-38 38H24a12 12 0 0 1-12-12V22a12 12 0 0 1 12-12z" fill="#84867f"/>
+            <path d="M24 4h132a12 12 0 0 1 12 12v184a38 38 0 0 1-38 38H24a12 12 0 0 1-12-12V16a12 12 0 0 1 12-12z" fill="url(#g7)"/>
+            <path d="M30 20h120a8 8 0 0 1 8 8v82a18 18 0 0 1-18 18H30a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8z" fill="#5c5f6b"/>
+            <rect x="42" y="31" width="96" height="86" rx="2" fill="#a9b78c"/>
+            <g fill="#2f3b25">
+              <g class="bob"><rect x="72" y="58" width="6" height="6"/><rect x="102" y="58" width="6" height="6"/><rect x="66" y="64" width="48" height="6"/><rect x="60" y="70" width="60" height="18"/><rect x="72" y="88" width="12" height="6"/><rect x="96" y="88" width="12" height="6"/></g>
+              <rect x="48" y="38" width="84" height="5" opacity=".6"/><rect x="48" y="104" width="52" height="5" opacity=".6"/>
+              <rect class="blink" x="106" y="104" width="6" height="5"/>
+            </g>
+            <g fill="#3c3e45"><rect x="38" y="150" width="18" height="56" rx="4"/><rect x="19" y="169" width="56" height="18" rx="4"/></g>
+            <circle cx="112" cy="188" r="14" fill="#8a2658"/><circle cx="146" cy="170" r="14" fill="#8a2658"/>
+            <g fill="#8b8d87" transform="rotate(-24 82 224)"><rect x="56" y="220" width="24" height="8" rx="4"/><rect x="88" y="220" width="24" height="8" rx="4"/></g>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>Game Boy</h2>
+          <div class="meta"><span class="pill">1989</span><span class="pill">160 × 144 pixels</span><span class="pill">mono + Color</span></div>
+          <p>The grey brick and the Game Boy Color that followed it. Drawn at exact pixel multiples, with battery saves and save states kept in your browser.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs your game files</span></div>
+        </div>
+      </a>
+
+      <a class="card ws" href="ws/">
+        <div class="stage">
+          <svg viewBox="0 0 280 170" role="img" aria-label="A slim wide handheld with two four-button pads on the left and two buttons on the right">
+            <defs><linearGradient id="g8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe9f1"/><stop offset=".55" stop-color="#c3d3e0"/><stop offset="1" stop-color="#a3b8c9"/></linearGradient></defs>
+            <rect x="6" y="20" width="268" height="138" rx="22" fill="#7d93a6"/>
+            <rect x="6" y="14" width="268" height="138" rx="22" fill="url(#g8)"/>
+            <rect x="74" y="26" width="140" height="100" rx="8" fill="#2a3038"/>
+            <rect x="84" y="35" width="120" height="78" rx="3" fill="#c9d0bd"/>
+            <g fill="#20281d">
+              <g class="bob"><rect x="126" y="52" width="36" height="6"/><rect x="120" y="58" width="48" height="6"/><rect x="114" y="64" width="60" height="12"/><rect x="126" y="76" width="12" height="6"/><rect x="150" y="76" width="12" height="6"/></g>
+              <rect x="90" y="41" width="108" height="5" opacity=".6"/><rect x="90" y="100" width="64" height="5" opacity=".6"/>
+              <rect class="blink" x="160" y="100" width="6" height="5"/>
+            </g>
+            <g fill="#4a5a6a">
+              <circle cx="40" cy="38" r="7"/><circle cx="26" cy="52" r="7"/><circle cx="54" cy="52" r="7"/><circle cx="40" cy="66" r="7"/>
+              <circle cx="40" cy="92" r="7"/><circle cx="26" cy="106" r="7"/><circle cx="54" cy="106" r="7"/><circle cx="40" cy="120" r="7"/>
+            </g>
+            <circle cx="234" cy="104" r="12" fill="#4a5a6a"/><circle cx="256" cy="80" r="12" fill="#4a5a6a"/>
+            <rect x="130" y="134" width="24" height="8" rx="4" fill="#8497a8"/>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>WonderSwan</h2>
+          <div class="meta"><span class="pill">1999</span><span class="pill">224 × 144 pixels</span><span class="pill">mono + Color</span></div>
+          <p>Bandai's slim handheld, developed with the company founded by the Game Boy's designer. Some games are played with it held upright, so there is a Rotate button.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs your game files</span></div>
+        </div>
+      </a>
+
+      <a class="card ngp" href="ngp/">
+        <div class="stage">
+          <svg viewBox="0 0 280 170" role="img" aria-label="A wide dark handheld with a thumb stick on the left and two buttons on the right">
+            <defs><linearGradient id="g9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#565b6b"/><stop offset=".55" stop-color="#444957"/><stop offset="1" stop-color="#343844"/></linearGradient></defs>
+            <rect x="6" y="18" width="268" height="142" rx="34" fill="#23262f"/>
+            <rect x="6" y="12" width="268" height="142" rx="34" fill="url(#g9)"/>
+            <rect x="82" y="24" width="116" height="112" rx="9" fill="#1d2027"/>
+            <rect x="92" y="34" width="96" height="90" rx="3" fill="#cfd5c6"/>
+            <g fill="#1f261c">
+              <g class="bob"><rect x="128" y="56" width="6" height="6"/><rect x="146" y="56" width="6" height="6"/><rect x="122" y="62" width="36" height="6"/><rect x="116" y="68" width="48" height="18"/><rect x="122" y="86" width="12" height="6"/><rect x="146" y="86" width="12" height="6"/></g>
+              <rect x="98" y="41" width="84" height="5" opacity=".6"/><rect x="98" y="110" width="50" height="5" opacity=".6"/>
+              <rect class="blink" x="154" y="110" width="6" height="5"/>
+            </g>
+            <circle cx="46" cy="82" r="26" fill="#2a2d37"/><circle cx="46" cy="82" r="17" fill="#6d7386"/><circle cx="46" cy="82" r="9" fill="#858ba0"/>
+            <circle cx="224" cy="96" r="13" fill="#b9bdc9"/><circle cx="250" cy="72" r="13" fill="#b9bdc9"/>
+            <rect x="216" y="126" width="24" height="8" rx="4" fill="#6d7386"/>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>Neo Geo Pocket</h2>
+          <div class="meta"><span class="pill">1998</span><span class="pill">160 × 152 pixels</span><span class="pill">mono + Color</span></div>
+          <p>SNK's handheld with the clicky thumb stick, and the Neo Geo Pocket Color that replaced it a few months later.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">needs your game files</span></div>
+        </div>
+      </a>
+
       <!-- Tricky Wicks is a game, not an emulator: one file kept in this repo (tricky-wicks.html), so no data-repo. -->
       <a class="card wicks" href="tricky-wicks.html">
         <div class="stage">
@@ -289,7 +375,7 @@
     <div class="how">
       <div><h3>Bring your own files</h3><p>No BIOS and no games are included. Each console asks for your own dumps the first time.</p></div>
       <div><h3>Nothing is uploaded</h3><p>Your files, saves and progress stay in this browser's storage on this device.</p></div>
-      <div><h3>Works like an app</h3><p>Use your browser's “Add to Home Screen” inside a console to install it and play offline.</p></div>
+      <div><h3>Works like an app</h3><p>Most consoles here can be installed with your browser's “Add to Home Screen” and then played offline.</p></div>
     </div>
 
     <section class="talk" id="talk" hidden aria-labelledby="talk-h">
@@ -302,7 +388,7 @@
   <footer class="wrap">
     <p class="visits" id="visits" hidden><b id="visits-n"></b> <span>visits so far, counted without cookies by <a href="https://www.goatcounter.com/" rel="noopener">GoatCounter</a></span></p>
     <p class="src" id="src"></p>
-    <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company, Sony Interactive Entertainment, SEGA, Aquaplus or the makers of any other handheld shown. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
+    <p>Unofficial fan project. Not affiliated with or endorsed by Nintendo, The Pokémon Company, Sony Interactive Entertainment, SEGA, Aquaplus, Bandai, SNK or the makers of any other handheld shown. Console names are trademarks of their owners, used only to say what the emulators are compatible with.</p>
   </footer>
 
   <script>

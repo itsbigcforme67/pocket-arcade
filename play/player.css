@@ -1,0 +1,67 @@
+/* Pocket Arcade - the pages for the consoles that run on EmulatorJS (gb/, ws/, ngp/).
+   Copyright (C) 2026 the Pocket Arcade authors. GPL-3.0-or-later; see LICENSE. */
+:root {
+  --bg: #14161b; --panel: #1e2128; --line: #323744; --text: #eceef3; --muted: #9aa1b2;
+  --accent: #ffcb3d; --accent-ink: #2a1f00; --bad: #ff8f7d;
+  color-scheme: dark;
+}
+/* (the box-sizing reset is kept to the list: EmulatorJS's own layout expects the browser default) */
+#library, #library * { box-sizing: border-box; }
+* { -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+body { min-height: 100dvh; }
+a { color: var(--accent); }
+[hidden] { display: none !important; }
+
+/* ---- the list of games ---- */
+#library { width: 100%; max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 28px); }
+.back { display: inline-block; padding: 8px 0; text-decoration: none; font-weight: 600; }
+h1 { font-size: clamp(28px, 7vw, 38px); line-height: 1.1; margin: 14px 0 4px; letter-spacing: -.02em; }
+.sub { margin: 0 0 20px; color: var(--muted); }
+.btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 52px; padding: 12px 20px;
+  background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 800; border: 0; border-radius: 14px; cursor: pointer; }
+.btn { position: relative; }
+.btn .file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.btn:active { transform: scale(.985); }
+.btn:focus-within { outline: 2px solid var(--text); outline-offset: 2px; }
+.note { margin: 10px 2px 0; font-size: 14px; color: var(--muted); }
+.note.bad { color: var(--bad); }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 28px 2px 8px; }
+ul.games { list-style: none; margin: 0; padding: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+ul.games li { display: flex; align-items: stretch; border-top: 1px solid var(--line); }
+ul.games li:first-child { border-top: 0; }
+ul.games button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.pick { flex: 1; min-width: 0; min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 10px 14px; text-align: left; }
+.pick:hover, .pick:focus-visible { background: rgba(255, 255, 255, .05); outline: none; }
+.pick .name { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.pick .meta { flex: none; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.pick .go { flex: none; color: var(--accent); font-weight: 800; }
+.drop { flex: none; width: 52px; color: var(--muted) !important; font-size: 18px !important; border-left: 1px solid var(--line) !important; }
+.drop:hover, .drop:focus-visible { color: var(--bad) !important; outline: none; }
+.fine { margin: 28px 2px 0; font-size: 13px; color: var(--muted); }
+.fine p { margin: 8px 0; }
+
+/* ---- playing ---- */
+body.playing { overflow: hidden; background: #000; }
+body.playing #library { display: none; }
+#stage { position: fixed; inset: 0; background: #000; }
+#game { width: 100%; height: 100%; }
+
+/* The picture is drawn at the screen's real pixel size and kept clear of the touch controls:
+   player.js sizes and places the canvas (see layout()). */
+#game .ejs_canvas_parent { position: relative; overflow: hidden; }
+#game .ejs_canvas { position: absolute; transform-origin: 0 0; image-rendering: pixelated; }
+
+.pa-chips { position: absolute; top: 4px; left: 6px; z-index: 3; display: flex; gap: 6px; }
+.pa-chip { box-sizing: border-box; height: 32px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; font: 600 14px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #fff; background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .28); border-radius: 99px; cursor: pointer; }
+.pa-chip:active { background: rgba(255, 255, 255, .3); }
+.pa-chip svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Phone held sideways: Start / Select / Option move above the D-pad so nothing sits on the picture. */
+#game.pa-wide .ejs_virtualGamepad_bottom { left: 13px; margin-left: 0; bottom: 190px; }
+
+/* WonderSwan: one set of touch controls for games held flat, another for games held upright. */
+#game.pa-tall .b_y_dpad, #game.pa-tall .b_a, #game.pa-tall .b_b { display: none; }
+#game:not(.pa-tall) .b_t_dpad, #game:not(.pa-tall) .b_t_a, #game:not(.pa-tall) .b_t_b { display: none; }
