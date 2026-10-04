@@ -96,36 +96,32 @@ try {
   const saved = JSON.parse(localStorage.getItem('pa-wanted-faces'));
   if (Array.isArray(saved) && saved.length === 4 && saved.every(f => typeof f === 'string' && f)) FACES = saved;
 } catch (e) {}
-const VERSION = '1.4';
+const VERSION = '1.5';
 
-/* Hard mode (not in the original): six faces drawn at random from POOL each
-   round, a faster clock, bigger penalty, faster movers. */
+/* Hard mode (not in the original): six yellow smiley faces each round, a faster
+   clock, bigger penalty, faster movers. Faces that are not yellow (devil, sick
+   green, hot, cold, red angry) are left out so no face stands out by colour, and
+   so are newer faces that older phones cannot draw. */
 const HARD = { faces: 6, tickFrames: 40, penalty: 15, speed: 1.5 };
-const POOL = [...new Set([...'🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐸🐵🐔🐧🐦🐤🦆🦉🐺🐗🐴🦄🐝🐛🦋🐌🐞🐢🐍🐙🦀🐠🐟🐡🐬🐳🦈🐊🦓🦒🐘🦛🐪🦘🐑🐐🦌🐓🦃🦜🦩🐇🦔' +
-  '🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🌽🥕🫒🧄🥔🥐🍞🧀🥚🍔🍟🍕🌭🥪🌮🍩🍪🎂🍰🧁🍭🍬🍫🍿' +
-  '⚽🏀🏈⚾🎾🏐🎱🎳🏓🥊🚗🚕🚙🚌🚓🚑🚒🚜🛵🚲🚀🛸⛵🎈🎁🎀🪁🎲🧩🎸🎺🥁🎹📷💡🔑🔔⏰🌂🌵🌲🌻🌹🌷🍄🌙⭐🌈🔥💧⛄' +
-  '🍏🥒🦎🍀🐋🧊🌀🎃🦐🌰🥜🦢🍙🐽🌸🍥🧠🔮👾🦏🐥⚡'])];
-/* Look-alike families for hard mode. Colour comes first: most rounds use a colour
-   family (things of the same colour, whatever they are); about one round in five
-   uses a shape family (the same kind of thing). The wanted face comes from the
-   family and brings a few relatives along (ALIKE_BY_LEVEL); the rest are random.
-   Colours are picked to agree across Apple, Google and Microsoft emoji. */
-const COLOUR_FAMILIES = [
-  '🍎🍒🍅🍓🎈🌹🦀🍄🐞🚒🥊🍉',   // red
-  '🍊🍑🥭🏀🥕🦊🎃🦐🐯🔥',       // orange
-  '🍋🍌🌽⭐🧀🐤🐥🌻🌙💡🔔⚡🚕', // yellow
-  '🥝🥑🥦🐸🐢🌲🌵🍐🍈🍏🥒🦎🍀🐊', // green
-  '🐳🐬💧🐋🧊🌀🚙🫐',             // blue
-  '🍇🍆🔮👾🫐',                 // purple
-  '🥔🍪🥐🍞🥥🍩🐻🐴🦔🌰🥜🍫🏈', // brown
-  '🐷🎀🦩🌷🌸🍥🐽🧠',           // pink
-  '🐑⛄🥚🍙🦢🐘🐨🐭🐺🦏',       // white and grey
+/* Look-alike expression families. Each round the wanted face comes from one of
+   them and brings a few of its relatives along (ALIKE_BY_LEVEL); the rest of the
+   six are any other smileys. */
+const FACE_FAMILIES = [
+  '😀😃😄😁😆😅😂🤣',     // grins
+  '🙂😊😇😌🥲😉🙃',       // smiles
+  '😍🥰😘😗😙😚🤩',       // love and kisses
+  '😋😛😜😝🤪🤑',         // tongues
+  '😐😑😶🙄😏😒😬🤐',     // straight faces
+  '😟😕🙁😔😞😣😖😫😩🥺', // worried
+  '😢😭😥😓😰😨',         // tears and sweat
+  '😮😯😲😦😧😱😳',       // shocked
+  '😴😪🤤🥱',             // sleepy
+  '😷🤒🤕🤧🥴😵',         // unwell
+  '🤔🤭🤫🤗🧐🤨',         // hands and eyebrows
+  '😎🤓🥸🤠',             // glasses and hats
+  '😤😠😑😒',             // cross
 ].map(f => [...f]);
-const SHAPE_FAMILIES = [
-  '🐶🐱🐯🦁🐻🐼🐨🐮🐵🐹🐭🐰', // animal faces
-  '⚽🏀🏈⚾🎾🏐🎱',             // balls
-  '🚗🚕🚙🚓🚌🚑🚒',             // car fronts
-].map(f => [...f]);
+const POOL = [...new Set(FACE_FAMILIES.flat())];
 const ALIKE_BY_LEVEL = lvl => lvl < 5 ? 2 : lvl < 15 ? 3 : 4;   // family faces in the six, wanted included
 
 /* ---------------------------------------------------------------------
@@ -547,8 +543,7 @@ function placeNextPicture() {            // scatter boards: one face per call on
 let alikeCount = 0;            // faces 0..alikeCount-1 are the look-alike family
 function chooseFaces() {       // hard mode: a fresh six every round, some of them look-alikes
   if (!hard) { faces = FACES; K = 4; return; }
-  const set = pick(5) < 4 ? COLOUR_FAMILIES : SHAPE_FAMILIES;   // colour four times in five
-  const fam = set[pick(set.length)].slice();
+  const fam = FACE_FAMILIES[pick(FACE_FAMILIES.length)].slice();
   alikeCount = Math.min(ALIKE_BY_LEVEL(g.level), fam.length);
   faces = [];
   for (let i = 0; i < alikeCount; i++) faces.push(fam.splice(pick(fam.length), 1)[0]);
@@ -715,7 +710,7 @@ function drawBot() {
   if (mode === 'title') {
     text(c, 'Tap the face on the poster before time runs out', W / 2, 16, 10, '#ffffff');
     button(c, BTN_NORMAL, 'NORMAL', 'Best ' + bests.normal + '  ·  your 4 faces', '#ffcb3d');
-    button(c, BTN_HARD, 'HARD', 'Best ' + bests.hard + '  ·  6 random faces, faster', '#ff6b5a');
+    button(c, BTN_HARD, 'HARD', 'Best ' + bests.hard + '  ·  6 smileys, faster', '#ff6b5a');
     return;
   }
   if (g.state !== 0) for (let i = 0; i < N; i++) if (g.shown[i] === 1) drawFace(c, g.chr[i], g.posX[i] >> 12, g.posY[i] >> 12);
