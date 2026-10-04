@@ -178,10 +178,14 @@
         '<p>' + (FREE_GAMES.length ? 'The free game' + (FREE_GAMES.length === 1 ? ' above was' : 's above were') + ' made for this site and can be played here or downloaded. No other games are included.'
                                    : 'No games are included.') +
         ' Saves and save states are kept in this browser; clearing its site data erases them, so export the ones you care about from the menu while playing.</p>' +
+        (SYS.tip ? '<p id="tip"></p>' : '') +
         '<p>Emulation by <a href="https://emulatorjs.org/" rel="noopener">EmulatorJS</a> with the ' + SYS.coreName + ' core, both served from this site ' +
         '(<a href="' + ROOT + 'emulatorjs/README.md">licences and source</a>). ' +
+        (SYS.id === 'gb' ? 'The Game Boy screen shader is adapted from <a href="https://github.com/kathoc/brickboy-dmg-shader" rel="noopener">brickboy-dmg-shader</a> ' +
+                           '(<a href="' + ROOT + 'play/shaders/README.md">what was changed, and its licence</a>). ' : '') +
         'Unofficial fan project; console names are trademarks of their owners.</p>' })
     ]));
+    if (SYS.tip) D.getElementById('tip').textContent = SYS.tip;
     D.body.appendChild(ui.stage = el('div', { id: 'stage', hidden: '' }, [el('div', { id: 'game' })]));
   }
   function say(text, bad) { ui.note.textContent = text; ui.note.classList.toggle('bad', !!bad); }
@@ -257,6 +261,22 @@
     return SYS.id === 'ws' && b.length >= 16 && b[b.length - 16] === 0xEA && (b[b.length - 4] & 1) === 1;
   }
 
+  // "Game Boy screen", in EmulatorJS's own Shaders menu (Settings, under Graphics): the original Game Boy's
+  // reflective LCD, from play/shaders/ (see the README there). It gives the picture the panel's own four
+  // colours, so it is only offered for games made for the original Game Boy, not for Game Boy Color ones
+  // (the cartridge says which in its header), and not for a zipped game, whose header cannot be read here.
+  var SCREEN_SHADER = 'Game Boy screen';
+  function screenShader(buf, name) {
+    var b = new Uint8Array(buf), files = ['dmg-screen.glslp', 'dmg-cells.glsl', 'dmg-dots.glsl'];
+    if (SYS.id !== 'gb' || ZIP_EXT.test(name) || b.length < 0x150 || (b[0x143] & 0x80)) return Promise.resolve(null);
+    return Promise.all(files.map(function (f) {
+      return fetch(ROOT + 'play/shaders/' + f).then(function (r) { if (!r.ok) throw new Error('missing'); return r.text(); });
+    })).then(function (text) {
+      return { shader: { type: 'text', value: text[0] },
+               resources: [{ name: files[1], type: 'text', value: text[1] }, { name: files[2], type: 'text', value: text[2] }] };
+    }).catch(function () { return null; });
+  }
+
   function script(src) {
     return new Promise(function (ok, no) { D.head.appendChild(el('script', { src: src, onload: ok, onerror: function () { no(new Error('Could not load ' + src)); } })); });
   }
@@ -297,7 +317,11 @@
     starting = true;
     say('Loading…', false);
     return Promise.all([bytesOf(game), loadEngine(), language()]).then(function (r) {
-      var buf = r[0], lang = r[2];
+      return screenShader(r[0], game.name).then(function (shader) { r.push(shader); return r; });
+    }).then(function (r) {
+      var buf = r[0], lang = r[2], shaders = {};
+      if (r[3]) shaders[SCREEN_SHADER] = r[3];
+      Object.assign(shaders, window.EJS_SHADERS);
       var touch = (navigator.maxTouchPoints || 0) > 0 || (window.matchMedia && matchMedia('(any-pointer: coarse)').matches);
       var defaults = { 'save-state-location': 'browser', 'save-save-interval': '30' };
       if (touch) defaults['virtual-gamepad'] = 'enabled';
@@ -315,7 +339,7 @@
         VirtualGamepadSettings: JSON.parse(JSON.stringify(PADS[SYS.id])),
         buttonOpts: { cacheManager: false, screenRecord: false, exitEmulation: false },
         backgroundColor: '#000',
-        shaders: Object.assign({}, window.EJS_SHADERS)
+        shaders: shaders
       };
       if (lang) { config.language = lang.language; config.langJson = lang.langJson; }
 

@@ -1,0 +1,16 @@
+# "Game Boy screen": the original Game Boy's reflective LCD, for games in four greys.
+# A cut-down port of brickboy-dmg-shader (https://github.com/kathoc/brickboy-dmg-shader,
+# Apache-2.0). See README.md in this folder for what was kept and what was changed.
+shaders = 2
+
+# Pass 0, at the game's own 160x144: each dot's colour, with the panel's crosstalk and its
+# slow response. It reads its own last frame back (the state of the liquid crystal).
+shader0 = dmg-cells.glsl
+filter_linear0 = false
+scale_type0 = source
+scale0 = 1.0
+feedback_pass = 0
+
+# Pass 1, at the size it is shown: the dot grid, the dots' shadows on the reflector, grain.
+shader1 = dmg-dots.glsl
+filter_linear1 = false

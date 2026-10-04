@@ -9,7 +9,7 @@ tests/probes/ into roms/<console>/ for the run and removes them afterwards, so t
 serving this folder. Extra ROMs you want booted as well: --also gb=path/to/game.gb (repeatable).
 
 What it checks, in a phone-sized window with touch: the list of games, the free game that comes
-with the Game Boy page, booting, that nothing is fetched from another site, whole-number scaling at the screen's own pixels, the touch controls
+with the Game Boy page and the Game Boy screen shader, booting, that nothing is fetched from another site, whole-number scaling at the screen's own pixels, the touch controls
 reaching the game, cartridge saves and save states surviving a reload, the file picker (plain and
 zipped), the sideways layout, WonderSwan rotation, and a desktop-sized window without touch.
 """
@@ -349,6 +349,8 @@ def run(browser):
         t.pick(rom)
         p = whole_number_scale(t, "gb", "gb-14-" + rom)
         check(p["colours"] >= at_least and t.errors == [], "%s boots and draws its test picture (%d colours)" % (rom, p["colours"]), t.errors)
+        offered = "Game Boy screen" in t.ev("Object.keys(pocketArcade.emulator.config.shaders)")
+        check(offered == (rom == "dmg-acid2"), "the Game Boy screen shader is %s for %s" % ("offered" if rom == "dmg-acid2" else "not offered", rom))
         t.page.locator("#pa-back").tap()
         t.page.wait_for_selector("#library h1")
         t.page.wait_for_timeout(500)
@@ -367,6 +369,14 @@ def run(browser):
     check(t.ev("document.title").startswith("Tricky Wicks"), "the tab is named after the game", t.ev("document.title"))
     p = whole_number_scale(t, "gb", "gb-15-free-title")
     check(p["colours"] >= 3 and t.errors == [], "Tricky Wicks boots to its title screen (%d colours)" % p["colours"], t.errors)
+    # the Game Boy screen shader (play/shaders/): offered for this game, and it gives the picture the panel's colours
+    check("Game Boy screen" in t.ev("Object.keys(pocketArcade.emulator.config.shaders)"), "the Game Boy screen shader is offered for an original Game Boy game")
+    t.ev("pocketArcade.emulator.changeSettingOption('shader', 'Game Boy screen')")
+    t.page.wait_for_timeout(2500)
+    q = whole_number_scale(t, "gb", "gb-15-free-shader")
+    r, g, b = q["rgb"]
+    check(q["colours"] > 50 and b < r and b < g and t.errors == [], "with it on the picture is the panel's green-yellow, dots and all (%d colours, centre %s)" % (q["colours"], q["rgb"]), t.errors)
+    check(t.ev("pocketArcade.emulator.getSettingValue('shader')") == "Game Boy screen", "and the choice is kept in the game's settings")
     title_screen = t.shot("gb-15-free-title").tobytes()
     t.hold("#game .b_start")                       # 1 PLAYER is the first choice on its menu
     t.release()

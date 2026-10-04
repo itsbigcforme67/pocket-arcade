@@ -26,6 +26,7 @@ The other emulators here each have a core written for the job in a repo of their
 |---|---|
 | `gb/`, `ws/`, `ngp/` | one small page per console: its name, file types and which EmulatorJS system it is |
 | `play/player.js`, `play/player.css` | everything the three pages share: the list of games, starting EmulatorJS, the layout while playing |
+| `play/shaders/` | "Game Boy screen", a shader that shows original Game Boy games as on the real LCD (see the README there) |
 | `emulatorjs/data/` | EmulatorJS 4.2.3 and the three cores, unmodified |
 | `free/gb/` | the free game that comes with the Game Boy page (published, see below) |
 | `roms/gb/`, `roms/ws/`, `roms/ngp/` | games to list on the page (not published, see below) |
@@ -37,6 +38,7 @@ What a page does:
 * **Free game** (Game Boy page) lists the games that come with the site, each with a line about it and a link to download the file.
 * **On this site** lists what is in `roms/<console>/`.
 * While playing, the picture is drawn at a whole-number multiple of the console's resolution, in the screen's own pixels, as large as fits next to the touch controls. **Games** goes back to the list; the menu button (top right) has EmulatorJS's own menu: save and load state, export and import the save file, settings.
+* **Game Boy screen:** original Game Boy games can be shown as on the real panel: green-yellow shades, a dot grid with shadows, a slow-to-clear picture. It is off until chosen in the menu under Settings, Graphics Settings, Shaders, and is remembered per game. Not offered for Game Boy Color games.
 * **WonderSwan:** games that say they are played upright start that way, and **Rotate** switches by hand. The touch controls change with it, and the choice is remembered per game.
 * Battery saves are written to the browser's storage every 30 seconds and whenever the page is hidden or left. Save states are kept there too, one per game. Clearing the site's data erases both.
 
@@ -97,4 +99,4 @@ The comment box is only fetched when a visitor scrolls down to it. Neither servi
 
 ## Licence
 
-GNU General Public License, version 3 or later (see `LICENSE`). EmulatorJS (GPL-3.0) and its cores (GPL-2.0) keep their own licences; see `emulatorjs/README.md`. Unofficial fan project; console names are trademarks of their owners.
+GNU General Public License, version 3 or later (see `LICENSE`). EmulatorJS (GPL-3.0) and its cores (GPL-2.0) keep their own licences; see `emulatorjs/README.md`. The Game Boy screen shader is adapted from brickboy-dmg-shader (Apache-2.0); see `play/shaders/README.md`. Unofficial fan project; console names are trademarks of their owners.
