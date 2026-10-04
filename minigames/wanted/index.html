@@ -96,7 +96,7 @@ try {
   const saved = JSON.parse(localStorage.getItem('pa-wanted-faces'));
   if (Array.isArray(saved) && saved.length === 4 && saved.every(f => typeof f === 'string' && f)) FACES = saved;
 } catch (e) {}
-const VERSION = '1.2';
+const VERSION = '1.3';
 
 /* Hard mode (not in the original): six faces drawn at random from POOL each
    round, a faster clock, bigger penalty, faster movers. */
@@ -104,6 +104,26 @@ const HARD = { faces: 6, tickFrames: 40, penalty: 15, speed: 1.5 };
 const POOL = [...new Set([...'🐶🐱🐭🐹🐰🦊🐻🐼🐨🐯🦁🐮🐷🐸🐵🐔🐧🐦🐤🦆🦉🐺🐗🐴🦄🐝🐛🦋🐌🐞🐢🐍🐙🦀🐠🐟🐡🐬🐳🦈🐊🦓🦒🐘🦛🐪🦘🐑🐐🦌🐓🦃🦜🦩🐇🦔' +
   '🍎🍐🍊🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥🥝🍅🍆🥑🥦🌽🥕🫒🧄🥔🥐🍞🧀🥚🍔🍟🍕🌭🥪🌮🍩🍪🎂🍰🧁🍭🍬🍫🍿' +
   '⚽🏀🏈⚾🎾🏐🎱🎳🏓🥊🚗🚕🚙🚌🚓🚑🚒🚜🛵🚲🚀🛸⛵🎈🎁🎀🪁🎲🧩🎸🎺🥁🎹📷💡🔑🔔⏰🌂🌵🌲🌻🌹🌷🍄🌙⭐🌈🔥💧⛄'])];
+/* Look-alike families for hard mode: same colour, same shape, or the same kind of
+   face. Each round the wanted face comes from one family and brings a few of its
+   relatives along (ALIKE_BY_LEVEL); the rest of the six are random. */
+const ALIKE = [
+  '🍎🍒🍅🍓🎈',         // red and round
+  '🍊🍑🥭🏀🥕🦊',       // orange
+  '🍋🍌🌽⭐🧀🐤',       // yellow
+  '🥝🥑🥦🐸🐢🌲🌵🍐🍈', // green
+  '🍇🍆🫐',             // purple
+  '🥔🍪🥐🍞🥥🍩',       // brown bakes and spuds
+  '🐷🎀🦩🌷🌹',         // pink
+  '🐶🐱🐯🦁🐻🐼🐨🐮🐵🐹🐭🐰', // animal faces
+  '🐦🐤🐧🦆🦉🐔🐓🦜',   // birds
+  '🐠🐟🐡🐬🐳🦈',       // sea life
+  '⚽🏀🏈⚾🎾🏐🎱',     // balls
+  '🚗🚕🚙🚓🚌🚑🚒',     // car fronts
+  '🍭🍬🍫🧁🎂🍰',       // sweets
+  '🌻🌹🌷🍄',           // flowers
+].map(g => [...g]);
+const ALIKE_BY_LEVEL = lvl => lvl < 5 ? 2 : lvl < 15 ? 3 : 4;   // family faces in the six, wanted included
 
 /* ---------------------------------------------------------------------
    ROM TABLES, read from overlay 6 of the EU ROM (ASMP). These are the game's
@@ -520,15 +540,20 @@ function placeNextPicture() {            // scatter boards: one face per call on
   if (!g.filled) return;
   for (let k = 0; k < K; k++) g.levelPhase[k] = pick(16) << 12;
 }
-function chooseFaces() {       // hard mode: a fresh random six every round
+let alikeCount = 0;            // faces 0..alikeCount-1 are the look-alike family
+function chooseFaces() {       // hard mode: a fresh six every round, some of them look-alikes
   if (!hard) { faces = FACES; K = 4; return; }
-  const bag = POOL.slice();
+  const fam = ALIKE[pick(ALIKE.length)].slice();
+  alikeCount = Math.min(ALIKE_BY_LEVEL(g.level), fam.length);
   faces = [];
-  for (let i = 0; i < HARD.faces; i++) faces.push(bag.splice(pick(bag.length), 1)[0]);
+  for (let i = 0; i < alikeCount; i++) faces.push(fam.splice(pick(fam.length), 1)[0]);
+  const bag = POOL.filter(e => !faces.includes(e));
+  while (faces.length < HARD.faces) faces.push(bag.splice(pick(bag.length), 1)[0]);
   K = HARD.faces;
 }
 function chooseTarget() {
-  if (hard) { g.wanted = pick(K); if (g.board === 9) g.wanted = 1; posterDirty = true; return; }
+  // hard mode: always one of the family (board 9's fixed face 1 is one too, as there are at least two)
+  if (hard) { g.wanted = pick(alikeCount); if (g.board === 9) g.wanted = 1; posterDirty = true; return; }
   const k = g.time >= 20 ? 20 : g.time >= 10 ? 10 : 0;
   g.wanted = WANTED_PICK[k + pick(10)];
   if (g.board === 9) g.wanted = 1;
