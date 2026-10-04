@@ -50,7 +50,7 @@ Games in `free/<console>/` are part of the published site. A console's page list
 
 Only put a game here if it is yours to give away, or its licence allows it. So far there are two. **Tricky Wicks** for Game Boy (`free/gb/tricky-wicks.gb`), the same game as `tricky-wicks.html`, built from the Tricky Wicks project (`port/gb/` there). To update it, replace the file. Its best score is kept as a battery save like any other game's. Its 2P LINK mode needs two Game Boys and a link cable, so in the browser it answers NO REPLY.
 
-**Two-Floor Dungeon** for Game Boy Advance (`free/gba/dungeon.gba`) is a tech demo from the GBA two-floor engine project (`rom-dungeon/dungeon.gba` there): a dungeon on two floor heights, drawn with the two affine background layers and skewed sprites for the walls. It orbits by itself until a button is pressed. To update it, replace the file.
+**Two-Floor Dungeon** for Game Boy Advance (`free/gba/dungeon.gba`) is a tech demo from the GBA two-floor engine project (`rom-c/dungeon-c.gba` there): a dungeon on two floor heights, drawn with the two affine background layers and skewed sprites for the walls, with a player who walks, jumps onto platforms and goes over or under the bridges. It orbits by itself until a button is pressed. To update it, replace the file.
 
 To add another: put the file in `free/<console>/`, add a line to the `free` list in that console's `index.html`, and commit.
 
