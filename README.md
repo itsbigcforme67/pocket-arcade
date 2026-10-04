@@ -10,6 +10,10 @@ A one-page console picker that links to five browser emulators:
 
 It also lists one game that needs no files: **Tricky Wicks** (`tricky-wicks.html`), a falling-block puzzle kept in this repo as a single self-contained page. To update it, replace that file with a newer build. Its Game Boy version is the free game on the Game Boy page (`free/gb/tricky-wicks.gb`, see "Free games" below).
 
+**Minigames** (`minigames/`) are small touch-screen games written for this site, each one self-contained page, with `minigames/index.html` as their picker. So far there is one:
+
+* **Wanted!** (`minigames/wanted.html`): find the face on the poster in a moving crowd and tap it. A catch adds 5 seconds (up to 50), a wrong tap takes 10, and the round ends when the clock hits zero. Its rules, timing and movement are ported line by line from the "Wanted!" minigame of Super Mario 64 DS, as decompiled by [sm64ds-decomp](https://github.com/tangosdev/sm64ds-decomp) (`src/actors/dScMgLuigi_c.cpp` there). No art, sound or data from the game is used: the four faces are emoji (🫒 🚕 🎳 🐱 by default, in Mario, Luigi, Wario and Yoshi's places), and players can pick their own under **Faces**. The game's data tables (the board list, speeds and who gets picked as wanted) are not in the decomp, so the block marked ROM TABLES at the top of the script holds placeholder values until they are read from a ROM.
+
 Four more consoles live in this repo and run on [EmulatorJS](https://emulatorjs.org/), each on a page of its own:
 
 * **Game Boy / Game Boy Color** (`gb/`), `.gb` and `.gbc` files

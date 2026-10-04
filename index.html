@@ -46,6 +46,7 @@
     .piece { --s1: #343a52; --s2: #1f2233; }
     .piece .stage svg { height: 118px; }
     .wicks { --s1: #4d3a2c; --s2: #2a201a; }
+    .games { --s1: #6b3a1e; --s2: #3a1f10; }
     .gb { --s1: #3d4b41; --s2: #232c26; }
     .gba { --s1: #3c3566; --s2: #221d3d; }
     .ws { --s1: #2e4759; --s2: #1a2a35; }
@@ -415,10 +416,31 @@
           <div class="go"><span class="btn">Play ›</span><span class="need">no files needed</span></div>
         </div>
       </a>
+
+      <!-- Minigames: small touch games written for this site, each one file in minigames/. -->
+      <a class="card games" href="minigames/">
+        <div class="stage">
+          <svg viewBox="0 0 180 210" role="img" aria-label="A wanted poster with a cat face on it">
+            <g transform="rotate(-4 90 105)">
+              <rect x="30" y="14" width="120" height="176" rx="3" fill="#e9d3a1" stroke="#8a5a2b" stroke-width="6"/>
+              <rect x="40" y="24" width="100" height="156" fill="none" stroke="#8a5a2b" stroke-width="1.5"/>
+              <text x="90" y="56" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="900" font-size="22" fill="#7a2214">WANTED</text>
+              <rect x="50" y="70" width="80" height="80" fill="#fff6dc" stroke="#8a5a2b" stroke-width="1.5"/>
+              <text class="bob" x="90" y="128" text-anchor="middle" font-size="58">🐱</text>
+            </g>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>Minigames</h2>
+          <div class="meta"><span class="pill">original games</span><span class="pill">touch</span></div>
+          <p>Quick touch-screen games. First up, Wanted!: find the face on the poster in a moving crowd before the clock runs out.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">no files needed</span></div>
+        </div>
+      </a>
     </div>
 
     <div class="how">
-      <div><h3>Bring your own files</h3><p>No BIOS is included, and the only game is our own Tricky Wicks. Each console asks for your own dumps the first time.</p></div>
+      <div><h3>Bring your own files</h3><p>No BIOS is included, and the only games are our own: Tricky Wicks and the minigames. Each console asks for your own dumps the first time.</p></div>
       <div><h3>Nothing is uploaded</h3><p>Your files, saves and progress stay in this browser's storage on this device.</p></div>
       <div><h3>Works like an app</h3><p>Most consoles here can be installed with your browser's “Add to Home Screen” and then played offline.</p></div>
     </div>
