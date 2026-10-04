@@ -29,7 +29,7 @@ The other emulators here each have a core written for the job in a repo of their
 | `play/player.js`, `play/player.css` | everything the four pages share: the list of games, starting EmulatorJS, the layout while playing |
 | `play/shaders/` | "Game Boy screen", a shader that shows original Game Boy games as on the real LCD (see the README there) |
 | `emulatorjs/data/` | EmulatorJS 4.2.3 and the four cores, unmodified |
-| `free/gb/` | the free game that comes with the Game Boy page (published, see below) |
+| `free/gb/`, `free/gba/` | the free games that come with the Game Boy and Game Boy Advance pages (published, see below) |
 | `roms/gb/`, `roms/gba/`, `roms/ws/`, `roms/ngp/` | games to list on the page (not published, see below) |
 | `tests/` | a browser test and the tiny test ROMs it boots |
 
@@ -48,7 +48,9 @@ What a page does:
 
 Games in `free/<console>/` are part of the published site. A console's page lists them in the `free` list of its `ARCADE_SYSTEM` block (file name, title and a line about the game), and they show under **Free game** with a download link. They are fetched from the site when played, not copied into the browser's list.
 
-Only put a game here if it is yours to give away, or its licence allows it. So far there is one: **Tricky Wicks** for Game Boy (`free/gb/tricky-wicks.gb`), the same game as `tricky-wicks.html`, built from the Tricky Wicks project (`port/gb/` there). To update it, replace the file. Its best score is kept as a battery save like any other game's. Its 2P LINK mode needs two Game Boys and a link cable, so in the browser it answers NO REPLY.
+Only put a game here if it is yours to give away, or its licence allows it. So far there are two. **Tricky Wicks** for Game Boy (`free/gb/tricky-wicks.gb`), the same game as `tricky-wicks.html`, built from the Tricky Wicks project (`port/gb/` there). To update it, replace the file. Its best score is kept as a battery save like any other game's. Its 2P LINK mode needs two Game Boys and a link cable, so in the browser it answers NO REPLY.
+
+**Two-Floor Dungeon** for Game Boy Advance (`free/gba/dungeon.gba`) is a tech demo from the GBA two-floor engine project (`rom-dungeon/dungeon.gba` there): a dungeon on two floor heights, drawn with the two affine background layers and skewed sprites for the walls. It orbits by itself until a button is pressed. To update it, replace the file.
 
 To add another: put the file in `free/<console>/`, add a line to the `free` list in that console's `index.html`, and commit.
 
@@ -65,7 +67,7 @@ bash run.sh                          # http://localhost:8770/  (it also prints t
 python3 tests/e2e.py                 # in another terminal; needs: pip install playwright pillow
 ```
 
-The test boots a ROM on each console in a phone-sized window and checks the list, the touch controls, the scaling, rotation, and that saves and save states survive a reload. It also boots the free game and starts a round. `tests/probes/` holds the test ROMs it uses; none of those is a game.
+The test boots a ROM on each console in a phone-sized window and checks the list, the touch controls, the scaling, rotation, and that saves and save states survive a reload. It also boots the free games: a round of Tricky Wicks, and the dungeon demo moving. `tests/probes/` holds the test ROMs it uses; none of those is a game.
 
 ## How the addresses fit together
 

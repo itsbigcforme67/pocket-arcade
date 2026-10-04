@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#14161b">
-  <meta name="description" content="Play Game Boy Advance games in your browser. Bring your own game files; nothing is uploaded.">
+  <meta name="description" content="Play Game Boy Advance games in your browser. Comes with one free demo, Two-Floor Dungeon; bring your own files for the rest. Nothing is uploaded.">
   <title>Game Boy Advance – Pocket Arcade</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314161b'/%3E%3Crect x='6' y='4' width='20' height='24' rx='5' fill='%23ffcb3d'/%3E%3Crect x='9' y='7' width='14' height='10' rx='1.5' fill='%23b4bea2'/%3E%3Ccircle cx='12' cy='22' r='2.4' fill='%232e3340'/%3E%3Ccircle cx='20' cy='22' r='2.4' fill='%232e3340'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../play/player.css">
@@ -19,7 +19,12 @@
       name: 'Game Boy Advance',
       blurb: 'Game Boy Advance games. No BIOS file needed.',
       exts: ['gba'],
-      coreName: 'mGBA'
+      coreName: 'mGBA',
+      // Games that come with the site: files in ../free/gba/, listed under "Free games" with a download link.
+      free: [
+        { file: 'dungeon.gba', title: 'Two-Floor Dungeon',
+          about: 'A tech demo made for this site: a dungeon on two floor heights in tilted pseudo-3D. D-pad moves, L/R orbit, A/B zoom, Select/Start raise and lower the camera.' }
+      ]
     };
   </script>
   <script src="../play/player.js"></script>
