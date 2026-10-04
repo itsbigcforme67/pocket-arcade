@@ -68,6 +68,23 @@
     @keyframes bob { 0% { transform: translateY(0); } 50% { transform: translateY(2px); } }
     @media (prefers-reduced-motion: reduce) { .blink, .bob { animation: none; } .card, .stage svg { transition: none; } }
 
+    /* phones: two cards side by side */
+    @media (max-width: 600px) {
+      .wrap { padding: 0 12px; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+      .card { border-radius: 16px; }
+      .stage { height: 128px; }
+      .stage svg { height: 104px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.4)); }
+      .piece .stage svg, .gba .stage svg, .ws .stage svg, .ngp .stage svg { height: 74px; }
+      .info { padding: 10px 11px 12px; gap: 6px; }
+      .info h2 { font-size: 16px; line-height: 1.2; }
+      .pill { font-size: 10.5px; padding: 1px 7px; }
+      .info p { font-size: 12.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+      .go { flex-direction: column; align-items: stretch; gap: 6px; padding-top: 6px; }
+      .btn { justify-content: center; padding: 8px 10px; border-radius: 10px; font-size: 14px; }
+      .need { font-size: 11px; text-align: center; }
+    }
+
     .how { margin: 26px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
     .how div { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
     .how h3 { margin: 0 0 4px; font-size: 15px; }
