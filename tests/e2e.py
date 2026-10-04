@@ -8,8 +8,8 @@ Needs: pip install playwright pillow (and a Chromium for Playwright). It copies 
 tests/probes/ into roms/<console>/ for the run and removes them afterwards, so the server must be
 serving this folder. Extra ROMs you want booted as well: --also gb=path/to/game.gb (repeatable).
 
-What it checks, in a phone-sized window with touch: the list of games, booting, that nothing is
-fetched from another site, whole-number scaling at the screen's own pixels, the touch controls
+What it checks, in a phone-sized window with touch: the list of games, the free game that comes
+with the Game Boy page, booting, that nothing is fetched from another site, whole-number scaling at the screen's own pixels, the touch controls
 reaching the game, cartridge saves and save states surviving a reload, the file picker (plain and
 zipped), the sideways layout, WonderSwan rotation, and a desktop-sized window without touch.
 """
@@ -68,7 +68,8 @@ class Tab:
         self.page.wait_for_timeout(600)
 
     def names(self, section):
-        return self.page.eval_on_selector_all("#library section:nth-of-type(%d):not([hidden]) .pick .name" % section, "e => e.map(x => x.textContent)")
+        """The games listed in one section of the page: "free", "mine" (on this device) or "site"."""
+        return self.page.eval_on_selector_all("#library #%s:not([hidden]) .pick .name" % section, "e => e.map(x => x.textContent)")
 
     def pick(self, name):
         row = self.page.locator(".pick", has=self.page.get_by_text(name, exact=True)).first
@@ -167,8 +168,9 @@ def run(browser):
         t = Tab(browser, PHONE)
         t.open(system)
         t.shot(system + "-1-list")
-        site = t.names(2)
+        site = t.names("site")
         check(PROBE[system].rsplit(".", 1)[0] in site, "the list shows what is in roms/%s/" % system, site)
+        check(t.names("free") == (["Tricky Wicks"] if system == "gb" else []), "free games: Tricky Wicks on the Game Boy page, none elsewhere", t.names("free"))
         t.pick("probe")
         check(t.ev("location.search").startswith("?play=site"), "address remembers the game")
         check(t.outside() == [], "nothing was fetched from another site", t.outside())
@@ -250,7 +252,7 @@ def run(browser):
         t.page.locator("#pa-back").tap()
         t.page.wait_for_selector("#library h1")
         t.page.wait_for_timeout(500)
-        check(t.names(1) == ["Picked Game"], "and is kept under 'On this device'", t.names(1))
+        check(t.names("mine") == ["Picked Game"], "and is kept under 'On this device'", t.names("mine"))
         z = io.BytesIO()
         with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as f:
             f.write(rom, "Zipped Game." + ext)
@@ -263,10 +265,10 @@ def run(browser):
         t.page.reload()
         t.page.wait_for_selector("#library h1")
         t.page.wait_for_timeout(600)
-        check(t.names(1) == ["Picked Game", "Zipped Game"], "picked games are still listed after a reload", t.names(1))
+        check(t.names("mine") == ["Picked Game", "Zipped Game"], "picked games are still listed after a reload", t.names("mine"))
         t.page.locator(".drop").first.tap()
         t.page.wait_for_timeout(500)
-        check(t.names(1) == ["Zipped Game"], "a game can be removed from the device", t.names(1))
+        check(t.names("mine") == ["Zipped Game"], "a game can be removed from the device", t.names("mine"))
         check(t.outside() == [], "still nothing fetched from another site", t.outside())
         check(t.errors == [], "no script errors", t.errors)
         t.close()
@@ -350,6 +352,34 @@ def run(browser):
         t.page.locator("#pa-back").tap()
         t.page.wait_for_selector("#library h1")
         t.page.wait_for_timeout(500)
+    t.close()
+
+    # ---------- the free game that comes with the Game Boy page ----------
+    print("\n== gb, the free game ==")
+    t = Tab(browser, PHONE)
+    t.open("gb")
+    rom = open(os.path.join(SITE, "free", "gb", "tricky-wicks.gb"), "rb").read()
+    link = t.ev("(() => { const a = document.querySelector('#free .get'); return [a.href, a.getAttribute('download')]; })()")
+    got = t.ev("fetch(%r).then(r => r.arrayBuffer()).then(b => b.byteLength)" % link[0])
+    check(link[1] == "tricky-wicks.gb" and got == len(rom), "the download link hands over the ROM itself (%d bytes)" % got, (link, got))
+    t.pick("Tricky Wicks")
+    check(t.ev("new URLSearchParams(location.search).get('play')") == "free:tricky-wicks.gb", "address remembers the game")
+    check(t.ev("document.title").startswith("Tricky Wicks"), "the tab is named after the game", t.ev("document.title"))
+    p = whole_number_scale(t, "gb", "gb-15-free-title")
+    check(p["colours"] >= 3 and t.errors == [], "Tricky Wicks boots to its title screen (%d colours)" % p["colours"], t.errors)
+    title_screen = t.shot("gb-15-free-title").tobytes()
+    t.hold("#game .b_start")                       # 1 PLAYER is the first choice on its menu
+    t.release()
+    t.page.wait_for_timeout(1500)
+    for _ in range(3):                             # drop a few pieces
+        t.hold("#game .b_dpad .ejs_dpad_main", dy=-0.35)
+        t.release()
+    check(t.shot("gb-16-free-playing").tobytes() != title_screen and t.errors == [], "Start begins a game and pieces drop", t.errors)
+    t.page.locator("#pa-back").tap()
+    t.page.wait_for_selector("#library h1")
+    t.page.wait_for_timeout(500)
+    check(t.names("free") == ["Tricky Wicks"] and t.names("mine") == [], "it is not copied into 'On this device'", (t.names("free"), t.names("mine")))
+    check(t.outside() == [] and t.errors == [], "nothing fetched from another site, no errors", (t.outside(), t.errors))
     t.close()
 
     # ---------- any other ROMs given on the command line ----------

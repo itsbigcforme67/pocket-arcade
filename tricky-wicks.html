@@ -108,30 +108,2003 @@ button:focus-visible{outline:3px solid var(--a);outline-offset:3px}
 <script>
 (() => {
 'use strict';
-const ATLAS_SRC = 'data:image/png;base64,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';
-const FONT = {"A":[14,17,17,31,17,17,17],"B":[30,17,17,30,17,17,30],"C":[14,17,16,16,16,17,14],"D":[30,17,17,17,17,17,30],"E":[31,16,16,30,16,16,31],"F":[31,16,16,30,16,16,16],"G":[14,17,16,23,17,17,15],"H":[17,17,17,31,17,17,17],"I":[14,4,4,4,4,4,14],"J":[7,2,2,2,2,18,12],"K":[17,18,20,24,20,18,17],"L":[16,16,16,16,16,16,31],"M":[17,27,21,21,17,17,17],"N":[17,25,21,19,17,17,17],"O":[14,17,17,17,17,17,14],"P":[30,17,17,30,16,16,16],"Q":[14,17,17,17,21,18,13],"R":[30,17,17,30,20,18,17],"S":[15,16,16,14,1,1,30],"T":[31,4,4,4,4,4,4],"U":[17,17,17,17,17,17,14],"V":[17,17,17,17,17,10,4],"W":[17,17,17,21,21,27,17],"X":[17,17,10,4,10,17,17],"Y":[17,17,10,4,4,4,4],"Z":[31,1,2,4,8,16,31],"0":[14,17,19,21,25,17,14],"1":[4,12,4,4,4,4,14],"2":[14,17,1,2,4,8,31],"3":[14,17,1,6,1,17,14],"4":[2,6,10,18,31,2,2],"5":[31,16,30,1,1,17,14],"6":[14,16,16,30,17,17,14],"7":[31,1,2,4,8,8,8],"8":[14,17,17,14,17,17,14],"9":[14,17,17,15,1,1,14],"x":[0,0,17,10,4,10,17],"!":[4,4,4,4,4,0,4],"-":[0,0,0,14,0,0,0],".":[0,0,0,0,0,0,4]};
+const ATLAS_SRC = 'data:image/png;base64,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';
+const FONT = {"A":[14,17,17,31,17,17,17],"B":[30,17,17,30,17,17,30],"C":[14,17,16,16,16,17,14],"D":[30,17,17,17,17,17,30],"E":[31,16,16,30,16,16,31],"F":[31,16,16,30,16,16,16],"G":[14,17,16,23,17,17,15],"H":[17,17,17,31,17,17,17],"I":[14,4,4,4,4,4,14],"J":[7,2,2,2,2,18,12],"K":[17,18,20,24,20,18,17],"L":[16,16,16,16,16,16,31],"M":[17,27,21,21,17,17,17],"N":[17,25,21,19,17,17,17],"O":[14,17,17,17,17,17,14],"P":[30,17,17,30,16,16,16],"Q":[14,17,17,17,21,18,13],"R":[30,17,17,30,20,18,17],"S":[15,16,16,14,1,1,30],"T":[31,4,4,4,4,4,4],"U":[17,17,17,17,17,17,14],"V":[17,17,17,17,17,10,4],"W":[17,17,17,21,21,27,17],"X":[17,17,10,4,10,17,17],"Y":[17,17,10,4,4,4,4],"Z":[31,1,2,4,8,16,31],"0":[14,17,19,21,25,17,14],"1":[4,12,4,4,4,4,14],"2":[14,17,1,2,4,8,31],"3":[14,17,1,6,1,17,14],"4":[2,6,10,18,31,2,2],"5":[31,16,30,1,1,17,14],"6":[14,16,16,30,17,17,14],"7":[31,1,2,4,8,8,8],"8":[14,17,17,14,17,17,14],"9":[14,17,17,15,1,1,14],"x":[0,0,17,10,4,10,17],"!":[4,4,4,4,4,0,4],"-":[0,0,0,14,0,0,0],"+":[0,4,4,31,4,4,0],">":[16,8,4,2,4,8,16],".":[0,0,0,0,0,0,4]};
+const CORE = /* Made by build_core.sh from port/core. Do not edit by hand. */
+(function () {
+var bufferView;
+var base64ReverseLookup = new Uint8Array(123/*'z'+1*/);
+for (var i = 25; i >= 0; --i) {
+base64ReverseLookup[48+i] = 52+i; // '0-9'
+base64ReverseLookup[65+i] = i; // 'A-Z'
+base64ReverseLookup[97+i] = 26+i; // 'a-z'
+}
+base64ReverseLookup[43] = 62; // '+'
+base64ReverseLookup[47] = 63; // '/'
+/** @noinline Inlining this function would mean expanding the base64 string 4x times in the source code, which Closure seems to be happy to do. */
+function base64DecodeToExistingUint8Array(uint8Array, offset, b64) {
+var b1, b2, i = 0, j = offset, bLength = b64.length, end = offset + (bLength*3>>2) - (b64[bLength-2] == '=') - (b64[bLength-1] == '=');
+for (; i < bLength; i += 4) {
+b1 = base64ReverseLookup[b64.charCodeAt(i+1)];
+b2 = base64ReverseLookup[b64.charCodeAt(i+2)];
+uint8Array[j++] = base64ReverseLookup[b64.charCodeAt(i)] << 2 | b1 >> 4;
+if (j < end) uint8Array[j++] = b1 << 4 | b2 >> 2;
+if (j < end) uint8Array[j++] = b2 << 6 | base64ReverseLookup[b64.charCodeAt(i+3)];
+}
+}
+function initActiveSegments(imports) {
+base64DecodeToExistingUint8Array(bufferView, 1024, "MS41AGtpbmQsdCx0bSxvZmYsbXVsdCxudGgsY2huLHBfa2luZCxwX3QscF9jb2wscF95LHBfc2VyaWFsLG5fa2luZCxuX3Qsc2NvcmUscGxhY2VkLGxldmVsLHdpY2ssYmVzdF93aWNrLHBoYXNlLG92ZXIsc2hha2UscG93ZXIsaW5jb21pbmcsbl9ib29tcyxib29tX3IsYm9vbV9jLGJvb21fdCxuX3BvcHMscG9wX3gscG9wX3kscG9wX3QscG9wX3R5cGUscG9wX2EscG9wX2Isbl9zZngsc2Z4LHNmeF9hcmcs");
+base64DecodeToExistingUint8Array(bufferView, 1268, "AQAAADAAAAABAAAAYAAAAAEAAACQAAAAAQAAAMAAAAABAAAA8AAAAAEAAAAgAQAAAQAAAFABAAABAAAAUQEAAAEAAABSAQAAAQAAAFMBAAABAAAAVAEAAAEAAABVAQAAAQAAAFYBAAABAAAAcAEAAAQAAAB0AQAAAgAAAHYBAAABAAAAeAEAAAEAAAB5AQAAAQAAAHoBAAABAAAAewEAAAEAAACCAQAAAQAAAIgBAAACAAAAlAEAAAEAAACXAQAAAQAAAJgBAAABAAAApAEAAAEAAACwAQAAAQAAALwBAAABAAAAvQEAAAEAAADJAQAAAQAAANUBAAABAAAA4QEAAAEAAADuAQAAAgAAAAYCAAACAAAAHgIAAAEAAAAfAgAAAQAAACcCAAAB");
+base64DecodeToExistingUint8Array(bufferView, 1584, "yAAAAAwAAABgCQAACQAAABYAAAAO");
+base64DecodeToExistingUint8Array(bufferView, 1616, "CgUGDAkDDg0LBw8ODQsHDwEAAwQFAgcICQYPDA0OCwoBBAgQ");
+base64DecodeToExistingUint8Array(bufferView, 1664, "AQAFAgMECQYHCA8OCwwNCv///wAAAQEB/wAB/wH/AAEBAgQI/wABAAABAP8ECAECAAAAAAAABAgBAgUECAECBf///////wsMDQ4PBgcICQoAAgABAQACAAACAQAAAAIBAQAAAgIBAAAAAgIBAQACAgIBAAICAgEAAQICAQACAQEBAAIBAQEAAgIBAQACAgEBAgMAAQ==");
+base64DecodeToExistingUint8Array(bufferView, 1824, "U1NTU0NDQ1RUWEJCRkZGS/8AAQAAAQD/BAgBAgECBAg=");
+}
+function asmFunc(imports) {
+var buffer = new ArrayBuffer(65536);
+var HEAP8 = new Int8Array(buffer);
+var HEAP16 = new Int16Array(buffer);
+var HEAP32 = new Int32Array(buffer);
+var HEAPU8 = new Uint8Array(buffer);
+var HEAPU16 = new Uint16Array(buffer);
+var HEAPU32 = new Uint32Array(buffer);
+var HEAPF32 = new Float32Array(buffer);
+var HEAPF64 = new Float64Array(buffer);
+var Math_imul = Math.imul;
+var Math_fround = Math.fround;
+var Math_abs = Math.abs;
+var Math_clz32 = Math.clz32;
+var Math_min = Math.min;
+var Math_max = Math.max;
+var Math_floor = Math.floor;
+var Math_ceil = Math.ceil;
+var Math_trunc = Math.trunc;
+var Math_sqrt = Math.sqrt;
+var global$0 = 11520;
+function $0($0_1) {
+$0_1 = $0_1 | 0;
+HEAP32[770] = Math_imul($0_1, 612) + 1856;
+}
+function $1($0_1) {
+$0_1 = $0_1 | 0;
+return Math_imul($0_1, 612) + 1856 | 0;
+}
+function $2() {
+return 1028;
+}
+function $3() {
+return 1264;
+}
+function $4($0_1) {
+$0_1 = $0_1 | 0;
+return HEAP32[($0_1 << 2) + 1584 >> 2];
+}
+function $5() {
+return 1024;
+}
+function $6($0_1, $1_1) {
+$0_1 = $0_1 | 0;
+$1_1 = $1_1 | 0;
+var $2_1 = 0, $3_1 = 0, $4_1 = 0, $5_1 = 0, $6_1 = 0, $7_1 = 0, $8_1 = 0, $9_1 = 0, $10_1 = 0, $11_1 = 0, $12_1 = 0, $13_1 = 0, $14_1 = 0, $15_1 = 0;
+$12_1 = global$0 - 16 | 0;
+global$0 = $12_1;
+$2_1 = HEAP32[770];
+HEAP8[$2_1 + 561 | 0] = 0;
+HEAP8[$2_1 + 542 | 0] = 0;
+block : {
+if (HEAPU8[$2_1 + 379 | 0]) {
+break block
+}
+block2 : {
+block20 : {
+block3 : {
+switch (HEAPU8[$2_1 + 378 | 0]) {
+case 0:
+block5 : {
+if (!HEAPU8[$2_1 + 390 | 0]) {
+break block5
+}
+$3_1 = HEAPU16[$2_1 + 392 >> 1];
+if (!$3_1) {
+break block5
+}
+$4_1 = HEAPU8[$2_1 + 406 | 0] + 1 | 0;
+HEAP8[$2_1 + 406 | 0] = $4_1;
+if (($4_1 & 255) != 3) {
+break block5
+}
+HEAP8[$2_1 + 406 | 0] = 0;
+HEAP16[$2_1 + 392 >> 1] = $3_1 - 1;
+}
+if ($1_1 & 16) {
+$7(1)
+}
+if ($1_1 & 32) {
+$7(-1)
+}
+block6 : {
+if ($1_1 & 1) {
+$8(-1);
+$2_1 = HEAP32[770];
+HEAP8[$2_1 + 387 | 0] = 255;
+HEAP8[$2_1 + 382 | 0] = 0;
+break block6;
+}
+if ($1_1 & 2) {
+$8(1);
+$2_1 = HEAP32[770];
+HEAP8[$2_1 + 387 | 0] = 1;
+HEAP8[$2_1 + 382 | 0] = 0;
+break block6;
+}
+$2_1 = HEAP32[770];
+$3_1 = $0_1 >>> 1 & 1;
+$4_1 = $0_1 & 1;
+if (($3_1 | 0) != ($4_1 | 0)) {
+$3_1 = $3_1 - $4_1 | 0;
+if (HEAPU8[$2_1 + 387 | 0] != ($3_1 & 255)) {
+break block6
+}
+$4_1 = HEAPU8[$2_1 + 382 | 0] + 1 | 0;
+HEAP8[$2_1 + 382 | 0] = $4_1;
+if (($4_1 & 255) >>> 0 < 12) {
+break block6
+}
+if (!($4_1 & 3)) {
+$8($3_1);
+$2_1 = HEAP32[770];
+$4_1 = HEAPU8[$2_1 + 382 | 0];
+}
+if (($4_1 & 255) >>> 0 < 16) {
+break block6
+}
+HEAP8[$2_1 + 382 | 0] = $4_1 - 4;
+break block6;
+}
+HEAP8[$2_1 + 387 | 0] = 0;
+}
+if ($1_1 & 8) {
+HEAP8[$2_1 + 381 | 0] = 1
+}
+block8 : {
+if ($1_1 & 4) {
+$0_1 = (HEAPU8[$2_1 + 339 | 0] + 15 & 240) >>> 4 | 0;
+$1_1 = $0_1 - 1 | 0;
+$3_1 = ($1_1 | 0) <= 7 ? 7 : $1_1;
+while (1) {
+block7 : {
+$1_1 = $0_1;
+if (($1_1 - 1 | 0) >= 7) {
+$1_1 = $3_1 + 1 | 0;
+break block7;
+}
+$0_1 = $1_1 + 1 | 0;
+if (!HEAPU8[(HEAPU8[$2_1 + 338 | 0] + Math_imul($1_1, 6) & 255) + $2_1 | 0]) {
+continue
+}
+}
+break;
+};
+$4_1 = $1_1 << 4;
+HEAP8[$2_1 + 339 | 0] = $4_1;
+break block8;
+}
+block10 : {
+if (!(!($0_1 & 8) | !HEAPU8[$2_1 + 381 | 0])) {
+$5_1 = 1;
+$0_1 = 1024;
+break block10;
+}
+$0_1 = Math_imul(HEAPU8[$2_1 + 374 | 0], 18);
+$0_1 = ($0_1 >>> 0 >= 453 ? 453 : $0_1) + 59 | 0;
+}
+$1_1 = $0_1 + HEAPU16[$2_1 + 388 >> 1] | 0;
+HEAP16[$2_1 + 388 >> 1] = $1_1;
+block12 : {
+block11 : {
+while (1) {
+if (($1_1 & 65535) >>> 0 < 256) {
+break block11
+}
+$1_1 = $1_1 - 256 | 0;
+HEAP16[$2_1 + 388 >> 1] = $1_1;
+$3_1 = HEAP8[$2_1 + 338 | 0];
+$4_1 = HEAPU8[$2_1 + 339 | 0];
+$0_1 = $4_1 + 1 | 0;
+if ($9($3_1, $0_1 & 255)) {
+HEAP8[$2_1 + 380 | 0] = 0;
+HEAP8[$2_1 + 339 | 0] = $0_1;
+continue;
+}
+break;
+};
+HEAP16[$2_1 + 388 >> 1] = 0;
+break block12;
+}
+$4_1 = HEAPU8[$2_1 + 339 | 0];
+$0_1 = $4_1 + 1 | 0;
+$3_1 = HEAPU8[$2_1 + 338 | 0];
+}
+if ($9($3_1 << 24 >> 24, $0_1 & 255)) {
+break block2
+}
+$0_1 = HEAPU8[$2_1 + 380 | 0] + 1 | 0;
+HEAP8[$2_1 + 380 | 0] = $0_1;
+if (($5_1 ^ -1) & ($0_1 & 255) >>> 0 < 20) {
+break block2
+}
+}
+if (($4_1 & 255) >>> 0 <= 15) {
+HEAP8[$2_1 + 336 | 0] = 0;
+HEAP8[$2_1 + 379 | 0] = 1;
+break block2;
+}
+$0_1 = (HEAPU8[$2_1 + 338 | 0] + Math_imul(($4_1 & 240) >>> 4 | 0, 6) | 0) - 6 & 255;
+$10($0_1);
+$1_1 = HEAP32[770];
+HEAP8[$1_1 + $0_1 | 0] = HEAPU8[$1_1 + 336 | 0];
+$1_1 = 0;
+$2_1 = HEAP32[770];
+if (HEAPU8[$2_1 + 336 | 0] == 1) {
+$1_1 = HEAPU8[$2_1 + 337 | 0]
+}
+HEAP8[($0_1 + $2_1 | 0) + 48 | 0] = $1_1;
+$0_1 = HEAP32[770];
+HEAP8[$0_1 + 336 | 0] = 0;
+HEAP8[$0_1 + 400 | 0] = 0;
+HEAP32[$0_1 + 396 >> 2] = 0;
+HEAP8[$0_1 + 384 | 0] = 0;
+HEAP8[$0_1 + 376 | 0] = 0;
+HEAP16[$0_1 + 372 >> 1] = HEAPU16[$0_1 + 372 >> 1] + 1;
+$2_1 = HEAPU8[$0_1 + 375 | 0] + 1 | 0;
+HEAP8[$0_1 + 375 | 0] = $2_1;
+$1_1 = 3;
+block13 : {
+if (($2_1 & 255) != 12) {
+break block13
+}
+HEAP8[$0_1 + 375 | 0] = 0;
+$1_1 = 4;
+$2_1 = HEAPU8[$0_1 + 374 | 0];
+if (($2_1 | 0) == 255) {
+break block13
+}
+HEAP8[$0_1 + 374 | 0] = $2_1 + 1;
+}
+$11($1_1, 0);
+$2_1 = HEAP32[770];
+HEAP8[$2_1 + 378 | 0] = 1;
+break block2;
+case 3:
+$2_1 = 0;
+while (1) {
+$1_1 = HEAP32[770];
+if (($2_1 | 0) != 48) {
+$0_1 = $1_1 + $2_1 | 0;
+if (HEAPU8[$0_1 + 96 | 0] != 255) {
+$3_1 = HEAPU8[$0_1 | 0];
+block14 : {
+if (!($3_1 >>> 0 > 5 | !(1 << $3_1 & 50))) {
+$0_1 = $8_1 & 255;
+HEAP8[$0_1 + 3088 | 0] = 1;
+$6_1 = $6_1 + 1 | 0;
+break block14;
+}
+$0_1 = $8_1 & 255;
+if (($3_1 & 254) == 2) {
+HEAP8[$0_1 + 3088 | 0] = 2;
+$10_1 = $10_1 + 1 | 0;
+break block14;
+}
+HEAP8[$0_1 + 3088 | 0] = 3;
+$13_1 = $13_1 + 1 | 0;
+}
+HEAP8[($0_1 + $1_1 | 0) + 562 | 0] = $2_1;
+$8_1 = $8_1 + 1 | 0;
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+HEAP8[$1_1 + 561 | 0] = $8_1;
+block15 : {
+if (!($6_1 & 255)) {
+break block15
+}
+$14_1 = $8_1 & 255;
+while (1) {
+if (($5_1 | 0) == ($14_1 | 0)) {
+break block15
+}
+block16 : {
+if (HEAPU8[$5_1 + 3088 | 0] != 1) {
+break block16
+}
+$0_1 = HEAP32[770];
+$3_1 = HEAPU8[($0_1 + $5_1 | 0) + 562 | 0];
+$0_1 = ($0_1 + $3_1 | 0) + 96 | 0;
+HEAP8[$0_1 | 0] = HEAPU8[$0_1 | 0] + 1;
+$0_1 = $3_1 << 24 >> 24;
+$4_1 = ((($0_1 | 0) <= 5 ? 5 : $0_1) >>> 0) / 6 | 0;
+$1_1 = HEAP32[770];
+$2_1 = $3_1 + $1_1 | 0;
+$0_1 = HEAPU8[$2_1 + 96 | 0];
+if (($0_1 | 0) == 9) {
+$0_1 = 15;
+$11_1 = HEAPU8[$2_1 | 0];
+$0_1 = ($11_1 & 254) != 4 ? HEAPU8[HEAPU8[$2_1 + 48 | 0] + 1616 | 0] : $0_1;
+$15_1 = $3_1 + Math_imul($4_1, -6) | 0;
+$2_1 = -4;
+while (1) {
+if ($2_1) {
+block17 : {
+if (!(HEAPU8[$2_1 + 1700 | 0] & $0_1)) {
+break block17
+}
+$1_1 = $12($4_1 + HEAPU8[$2_1 + 1704 | 0] << 24 >> 24, HEAPU8[$2_1 + 1708 | 0] + $15_1 << 24 >> 24);
+if (($1_1 | 0) == 255) {
+break block17
+}
+$7_1 = $1_1 + HEAP32[770] | 0;
+$9_1 = $7_1 + 96 | 0;
+if (HEAPU8[$9_1 | 0] != 255) {
+break block17
+}
+block19 : {
+switch (HEAPU8[$7_1 | 0] - 1 | 0) {
+case 0:
+if (($11_1 | 0) != 5) {
+if (!(HEAPU8[$2_1 + 1712 | 0] & HEAPU8[HEAPU8[$7_1 + 48 | 0] + 1616 | 0])) {
+break block17
+}
+}
+HEAP8[$9_1 | 0] = 0;
+$7_1 = HEAP32[770];
+$1_1 = HEAPU8[$7_1 + 376 | 0] + 1 | 0;
+HEAP8[$7_1 + 376 | 0] = $1_1;
+$1_1 = $1_1 & 255;
+$11(7, $1_1 >>> 0 >= 16 ? 16 : $1_1);
+break block17;
+case 1:
+case 2:
+break block19;
+default:
+break block17;
+};
+}
+HEAP8[$9_1 | 0] = 0;
+$9_1 = HEAP32[770];
+$7_1 = HEAPU8[$9_1 + 376 | 0];
+HEAP8[($1_1 + $9_1 | 0) + 192 | 0] = $7_1 >>> 0 <= 1 ? 1 : $7_1;
+$7_1 = HEAP32[770];
+$9_1 = HEAPU8[$7_1 + 385 | 0] + 1 | 0;
+HEAP8[$7_1 + 385 | 0] = $9_1;
+HEAP8[($1_1 + $7_1 | 0) + 240 | 0] = $9_1;
+$9_1 = HEAP32[770];
+$7_1 = HEAPU8[$9_1 + 384 | 0];
+HEAP8[($1_1 + $9_1 | 0) + 288 | 0] = $7_1 >>> 0 >= 3 ? 3 : $7_1;
+$7_1 = $1_1;
+$1_1 = HEAP32[770];
+if (HEAPU8[$7_1 + $1_1 | 0] != 3 | HEAPU8[$1_1 + 400 | 0]) {
+break block17
+}
+HEAP8[$1_1 + 400 | 0] = 1;
+$7_1 = $1_1;
+$1_1 = HEAP32[$1_1 + 396 >> 2] + HEAPU16[$1_1 + 392 >> 1] | 0;
+HEAP16[$7_1 + 392 >> 1] = $1_1 >>> 0 >= 2400 ? 2400 : $1_1;
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+$1_1 = HEAP32[770];
+$0_1 = HEAPU8[($3_1 + $1_1 | 0) + 96 | 0];
+}
+if (($0_1 & 255) >>> 0 < 22) {
+break block16
+}
+$0_1 = HEAPU8[$1_1 + $3_1 | 0];
+$10($3_1);
+if (($0_1 | 0) != 1) {
+break block16
+}
+$13(10);
+}
+$5_1 = $5_1 + 1 | 0;
+continue;
+};
+}
+if (!($10_1 & 255)) {
+break block20
+}
+$14_1 = $8_1 & 255;
+$4_1 = 0;
+while (1) {
+if (($4_1 | 0) == ($14_1 | 0)) {
+break block20
+}
+block21 : {
+if (HEAPU8[$4_1 + 3088 | 0] != 2) {
+break block21
+}
+$1_1 = HEAP32[770];
+$0_1 = HEAPU8[($1_1 + $4_1 | 0) + 562 | 0];
+$1_1 = ($0_1 + $1_1 | 0) + 96 | 0;
+HEAP8[$1_1 | 0] = HEAPU8[$1_1 | 0] + 1;
+$1_1 = $0_1 << 24 >> 24;
+$1_1 = ((($1_1 | 0) <= 5 ? 5 : $1_1) >>> 0) / 6 | 0;
+$2_1 = HEAP32[770];
+$3_1 = $0_1 + $2_1 | 0;
+block22 : {
+if (HEAPU8[$3_1 + 96 | 0] != 14) {
+break block22
+}
+$11_1 = Math_imul(HEAPU8[HEAPU8[$3_1 + 288 | 0] + 1648 | 0], Math_imul(HEAPU8[$3_1 + 240 | 0], HEAPU8[$3_1 + 192 | 0])) & 65535;
+$13(Math_imul($11_1, 100));
+$2_1 = HEAP32[770];
+$3_1 = HEAPU8[($0_1 + $2_1 | 0) + 192 | 0];
+if ($3_1 >>> 0 > HEAPU8[$2_1 + 377 | 0]) {
+HEAP8[$2_1 + 377 | 0] = $3_1
+}
+$5_1 = $1_1 << 4;
+$7_1 = $0_1 + Math_imul($1_1, -6) | 0;
+$9_1 = ($7_1 << 4) + 16 | 0;
+$3_1 = HEAPU8[$2_1 + 407 | 0];
+if (($3_1 | 0) == 12) {
+$3_1 = $2_1 + 559 | 0
+} else {
+HEAP8[($2_1 + $3_1 | 0) + 408 | 0] = $1_1;
+$2_1 = HEAP32[770];
+HEAP8[(HEAPU8[$2_1 + 407 | 0] + $2_1 | 0) + 420 | 0] = $7_1;
+$2_1 = HEAP32[770];
+HEAP8[(HEAPU8[$2_1 + 407 | 0] + $2_1 | 0) + 432 | 0] = 0;
+$2_1 = HEAP32[770];
+$3_1 = $2_1 + 407 | 0;
+}
+HEAP8[$3_1 | 0] = HEAPU8[$3_1 | 0] + 1;
+$2_1 = $0_1 + $2_1 | 0;
+$3_1 = HEAPU8[$2_1 + 240 | 0];
+$14($9_1 & 255, ($5_1 | 12) & 255, HEAPU8[$2_1 + 288 | 0] ? 2 : $3_1 >>> 0 > 1, $3_1, $11_1);
+HEAP8[HEAP32[770] + 386 | 0] = 8;
+$11(8, 0);
+$2_1 = HEAP32[770];
+if (HEAPU8[($0_1 + $2_1 | 0) + 288 | 0]) {
+$11(9, 0);
+$2_1 = HEAP32[770];
+}
+if (HEAPU8[$0_1 + $2_1 | 0] != 3) {
+$2_1 = -8;
+while (1) {
+if ($2_1) {
+$3_1 = $12($1_1 + HEAPU8[$2_1 + 1688 | 0] << 24 >> 24, $7_1 + HEAPU8[$2_1 + 1696 | 0] << 24 >> 24);
+block23 : {
+if (($3_1 | 0) == 255) {
+break block23
+}
+$3_1 = $3_1 + HEAP32[770] | 0;
+if (HEAPU8[$3_1 | 0] != 6) {
+break block23
+}
+$3_1 = $3_1 + 96 | 0;
+if (HEAPU8[$3_1 | 0] != 255) {
+break block23
+}
+HEAP8[$3_1 | 0] = 0;
+$13(50);
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+$2_1 = HEAP32[770];
+break block22;
+}
+HEAP8[$2_1 + 402 | 0] = $5_1 + 16;
+HEAP8[$2_1 + 401 | 0] = $9_1;
+}
+if (HEAPU8[($0_1 + $2_1 | 0) + 96 | 0] < 34) {
+break block21
+}
+$10($0_1);
+}
+$4_1 = $4_1 + 1 | 0;
+continue;
+};
+case 2:
+break block3;
+default:
+break block2;
+};
+}
+$1_1 = 144;
+while (1) {
+if (($1_1 | 0) != 192) {
+$0_1 = $1_1 + $2_1 | 0;
+block24 : {
+if (!HEAPU8[$0_1 - 144 | 0]) {
+break block24
+}
+$4_1 = HEAPU8[$0_1 | 0];
+if (!$4_1) {
+break block24
+}
+$2_1 = $0_1;
+$0_1 = $4_1 - 4 | 0;
+HEAP8[$2_1 | 0] = $0_1 >>> 0 <= $4_1 >>> 0 ? $0_1 : 0;
+$2_1 = HEAP32[770];
+$3_1 = HEAPU8[$2_1 + $1_1 | 0] ? 1 : $3_1;
+}
+$1_1 = $1_1 + 1 | 0;
+continue;
+}
+break;
+};
+if ($3_1 & 255) {
+break block2
+}
+$11(5, 0);
+$2_1 = HEAP32[770];
+HEAP8[$2_1 + 378 | 0] = 1;
+break block2;
+}
+block25 : {
+if (!($13_1 & 255)) {
+break block25
+}
+$3_1 = $8_1 & 255;
+$2_1 = 0;
+while (1) {
+if (($2_1 | 0) == ($3_1 | 0)) {
+break block25
+}
+block26 : {
+if (HEAPU8[$2_1 + 3088 | 0] != 3) {
+break block26
+}
+$1_1 = HEAP32[770];
+$0_1 = HEAPU8[($1_1 + $2_1 | 0) + 562 | 0];
+$4_1 = ($0_1 + $1_1 | 0) + 96 | 0;
+$1_1 = HEAPU8[$4_1 | 0] + 1 | 0;
+HEAP8[$4_1 | 0] = $1_1;
+if (($1_1 & 255) >>> 0 < 18) {
+break block26
+}
+$10($0_1);
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+};
+}
+$2_1 = HEAP32[770];
+if (!(($6_1 | $10_1 | $13_1) & 255)) {
+$0_1 = HEAPU8[$2_1 + 383 | 0] + 1 | 0;
+HEAP8[$2_1 + 383 | 0] = $0_1;
+if (($0_1 & 255) >>> 0 < 7) {
+break block2
+}
+if (HEAPU8[$2_1 + 385 | 0]) {
+HEAP8[$2_1 + 384 | 0] = HEAPU8[$2_1 + 384 | 0] + 1
+}
+HEAP8[$2_1 + 378 | 0] = 1;
+HEAP8[$2_1 + 385 | 0] = 0;
+break block2;
+}
+HEAP8[$2_1 + 383 | 0] = 0;
+}
+block27 : {
+if (HEAPU8[$2_1 + 378 | 0] != 1) {
+break block27
+}
+$10_1 = 0;
+$8_1 = 0;
+while (1) {
+if (($8_1 & 255) >>> 0 <= 5) {
+$3_1 = 0;
+$4_1 = $8_1 + 42 | 0;
+$6_1 = $4_1;
+while (1) {
+if (($3_1 & 255) >>> 0 <= 7) {
+$1_1 = HEAP32[770];
+$0_1 = $4_1 & 255;
+$2_1 = HEAPU8[$1_1 + $0_1 | 0];
+if ($2_1) {
+$5_1 = $6_1 & 255;
+if (($5_1 | 0) != ($0_1 | 0)) {
+HEAP8[$1_1 + $5_1 | 0] = $2_1;
+$1_1 = 0;
+$2_1 = HEAP32[770] + 48 | 0;
+HEAP8[$2_1 + $5_1 | 0] = HEAPU8[$0_1 + $2_1 | 0];
+$2_1 = HEAP32[770] + 96 | 0;
+HEAP8[$2_1 + $5_1 | 0] = HEAPU8[$0_1 + $2_1 | 0];
+$2_1 = HEAP32[770] + 192 | 0;
+HEAP8[$2_1 + $5_1 | 0] = HEAPU8[$0_1 + $2_1 | 0];
+$2_1 = HEAP32[770] + 240 | 0;
+HEAP8[$2_1 + $5_1 | 0] = HEAPU8[$0_1 + $2_1 | 0];
+$2_1 = HEAP32[770] + 288 | 0;
+HEAP8[$2_1 + $5_1 | 0] = HEAPU8[$0_1 + $2_1 | 0];
+$2_1 = $6_1 - $4_1 | 0;
+while (1) {
+if ($2_1 & 255) {
+$1_1 = $1_1 + 16 | 0;
+$2_1 = $2_1 - 6 | 0;
+continue;
+}
+break;
+};
+HEAP8[($5_1 + HEAP32[770] | 0) + 144 | 0] = $1_1;
+$10($0_1);
+$10_1 = 1;
+}
+$6_1 = $6_1 - 6 | 0;
+}
+$4_1 = $4_1 - 6 | 0;
+$3_1 = $3_1 + 1 | 0;
+continue;
+}
+break;
+};
+$8_1 = $8_1 + 1 | 0;
+continue;
+}
+break;
+};
+$2_1 = 0;
+$1_1 = HEAP32[770];
+block28 : {
+if (!$10_1) {
+while (1) {
+if (($2_1 | 0) == 48) {
+break block28
+}
+$0_1 = $1_1 + $2_1 | 0;
+if (!(HEAPU8[$0_1 | 0] == 1 & HEAPU8[$0_1 + 48 | 0] > 5)) {
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+if (($2_1 | 0) == 48) {
+break block28
+}
+$0_1 = 0;
+while (1) {
+if (($0_1 & 255) >>> 0 <= 5) {
+$2_1 = 0;
+while (1) {
+$6_1 = $2_1 << 24 >> 24;
+if (($6_1 | 0) <= 7) {
+block30 : {
+$3_1 = Math_imul($2_1, 6) + $0_1 & 255;
+$4_1 = $3_1 + $1_1 | 0;
+if (HEAPU8[$4_1 | 0] != 1) {
+break block30
+}
+$8_1 = HEAPU8[$4_1 + 48 | 0];
+if ($8_1 >>> 0 < 10) {
+break block30
+}
+if (!$15($3_1)) {
+break block30
+}
+$3_1 = $2_1;
+while (1) {
+block31 : {
+$4_1 = $3_1;
+if ($3_1 << 24 >> 24 > 6) {
+$4_1 = 7;
+break block31;
+}
+$3_1 = $4_1 + 1 << 24 >> 24;
+if ($15($12($3_1, $0_1 << 24 >> 24))) {
+continue
+}
+}
+break;
+};
+$3_1 = $0_1 << 24 >> 24;
+$5_1 = $16(10, $6_1, $3_1, 0);
+$4_1 = $4_1 << 24 >> 24;
+$10_1 = $16(10, $4_1, $3_1, 2);
+$3_1 = $16(15, $6_1, $3_1, 0) + $16(15, $4_1, $3_1, 2) & 255;
+$6_1 = $5_1 + $10_1 & 255;
+$3_1 = $3_1 >>> 0 > $6_1 >>> 0 ? 10 : $3_1 >>> 0 < $6_1 >>> 0 ? 15 : $8_1;
+while (1) {
+if (($4_1 | 0) < $2_1 << 24 >> 24) {
+break block30
+}
+$6_1 = ((Math_imul($2_1, 6) + $0_1 & 255) + $1_1 | 0) + 48 | 0;
+if (($3_1 | 0) != HEAPU8[$6_1 | 0]) {
+HEAP8[$6_1 | 0] = $3_1;
+$1_1 = HEAP32[770];
+HEAP8[$1_1 + 560 | 0] = HEAPU8[$1_1 + 560 | 0] + 1;
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+};
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+$0_1 = $0_1 + 1 | 0;
+continue;
+}
+break;
+};
+$6_1 = 0;
+$4_1 = 0;
+label18 : while (1) {
+if (($6_1 & 255) >>> 0 > 7) {
+break block28
+}
+$0_1 = 0;
+while (1) {
+block32 : {
+if (($0_1 & 255) >>> 0 <= 5) {
+$2_1 = $4_1 & 255;
+$3_1 = $2_1 + $1_1 | 0;
+if (HEAPU8[$3_1 | 0] != 1) {
+break block32
+}
+$8_1 = $3_1 + 48 | 0;
+$3_1 = HEAPU8[$8_1 | 0];
+if ($3_1 >>> 0 < 6) {
+break block32
+}
+if (!$17($2_1)) {
+break block32
+}
+if ($15($2_1)) {
+break block32
+}
+$5_1 = HEAPU8[$3_1 + 1712 | 0];
+$2_1 = 0;
+while (1) {
+if (($2_1 | 0) == 4) {
+break block32
+}
+block33 : {
+if (!($5_1 & HEAPU8[$2_1 + 1696 | 0])) {
+break block33
+}
+if (!$18($3_1, $6_1 << 24 >> 24, $0_1 << 24 >> 24, $2_1 & 255)) {
+break block33
+}
+HEAP8[$8_1 | 0] = HEAPU8[$3_1 + 1728 | 0];
+$1_1 = HEAP32[770];
+HEAP8[$1_1 + 560 | 0] = HEAPU8[$1_1 + 560 | 0] + 1;
+break block32;
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+};
+}
+$6_1 = $6_1 + 1 | 0;
+continue label18;
+}
+$4_1 = $4_1 + 1 | 0;
+$0_1 = $0_1 + 1 | 0;
+continue;
+};
+};
+}
+HEAP8[$1_1 + 378 | 0] = 2;
+break block27;
+}
+$5_1 = 0;
+$8_1 = 0;
+$4_1 = 0;
+label21 : while (1) {
+if (($4_1 & 255) >>> 0 <= 7) {
+$1_1 = 0;
+while (1) {
+block34 : {
+if (($1_1 & 255) >>> 0 <= 5) {
+$3_1 = HEAP32[770];
+$0_1 = $3_1 + ($5_1 & 255) | 0;
+$6_1 = HEAPU8[$0_1 | 0];
+if (($6_1 & 254) != 4) {
+break block34
+}
+$10_1 = $0_1 + 96 | 0;
+if (HEAPU8[$10_1 | 0] != 255) {
+break block34
+}
+$2_1 = -4;
+while (1) {
+if (!$2_1) {
+break block34
+}
+block35 : {
+$0_1 = $12(HEAPU8[$2_1 + 1704 | 0] + $4_1 << 24 >> 24, HEAPU8[$2_1 + 1708 | 0] + $1_1 << 24 >> 24);
+if (($0_1 | 0) == 255) {
+break block35
+}
+$0_1 = $0_1 + $3_1 | 0;
+if (HEAPU8[$0_1 + 96 | 0] != 255) {
+break block35
+}
+block37 : {
+block36 : {
+switch (HEAPU8[$0_1 | 0] - 1 | 0) {
+case 0:
+break block36;
+case 1:
+case 2:
+break block37;
+default:
+break block35;
+};
+}
+if (($6_1 | 0) == 5) {
+break block37
+}
+if (!(HEAPU8[$2_1 + 1712 | 0] & HEAPU8[HEAPU8[$0_1 + 48 | 0] + 1616 | 0])) {
+break block35
+}
+}
+HEAP8[$10_1 | 0] = 0;
+$8_1 = 1;
+break block34;
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+};
+}
+$4_1 = $4_1 + 1 | 0;
+continue label21;
+}
+$5_1 = $5_1 + 1 | 0;
+$1_1 = $1_1 + 1 | 0;
+continue;
+};
+}
+break;
+};
+$1_1 = HEAP32[770];
+if ($8_1 & 255) {
+HEAP8[$1_1 + 385 | 0] = 0;
+HEAP8[$1_1 + 383 | 0] = 0;
+$11(6, 0);
+HEAP8[HEAP32[770] + 378 | 0] = 3;
+break block27;
+}
+if (HEAPU8[$1_1 + 400 | 0]) {
+$2_1 = 0;
+while (1) {
+block38 : {
+if (($2_1 & 255) >>> 0 > 11) {
+$2_1 = 12;
+break block38;
+}
+$0_1 = HEAPU16[$1_1 + 392 >> 1];
+if ($0_1 >>> 0 < 200) {
+break block38
+}
+HEAP16[$1_1 + 392 >> 1] = $0_1 - 200;
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+HEAP8[$1_1 + 400 | 0] = 0;
+HEAP16[$1_1 + 392 >> 1] = 0;
+HEAP8[$1_1 + 403 | 0] = HEAPU8[$1_1 + 403 | 0] + $2_1;
+$14(HEAPU8[$1_1 + 401 | 0], HEAPU8[$1_1 + 402 | 0] + 6 & 255, 3, $2_1 & 255, 0);
+$11(10, 0);
+$1_1 = HEAP32[770];
+}
+HEAP32[$1_1 + 396 >> 2] = 0;
+block39 : {
+$5_1 = HEAPU8[$1_1 + 404 | 0];
+if (!$5_1) {
+break block39
+}
+$2_1 = 0;
+while (1) {
+if (($2_1 | 0) != 6) {
+HEAP8[($12_1 + 10 | 0) + $2_1 | 0] = 0;
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+HEAP8[$1_1 + 404 | 0] = 0;
+$6_1 = 0;
+$3_1 = 0;
+while (1) {
+if (!(!($5_1 & 255) | ($3_1 & 255) >>> 0 > 47)) {
+$4_1 = HEAP32[770];
+$0_1 = HEAPU8[$4_1 + 405 | 0];
+HEAP8[$4_1 + 405 | 0] = ($0_1 + 1 >>> 0) % 6;
+$2_1 = 7;
+block40 : {
+while (1) {
+if ($2_1 << 24 >> 24 < 0) {
+break block40
+}
+$1_1 = $0_1 + Math_imul($2_1, 6) & 255;
+if (HEAPU8[$1_1 + $4_1 | 0]) {
+$2_1 = $2_1 - 1 | 0;
+continue;
+}
+break;
+};
+$10($1_1);
+HEAP8[$1_1 + HEAP32[770] | 0] = 6;
+$4_1 = $0_1 + ($12_1 + 10 | 0) | 0;
+$0_1 = HEAPU8[$4_1 | 0];
+HEAP8[$4_1 | 0] = $0_1 + 1;
+HEAP8[($1_1 + HEAP32[770] | 0) + 144 | 0] = ($0_1 + $2_1 << 4) + 32;
+$6_1 = $6_1 + 1 | 0;
+$5_1 = $5_1 - 1 | 0;
+}
+$3_1 = $3_1 + 1 | 0;
+continue;
+}
+break;
+};
+$0_1 = $6_1 & 255;
+if (!$0_1) {
+break block39
+}
+$14(56, 32, 4, $0_1, 0);
+$11(11, 0);
+$0_1 = HEAP32[770];
+HEAP8[$0_1 + 386 | 0] = 6;
+HEAP8[$0_1 + 378 | 0] = 2;
+break block27;
+}
+$19();
+}
+$2_1 = 432;
+$0_1 = 0;
+while (1) {
+$3_1 = $2_1 - 432 | 0;
+$1_1 = HEAP32[770];
+if ($3_1 >>> 0 < HEAPU8[$1_1 + 407 | 0]) {
+$4_1 = $1_1 + $2_1 | 0;
+$1_1 = HEAPU8[$4_1 | 0] + 1 | 0;
+HEAP8[$4_1 | 0] = $1_1;
+if (($1_1 & 255) >>> 0 <= 19) {
+$1_1 = $0_1 & 255;
+if (($1_1 | 0) != ($3_1 | 0)) {
+$3_1 = HEAP32[770];
+HEAP8[($3_1 + $1_1 | 0) + 408 | 0] = HEAPU8[($2_1 + $3_1 | 0) - 24 | 0];
+$3_1 = HEAP32[770];
+HEAP8[($3_1 + $1_1 | 0) + 420 | 0] = HEAPU8[($2_1 + $3_1 | 0) - 12 | 0];
+$3_1 = $1_1;
+$1_1 = HEAP32[770];
+HEAP8[($3_1 + $1_1 | 0) + 432 | 0] = HEAPU8[$1_1 + $2_1 | 0];
+}
+$0_1 = $0_1 + 1 | 0;
+}
+$2_1 = $2_1 + 1 | 0;
+continue;
+}
+break;
+};
+HEAP8[$1_1 + 407 | 0] = $0_1;
+$0_1 = 494;
+$2_1 = 0;
+$4_1 = 0;
+while (1) {
+if ($2_1 >>> 0 < HEAPU8[$1_1 + 444 | 0]) {
+$3_1 = ($1_1 + $2_1 | 0) + 469 | 0;
+$1_1 = HEAPU8[$3_1 | 0] + 1 | 0;
+HEAP8[$3_1 | 0] = $1_1;
+if (($1_1 & 255) >>> 0 <= 59) {
+$1_1 = $4_1 & 255;
+if (($1_1 | 0) != ($2_1 | 0)) {
+$3_1 = HEAP32[770];
+HEAP8[($3_1 + $1_1 | 0) + 445 | 0] = HEAPU8[($2_1 + $3_1 | 0) + 445 | 0];
+$3_1 = HEAP32[770];
+HEAP8[($3_1 + $1_1 | 0) + 457 | 0] = HEAPU8[($2_1 + $3_1 | 0) + 457 | 0];
+$3_1 = HEAP32[770];
+HEAP8[($3_1 + $1_1 | 0) + 469 | 0] = HEAPU8[($2_1 + $3_1 | 0) + 469 | 0];
+$3_1 = HEAP32[770];
+HEAP8[($3_1 + $1_1 | 0) + 481 | 0] = HEAPU8[($2_1 + $3_1 | 0) + 481 | 0];
+$3_1 = $1_1 << 1;
+$1_1 = HEAP32[770];
+$3_1 = $3_1 + $1_1 | 0;
+$1_1 = $0_1 + $1_1 | 0;
+HEAP16[$3_1 + 494 >> 1] = HEAPU16[$1_1 >> 1];
+HEAP16[$3_1 + 518 >> 1] = HEAPU16[$1_1 + 24 >> 1];
+}
+$4_1 = $4_1 + 1 | 0;
+}
+$0_1 = $0_1 + 2 | 0;
+$2_1 = $2_1 + 1 | 0;
+$1_1 = HEAP32[770];
+continue;
+}
+break;
+};
+HEAP8[$1_1 + 444 | 0] = $4_1;
+$0_1 = HEAPU8[$1_1 + 386 | 0];
+if (!$0_1) {
+break block
+}
+HEAP8[$1_1 + 386 | 0] = $0_1 - 1;
+}
+global$0 = $12_1 + 16 | 0;
+}
+function $7($0_1) {
+var $1_1 = 0;
+$1_1 = HEAP32[770];
+if (HEAPU8[$1_1 + 336 | 0] == 1) {
+HEAP8[$1_1 + 337 | 0] = HEAPU8[HEAPU8[$1_1 + 337 | 0] + (($0_1 | 0) > 0 ? 1632 : 1664) | 0];
+$11(2, 0);
+}
+}
+function $8($0_1) {
+var $1_1 = 0;
+$1_1 = $0_1;
+$0_1 = HEAP32[770];
+$1_1 = $1_1 + HEAPU8[$0_1 + 338 | 0] << 24 >> 24;
+if ($9($1_1, HEAPU8[$0_1 + 339 | 0])) {
+HEAP8[$0_1 + 338 | 0] = $1_1;
+$11(1, 0);
+}
+}
+function $9($0_1, $1_1) {
+var $2_1 = 0, $3_1 = 0, $4_1 = 0, $5_1 = 0;
+block : {
+if ($0_1 >>> 0 > 5 | $1_1 >>> 0 > 128) {
+break block
+}
+$4_1 = $1_1 + 15 | 0;
+block2 : {
+block4 : {
+block3 : {
+block1 : {
+if ($1_1 >>> 0 >= 16) {
+$2_1 = HEAP32[770];
+$3_1 = $0_1 - 6 | 0;
+if (!HEAPU8[$2_1 + ($3_1 + Math_imul($1_1 >>> 4 | 0, 6) & 255) | 0]) {
+break block1
+}
+break block2;
+}
+$2_1 = HEAP32[770];
+if (($4_1 & 255) >>> 0 < 16) {
+break block3
+}
+$3_1 = $0_1 - 6 | 0;
+}
+if (HEAPU8[(Math_imul(($4_1 & 240) >>> 4 | 0, 6) + $3_1 & 255) + $2_1 | 0]) {
+break block
+}
+if ($1_1 >>> 0 > 15) {
+break block4
+}
+}
+if (HEAPU8[$0_1 + $2_1 | 0]) {
+break block2
+}
+}
+$5_1 = 1;
+}
+return $5_1;
+}
+return 0;
+}
+function $10($0_1) {
+HEAP8[HEAP32[770] + $0_1 | 0] = 0;
+HEAP8[(HEAP32[770] + $0_1 | 0) + 48 | 0] = 0;
+HEAP8[(HEAP32[770] + $0_1 | 0) + 96 | 0] = 255;
+HEAP8[(HEAP32[770] + $0_1 | 0) + 144 | 0] = 0;
+HEAP8[(HEAP32[770] + $0_1 | 0) + 192 | 0] = 0;
+HEAP8[(HEAP32[770] + $0_1 | 0) + 240 | 0] = 0;
+HEAP8[(HEAP32[770] + $0_1 | 0) + 288 | 0] = 0;
+}
+function $11($0_1, $1_1) {
+var $2_1 = 0, $3_1 = 0;
+$2_1 = HEAP32[770];
+$3_1 = HEAPU8[$2_1 + 542 | 0];
+if ($3_1 >>> 0 <= 7) {
+HEAP8[($2_1 + $3_1 | 0) + 543 | 0] = $0_1;
+$0_1 = HEAP32[770];
+HEAP8[(HEAPU8[$0_1 + 542 | 0] + $0_1 | 0) + 551 | 0] = $1_1;
+$0_1 = HEAP32[770];
+HEAP8[$0_1 + 542 | 0] = HEAPU8[$0_1 + 542 | 0] + 1;
+}
+}
+function $12($0_1, $1_1) {
+var $2_1 = 0;
+$2_1 = 255;
+block : {
+if ($0_1 >>> 0 > 7) {
+break block
+}
+$2_1 = 255;
+if ($1_1 >>> 0 > 5) {
+break block
+}
+$0_1 = Math_imul($0_1, 6) + $1_1 | 0;
+$2_1 = HEAPU8[HEAP32[770] + ($0_1 & 255) | 0] ? $0_1 : -1;
+}
+return $2_1 & 255;
+}
+function $13($0_1) {
+var $1_1 = 0, $2_1 = 0;
+$1_1 = HEAP32[770];
+$2_1 = HEAP32[$1_1 + 368 >> 2] + $0_1 | 0;
+HEAP32[$1_1 + 368 >> 2] = $2_1 >>> 0 >= 999999 ? 999999 : $2_1;
+if (HEAPU8[$1_1 + 390 | 0]) {
+HEAP32[$1_1 + 396 >> 2] = HEAP32[$1_1 + 396 >> 2] + $0_1;
+$0_1 = HEAPU16[$1_1 + 392 >> 1] + ($0_1 << (HEAPU8[$1_1 + 400 | 0] != 0)) | 0;
+HEAP16[$1_1 + 392 >> 1] = $0_1 >>> 0 >= 2400 ? 2400 : $0_1;
+}
+}
+function $14($0_1, $1_1, $2_1, $3_1, $4_1) {
+var $5_1 = 0, $6_1 = 0;
+$6_1 = HEAP32[770];
+$5_1 = HEAPU8[$6_1 + 444 | 0];
+if (($5_1 | 0) == 12) {
+HEAP8[$6_1 + 559 | 0] = HEAPU8[$6_1 + 559 | 0] + 1;
+return;
+}
+HEAP8[($5_1 + $6_1 | 0) + 445 | 0] = $0_1;
+HEAP8[(HEAP32[770] + $5_1 | 0) + 457 | 0] = $1_1;
+HEAP8[(HEAP32[770] + $5_1 | 0) + 469 | 0] = 0;
+HEAP8[(HEAP32[770] + $5_1 | 0) + 481 | 0] = $2_1;
+$0_1 = HEAP32[770];
+$1_1 = $0_1 + ($5_1 << 1) | 0;
+HEAP16[$1_1 + 494 >> 1] = $3_1;
+HEAP16[$1_1 + 518 >> 1] = $4_1;
+HEAP8[$0_1 + 444 | 0] = HEAPU8[$0_1 + 444 | 0] + 1;
+}
+function $15($0_1) {
+if (!$17($0_1)) {
+return 0
+}
+$0_1 = HEAPU8[(HEAP32[770] + $0_1 | 0) + 48 | 0];
+return ($0_1 | 0) == 10 | ($0_1 | 0) == 15;
+}
+function $16($0_1, $1_1, $2_1, $3_1) {
+var $4_1 = 0;
+$4_1 = $12(HEAPU8[$3_1 + 1700 | 0] + $1_1 << 24 >> 24, HEAPU8[$3_1 + 1704 | 0] + $2_1 << 24 >> 24);
+if (!$18($0_1, $1_1, $2_1, $3_1)) {
+return 0
+}
+if (!$17($4_1)) {
+return 1
+}
+return !(HEAPU8[$3_1 + 1708 | 0] & HEAPU8[HEAPU8[(HEAP32[770] + $4_1 | 0) + 48 | 0] + 1712 | 0]);
+}
+function $17($0_1) {
+var $1_1 = 0;
+block : {
+if (($0_1 | 0) == 255) {
+break block
+}
+$0_1 = HEAP32[770] + $0_1 | 0;
+if (HEAPU8[$0_1 | 0] != 1 | HEAPU8[$0_1 + 96 | 0] != 255) {
+break block
+}
+$1_1 = HEAPU8[$0_1 + 48 | 0] - 6 >>> 0 < 10;
+}
+return $1_1;
+}
+function $18($0_1, $1_1, $2_1, $3_1) {
+var $4_1 = 0;
+block : {
+if (!(HEAPU8[$3_1 + 1696 | 0] & HEAPU8[$0_1 + 1616 | 0])) {
+break block
+}
+$1_1 = $12(HEAPU8[$3_1 + 1700 | 0] + $1_1 << 24 >> 24, HEAPU8[$3_1 + 1704 | 0] + $2_1 << 24 >> 24);
+if (($1_1 | 0) == 255) {
+break block
+}
+$1_1 = $1_1 + HEAP32[770] | 0;
+if (HEAPU8[$1_1 | 0] != 1) {
+break block
+}
+$1_1 = HEAPU8[$1_1 + 48 | 0];
+if (!(HEAPU8[$3_1 + 1708 | 0] & HEAPU8[$1_1 + 1616 | 0])) {
+break block
+}
+$4_1 = HEAPU8[(($0_1 << 2) + $3_1 | 0) + 1744 | 0] == HEAPU8[(HEAPU8[$3_1 + 1808 | 0] + ($1_1 << 2) | 0) + 1744 | 0];
+}
+return $4_1;
+}
+function $19() {
+var $0_1 = 0;
+$0_1 = HEAP32[770];
+if (HEAPU8[$0_1 + 2 | 0]) {
+HEAP8[$0_1 + 336 | 0] = 0;
+HEAP8[$0_1 + 379 | 0] = 1;
+return;
+}
+HEAP16[$0_1 + 336 >> 1] = HEAPU8[$0_1 + 341 | 0] | HEAPU8[$0_1 + 342 | 0] << 8;
+$21();
+$0_1 = HEAP32[770];
+HEAP16[$0_1 + 338 >> 1] = 2;
+HEAP16[$0_1 + 388 >> 1] = 0;
+HEAP8[$0_1 + 380 | 0] = 0;
+HEAP8[$0_1 + 387 | 0] = 0;
+HEAP8[$0_1 + 381 | 0] = 0;
+HEAP8[$0_1 + 382 | 0] = 0;
+HEAP8[$0_1 + 378 | 0] = 0;
+HEAP8[$0_1 + 340 | 0] = HEAPU8[$0_1 + 340 | 0] + 1;
+}
+function $20($0_1, $1_1) {
+$0_1 = $0_1 | 0;
+$1_1 = $1_1 | 0;
+var $2_1 = 0, $3_1 = 0;
+$2_1 = HEAP32[770];
+while (1) {
+if (($3_1 | 0) == 612) {
+$3_1 = 96;
+while (1) {
+$2_1 = HEAP32[770];
+if (($3_1 | 0) != 144) {
+HEAP8[$2_1 + $3_1 | 0] = 255;
+$3_1 = $3_1 + 1 | 0;
+continue;
+}
+break;
+};
+HEAP8[$2_1 + 378 | 0] = 0;
+HEAP8[$2_1 + 374 | 0] = 1;
+HEAP8[$2_1 + 390 | 0] = $1_1;
+HEAP8[$2_1 + 405 | 0] = ($0_1 >>> 0) % 6;
+HEAP16[$2_1 + 344 >> 1] = $0_1 ? Math_imul($0_1, -25033) : 1;
+$21();
+$19();
+} else {
+HEAP8[$2_1 + $3_1 | 0] = 0;
+$3_1 = $3_1 + 1 | 0;
+continue;
+}
+break;
+};
+}
+function $21() {
+var $0_1 = 0, $1_1 = 0, $2_1 = 0, $3_1 = 0, $4_1 = 0;
+$1_1 = 255;
+$0_1 = HEAP32[770];
+$2_1 = HEAPU8[$0_1 + 363 | 0];
+if (($2_1 | 0) != 255) {
+$1_1 = $2_1 + 1 | 0;
+HEAP8[$0_1 + 363 | 0] = $1_1;
+}
+$2_1 = HEAPU8[$0_1 + 364 | 0];
+if (($2_1 | 0) == 255) {
+$2_1 = 1
+} else {
+HEAP8[$0_1 + 364 | 0] = $2_1 + 1;
+$2_1 = $2_1 >>> 0 > 11;
+}
+$3_1 = HEAPU8[$0_1 + 365 | 0];
+if (($3_1 | 0) != 255) {
+HEAP8[$0_1 + 365 | 0] = $3_1 + 1
+}
+HEAP8[$0_1 + 342 | 0] = 0;
+block2 : {
+block1 : {
+block : {
+if (($1_1 & 255) >>> 0 < 7) {
+break block
+}
+if ($2_1) {
+$1_1 = $22(16);
+$0_1 = HEAP32[770];
+if (!$1_1) {
+break block1
+}
+$1_1 = HEAPU8[$0_1 + 363 | 0];
+}
+if (($1_1 & 255) >>> 0 < 9 | HEAPU8[$0_1 + 365 | 0] < 13) {
+break block
+}
+$1_1 = $22(12);
+$0_1 = HEAP32[770];
+if ($1_1) {
+break block
+}
+HEAP8[$0_1 + 341 | 0] = 5;
+HEAP8[$0_1 + 365 | 0] = 0;
+return;
+}
+$1_1 = HEAPU8[$0_1 + 362 | 0];
+if ($1_1) {
+break block2
+}
+$1_1 = HEAPU8[$0_1 + 390 | 0] ? 16 : 15;
+HEAP8[$0_1 + 362 | 0] = $1_1;
+$2_1 = 0;
+while (1) if (($1_1 & 255) >>> 0 <= $2_1 >>> 0) {
+while (1) {
+$2_1 = $1_1 - 1 | 0;
+$0_1 = $2_1 & 255;
+if ($0_1) {
+$1_1 = $22($1_1 & 255);
+$3_1 = $0_1;
+$0_1 = HEAP32[770] + 346 | 0;
+$3_1 = $3_1 + $0_1 | 0;
+$4_1 = HEAPU8[$3_1 | 0];
+HEAP8[$3_1 | 0] = HEAPU8[$0_1 + $1_1 | 0];
+HEAP8[($1_1 + HEAP32[770] | 0) + 346 | 0] = $4_1;
+$1_1 = $2_1;
+continue;
+}
+break;
+};
+$0_1 = HEAP32[770];
+$1_1 = HEAPU8[$0_1 + 362 | 0];
+break block2;
+} else {
+HEAP8[($0_1 + $2_1 | 0) + 346 | 0] = HEAPU8[$2_1 + 1824 | 0];
+$2_1 = $2_1 + 1 | 0;
+$0_1 = HEAP32[770];
+$1_1 = HEAPU8[$0_1 + 362 | 0];
+continue;
+};
+}
+HEAP8[$0_1 + 341 | 0] = 6;
+HEAP8[$0_1 + 364 | 0] = 0;
+return;
+}
+$1_1 = $1_1 - 1 | 0;
+HEAP8[$0_1 + 362 | 0] = $1_1;
+block11 : {
+block5 : {
+block10 : {
+block8 : {
+block6 : {
+block4 : {
+block9 : {
+block3 : {
+block7 : {
+$1_1 = HEAPU8[(($1_1 & 255) + $0_1 | 0) + 346 | 0];
+switch ($1_1 - 83 | 0) {
+case 0:
+break block3;
+case 1:
+break block4;
+case 2:
+case 3:
+case 4:
+break block5;
+case 5:
+break block6;
+default:
+break block7;
+};
+}
+switch ($1_1 - 66 | 0) {
+case 0:
+break block8;
+case 1:
+break block9;
+default:
+break block10;
+};
+}
+HEAP8[$0_1 + 341 | 0] = 1;
+$1_1 = $22(2);
+HEAP8[HEAP32[770] + 342 | 0] = $1_1;
+return;
+}
+HEAP8[$0_1 + 341 | 0] = 1;
+$1_1 = $22(4);
+HEAP8[HEAP32[770] + 342 | 0] = $1_1 + 2;
+return;
+}
+HEAP8[$0_1 + 341 | 0] = 1;
+$1_1 = $22(4);
+HEAP8[HEAP32[770] + 342 | 0] = $1_1 + 6;
+return;
+}
+HEAP8[$0_1 + 341 | 0] = 1;
+HEAP8[$0_1 + 342 | 0] = 10;
+return;
+}
+HEAP8[$0_1 + 341 | 0] = 2;
+return;
+}
+if (($1_1 | 0) == 75) {
+break block11
+}
+}
+HEAP8[$0_1 + 341 | 0] = 4;
+return;
+}
+HEAP8[$0_1 + 341 | 0] = 3;
+}
+function $22($0_1) {
+var $1_1 = 0, $2_1 = 0, $3_1 = 0;
+$2_1 = HEAP32[770];
+$1_1 = HEAPU16[$2_1 + 344 >> 1];
+$1_1 = $1_1 << 7 ^ $1_1;
+$1_1 = ($1_1 & 65024) >>> 9 ^ $1_1;
+$3_1 = $1_1 << 8 ^ $1_1;
+HEAP16[$2_1 + 344 >> 1] = $3_1;
+$2_1 = $0_1 - 1 | 0;
+block : {
+if (!($2_1 & $0_1)) {
+$0_1 = $1_1 & $2_1;
+break block;
+}
+$0_1 = (($3_1 & 65535) >>> 0) % ($0_1 >>> 0) | 0;
+}
+return $0_1 & 255;
+}
+function $23($0_1) {
+$0_1 = $0_1 | 0;
+var $1_1 = 0;
+$1_1 = HEAP32[770];
+HEAP8[$1_1 + 404 | 0] = HEAPU8[$1_1 + 404 | 0] + $0_1;
+}
+function $24() {
+var $0_1 = 0, $1_1 = 0;
+$0_1 = HEAP32[770];
+$1_1 = HEAPU8[$0_1 + 403 | 0];
+HEAP8[$0_1 + 403 | 0] = 0;
+return $1_1 | 0;
+}
+function $25($0_1) {
+$0_1 = $0_1 | 0;
+HEAP8[3140] = 12;
+$0_1 = Math_imul($0_1, 31) + 7 & 65535;
+HEAP16[1568] = $0_1 >>> 0 <= 1 ? 1 : $0_1;
+HEAP8[3138] = 0;
+HEAP8[3139] = 0;
+}
+function $26() {
+var $0_1 = 0, $1_1 = 0, $2_1 = 0, $3_1 = 0, $4_1 = 0, $5_1 = 0, $6_1 = 0, $7_1 = 0, $8_1 = 0, $9_1 = 0, $10_1 = 0, $11_1 = 0, $12_1 = 0, $13_1 = 0, $14_1 = 0, $15_1 = 0, $16_1 = 0, $17_1 = 0, $18_1 = 0, $19_1 = 0, $20_1 = 0, $21_1 = 0, $22_1 = 0;
+block1 : {
+$3_1 = HEAP32[770];
+block : {
+if (HEAPU8[$3_1 + 378 | 0]) {
+break block
+}
+$9_1 = HEAPU8[$3_1 + 336 | 0];
+if (!$9_1) {
+break block
+}
+if (!HEAPU8[$3_1 + 379 | 0]) {
+break block1
+}
+}
+HEAP8[3138] = 0;
+return 0;
+}
+block7 : {
+block6 : {
+block5 : {
+block3 : {
+block2 : {
+if (!HEAPU8[3138]) {
+$1_1 = HEAPU8[$3_1 + 340 | 0];
+break block2;
+}
+$1_1 = HEAPU8[$3_1 + 340 | 0];
+if (($1_1 | 0) == HEAPU8[3141]) {
+break block3
+}
+}
+HEAP8[3141] = $1_1;
+HEAP8[3138] = 1;
+HEAP8[3146] = 255;
+$0_1 = HEAPU8[$3_1 + 374 | 0];
+HEAP8[3139] = $0_1 >>> 0 >= 19 ? 20 : 57 - ($0_1 << 1) | 0;
+HEAP8[3140] = $0_1 >>> 0 >= 32 ? 8 : 12 - ($0_1 >>> 3 | 0) | 0;
+HEAP8[3142] = 0;
+HEAP8[3143] = 0;
+HEAP8[3144] = 0;
+HEAP8[3145] = 0;
+HEAP8[3147] = 0;
+HEAP8[3148] = 0;
+HEAP8[3149] = 0;
+$0_1 = $3_1;
+while (1) {
+if (($5_1 | 0) != 6) {
+$1_1 = 0;
+$4_1 = $0_1;
+$7_1 = $5_1 + 3150 | 0;
+block4 : {
+while (1) {
+$2_1 = 8;
+if (($1_1 | 0) == 8) {
+break block4
+}
+if (!HEAPU8[$4_1 | 0]) {
+$4_1 = $4_1 + 6 | 0;
+$1_1 = $1_1 + 1 | 0;
+continue;
+}
+break;
+};
+$2_1 = $1_1;
+}
+HEAP8[$7_1 | 0] = $2_1;
+$2_1 = 8 - ($2_1 & 255) | 0;
+if (($2_1 | 0) > ($8_1 & 255)) {
+HEAP8[3148] = $2_1;
+$8_1 = $2_1;
+}
+$0_1 = $0_1 + 1 | 0;
+$5_1 = $5_1 + 1 | 0;
+continue;
+}
+break;
+};
+$1_1 = 0;
+$4_1 = 0;
+while (1) {
+if (($1_1 | 0) != 48) {
+if ((HEAPU8[$1_1 + $3_1 | 0] & 254) == 4) {
+$0_1 = $4_1 + 1 | 0;
+HEAP8[3149] = $0_1;
+HEAP8[($4_1 & 255) + 3168 | 0] = $1_1;
+$4_1 = $0_1;
+}
+$1_1 = $1_1 + 1 | 0;
+continue;
+}
+break;
+};
+if (($9_1 | 0) != 1) {
+break block5
+}
+$1_1 = 0;
+$0_1 = HEAPU8[$3_1 + 337 | 0];
+$4_1 = $0_1;
+while (1) {
+HEAP8[($1_1 & 255) + 3217 | 0] = $4_1;
+$1_1 = $1_1 + 1 | 0;
+$4_1 = HEAPU8[($4_1 & 255) + 1632 | 0];
+if (($0_1 | 0) != ($4_1 | 0)) {
+continue
+}
+break;
+};
+HEAP8[3216] = $1_1;
+break block6;
+}
+if (!HEAPU8[3144]) {
+break block6
+}
+$0_1 = HEAPU8[3139];
+if ($0_1) {
+HEAP8[3139] = $0_1 - 1;
+return 0;
+}
+HEAP8[3139] = HEAPU8[3140];
+if (($9_1 | 0) == 1) {
+$19_1 = 16;
+if (HEAPU8[$3_1 + 337 | 0] != HEAPU8[3225]) {
+break block7
+}
+}
+$19_1 = 4;
+$3_1 = HEAPU8[$3_1 + 338 | 0];
+$2_1 = HEAPU8[3224];
+if (($3_1 | 0) == ($2_1 | 0)) {
+break block7
+}
+if (($3_1 | 0) == HEAPU8[3146]) {
+$0_1 = HEAPU8[3147] + 1 | 0;
+HEAP8[3147] = $0_1;
+if (($0_1 & 255) >>> 0 > 1) {
+break block7
+}
+}
+HEAP8[3146] = $3_1;
+$19_1 = $2_1 >>> 0 > $3_1 >>> 0 ? 2 : 1;
+break block7;
+}
+HEAP8[3216] = 1;
+HEAP8[3217] = 0;
+}
+while (1) {
+if ($16_1 & 1 | ($21_1 & 255) >>> 0 > 1) {
+break block7
+}
+$8_1 = HEAPU8[3143];
+$0_1 = $8_1 + 1 | 0;
+HEAP8[3143] = $0_1;
+$6_1 = HEAPU8[3142];
+$16_1 = 0;
+block8 : {
+if (HEAPU8[3216] != ($0_1 & 255)) {
+break block8
+}
+$0_1 = $6_1 + 1 | 0;
+HEAP8[3142] = $0_1;
+HEAP8[3143] = 0;
+$16_1 = 0;
+if (($0_1 & 255) != 6) {
+break block8
+}
+HEAP8[3144] = 1;
+$16_1 = 1;
+}
+block11 : {
+block9 : {
+$5_1 = HEAP32[770];
+$2_1 = HEAPU8[$5_1 + 338 | 0];
+if (($2_1 | 0) == ($6_1 | 0)) {
+break block9
+}
+$0_1 = Math_imul(HEAPU8[HEAP32[770] + 374 | 0], 18);
+$5_1 = HEAP32[770];
+$4_1 = (Math_imul(($0_1 >>> 0 >= 453 ? 453 : $0_1) + 59 | 0, HEAPU8[3139] + Math_imul(HEAPU8[3140] + 1 | 0, $8_1 + (($2_1 >>> 0 < $6_1 >>> 0 ? $6_1 - $2_1 | 0 : $2_1 - $6_1 | 0) & 255) | 0) | 0) >>> 12) + ((HEAPU8[$5_1 + 339 | 0] + 15 & 240) >>> 4) << 16 >> 16;
+$10_1 = HEAPU8[$5_1 + 338 | 0];
+$2_1 = $6_1 >>> 0 < $10_1 >>> 0 ? $10_1 : $6_1;
+$3_1 = $6_1 >>> 0 > $10_1 >>> 0 ? $10_1 : $6_1;
+$16_1 = HEAPU8[3144];
+while (1) {
+$0_1 = $3_1 & 255;
+if ($0_1 >>> 0 > $2_1 >>> 0) {
+break block9
+}
+block10 : {
+if (($0_1 | 0) == ($10_1 | 0)) {
+break block10
+}
+$1_1 = 0;
+while (1) {
+if (($1_1 | 0) > ($4_1 | 0) | $1_1 >>> 0 > 7) {
+break block10
+}
+$0_1 = Math_imul($1_1, 6);
+$1_1 = $1_1 + 1 | 0;
+if (!HEAPU8[($0_1 + $3_1 & 255) + $5_1 | 0]) {
+continue
+}
+break;
+};
+break block11;
+}
+$3_1 = $3_1 + 1 | 0;
+continue;
+};
+}
+$20_1 = HEAPU8[$8_1 + 3217 | 0];
+$12_1 = HEAPU8[$6_1 + 3150 | 0] - 1 | 0;
+block12 : {
+if ($12_1 << 24 >> 24 < 0) {
+$2_1 = 55537;
+break block12;
+}
+$22_1 = HEAPU8[3148];
+$8_1 = Math_imul($12_1, 6) + $6_1 | 0;
+$10_1 = $8_1 & 255;
+$17_1 = HEAPU8[$5_1 + 336 | 0];
+HEAP8[$10_1 + $5_1 | 0] = $17_1;
+HEAP8[($10_1 + HEAP32[770] | 0) + 48 | 0] = ($17_1 | 0) == 1 ? $20_1 : 0;
+$0_1 = HEAPU16[1568];
+$0_1 = $0_1 << 7 ^ $0_1;
+$0_1 = ($0_1 & 65024) >>> 9 ^ $0_1;
+$0_1 = $0_1 << 8 ^ $0_1;
+HEAP16[1568] = $0_1;
+$2_1 = $12_1 & 255;
+$2_1 = (($6_1 | 0) == 2 ? ($2_1 >>> 0 < 3 ? Math_imul(3 - $2_1 | 0, -150) : 0) : 0) + Math_imul(7 - $2_1 | 0, -6) + (($0_1 & 65535) >>> 0) % 24 | 0;
+block17 : {
+block13 : {
+$14_1 = HEAPU8[3149];
+$13_1 = HEAP32[770];
+$18_1 = $10_1 + $13_1 | 0;
+if (!$14_1 & (HEAPU8[$18_1 | 0] & 254) != 4) {
+break block13
+}
+$5_1 = 0;
+$15_1 = 0;
+while (1) {
+block15 : {
+block14 : {
+$0_1 = $15_1 & 255;
+if ($0_1 >>> 0 <= $14_1 >>> 0) {
+if (($0_1 | 0) != ($14_1 | 0)) {
+break block14
+}
+$3_1 = $10_1;
+$4_1 = HEAPU8[$18_1 | 0];
+$0_1 = $8_1;
+if (($4_1 & 254) == 4) {
+break block15
+}
+}
+if (!($5_1 & 255)) {
+break block13
+}
+$4_1 = 0;
+$0_1 = 0;
+$8_1 = 0;
+label6 : while (1) {
+if ($5_1 & 255) {
+$5_1 = $5_1 - 1 | 0;
+$11_1 = HEAPU8[($5_1 & 255) + 3280 | 0];
+$18_1 = (($11_1 >>> 0 <= 5 ? 5 : $11_1) >>> 0) / 6 | 0;
+$9_1 = Math_imul($18_1, -6);
+$3_1 = 15;
+$1_1 = $11_1 + $13_1 | 0;
+$7_1 = HEAPU8[$1_1 | 0];
+if (($7_1 & 254) != 4) {
+$3_1 = HEAPU8[HEAPU8[$1_1 + 48 | 0] + 1616 | 0]
+}
+$11_1 = $9_1 + $11_1 | 0;
+$1_1 = -4;
+while (1) {
+if (!$1_1) {
+continue label6
+}
+block16 : {
+if (!(HEAPU8[$1_1 + 1856 | 0] & $3_1)) {
+break block16
+}
+$12_1 = $12($18_1 + HEAPU8[$1_1 + 1844 | 0] << 24 >> 24, $11_1 + HEAPU8[$1_1 + 1848 | 0] << 24 >> 24);
+if (($12_1 | 0) == 255) {
+break block16
+}
+$15_1 = $12_1 + 3232 | 0;
+if (HEAPU8[$15_1 | 0]) {
+break block16
+}
+$9_1 = $12_1 + $13_1 | 0;
+$14_1 = HEAPU8[$9_1 | 0];
+if (($14_1 | 0) == 1) {
+if (($7_1 | 0) != 5) {
+if (!(HEAPU8[$1_1 + 1852 | 0] & HEAPU8[HEAPU8[$9_1 + 48 | 0] + 1616 | 0])) {
+break block16
+}
+}
+HEAP8[$15_1 | 0] = 1;
+HEAP8[($5_1 & 255) + 3280 | 0] = $12_1;
+$5_1 = $5_1 + 1 | 0;
+$4_1 = $4_1 + 1 | 0;
+break block16;
+}
+if (($14_1 & 254) != 2) {
+break block16
+}
+HEAP8[$15_1 | 0] = 1;
+if (($14_1 | 0) == 3) {
+$0_1 = $0_1 + 1 | 0;
+break block16;
+}
+$8_1 = $8_1 + 1 | 0;
+}
+$1_1 = $1_1 + 1 | 0;
+continue;
+};
+}
+break;
+};
+$3_1 = $0_1 & 255;
+$0_1 = $3_1 + ($8_1 & 255) | 0;
+if ($0_1) {
+$0_1 = Math_imul(Math_imul($0_1, $4_1 & 255), 45) + 30 | 0;
+$2_1 = ($0_1 + ($3_1 ? (HEAPU16[$13_1 + 392 >> 1] >>> 2 | 0) + 80 | 0 : 0) | 0) + $2_1 | 0;
+break block17;
+}
+$2_1 = (($22_1 >>> 0 <= 4 ? -50 : Math_imul($22_1, 25) - 150 | 0) + $2_1 | 0) + Math_imul($4_1 & 255, 10) | 0;
+break block17;
+}
+$3_1 = HEAPU8[$0_1 + 3168 | 0];
+$4_1 = HEAPU8[$13_1 + $3_1 | 0];
+$0_1 = $3_1;
+}
+$1_1 = $0_1 & 255;
+$7_1 = (($1_1 >>> 0 <= 5 ? 5 : $1_1) >>> 0) / 6 | 0;
+$11_1 = Math_imul($7_1, -6) + $0_1 | 0;
+$1_1 = -4;
+$9_1 = ($4_1 & 255) == 5;
+block18 : {
+while (1) {
+if (!$1_1) {
+break block18
+}
+block21 : {
+$4_1 = $12($7_1 + HEAPU8[$1_1 + 1844 | 0] << 24 >> 24, $11_1 + HEAPU8[$1_1 + 1848 | 0] << 24 >> 24);
+block19 : {
+if (($4_1 | 0) == 255) {
+break block19
+}
+block20 : {
+$4_1 = $4_1 + $13_1 | 0;
+switch (HEAPU8[$4_1 | 0] - 1 | 0) {
+case 0:
+break block20;
+case 1:
+case 2:
+break block21;
+default:
+break block19;
+};
+}
+if (HEAPU8[$1_1 + 1852 | 0] & HEAPU8[HEAPU8[$4_1 + 48 | 0] + 1616 | 0] | $9_1) {
+break block21
+}
+}
+$1_1 = $1_1 + 1 | 0;
+continue;
+}
+break;
+};
+block22 : {
+$4_1 = $5_1 & 255;
+if ($4_1) {
+break block22
+}
+$1_1 = -48;
+while (1) {
+if (!$1_1) {
+break block22
+}
+HEAP8[$1_1 + 3280 | 0] = 0;
+$1_1 = $1_1 + 1 | 0;
+continue;
+};
+}
+HEAP8[$3_1 + 3232 | 0] = 1;
+HEAP8[$4_1 + 3280 | 0] = $0_1;
+$5_1 = $5_1 + 1 | 0;
+}
+$15_1 = $15_1 + 1 | 0;
+continue;
+};
+}
+$1_1 = -4;
+$9_1 = $20_1 + 1616 | 0;
+$8_1 = ($17_1 & 254) != 2;
+while (1) {
+if ($1_1) {
+$5_1 = 0;
+$3_1 = 0;
+$0_1 = $12_1 + HEAPU8[$1_1 + 1844 | 0] | 0;
+$11_1 = HEAPU8[$1_1 + 1848 | 0] + $6_1 << 24 >> 24;
+$4_1 = ($0_1 & 255) >>> 0 < 8 & ($11_1 | 0) >= 0 & ($11_1 | 0) < 6;
+$7_1 = 0;
+block23 : {
+if (!$4_1) {
+break block23
+}
+$0_1 = $12($0_1 << 24 >> 24, $11_1);
+$7_1 = 0;
+if (($0_1 | 0) == 255) {
+break block23
+}
+$0_1 = $0_1 + $13_1 | 0;
+$5_1 = HEAPU8[$0_1 | 0];
+$7_1 = 0;
+if (($5_1 | 0) != 1) {
+break block23
+}
+$3_1 = (HEAPU8[$1_1 + 1852 | 0] & HEAPU8[HEAPU8[$0_1 + 48 | 0] + 1616 | 0]) != 0;
+$5_1 = 1;
+$7_1 = 1;
+}
+block24 : {
+if (($17_1 | 0) == 1) {
+if (HEAPU8[$1_1 + 1856 | 0] & HEAPU8[$9_1 | 0]) {
+$0_1 = $2_1 - 14 | 0;
+if (!$4_1) {
+break block24
+}
+$0_1 = $2_1 + 3 | 0;
+if (!$5_1) {
+break block24
+}
+$0_1 = ($3_1 ? 16 : -10) + $2_1 | 0;
+if ($7_1) {
+break block24
+}
+$0_1 = $2_1 + 18 | 0;
+if (($5_1 & 254) == 2) {
+break block24
+}
+$0_1 = ($5_1 | 0) == 6 ? $2_1 - 10 | 0 : $2_1;
+break block24;
+}
+$0_1 = $3_1 ? $2_1 - 8 | 0 : $2_1;
+break block24;
+}
+$0_1 = $3_1 ? $2_1 + 20 | 0 : $2_1;
+if (!$8_1) {
+break block24
+}
+$0_1 = ($17_1 | 0) == 6 ? ($3_1 ? $2_1 - 12 | 0 : $2_1) : $2_1;
+}
+$2_1 = $0_1;
+$1_1 = $1_1 + 1 | 0;
+continue;
+}
+break;
+};
+if (($17_1 | 0) != 6 | ($6_1 ? ($6_1 | 0) != 5 : 0)) {
+break block17
+}
+$2_1 = $2_1 + 6 | 0;
+}
+HEAP8[$10_1 + $13_1 | 0] = 0;
+HEAP8[($10_1 + HEAP32[770] | 0) + 48 | 0] = 0;
+}
+if (HEAP16[1611] >= $2_1 << 16 >> 16 ? HEAPU8[3145] : 0) {
+break block11
+}
+HEAP8[3224] = $6_1;
+HEAP8[3145] = 1;
+HEAP8[3225] = $20_1;
+HEAP16[1611] = $2_1;
+}
+$21_1 = $21_1 + 1 | 0;
+continue;
+};
+}
+return $19_1 | 0;
+}
+bufferView = HEAPU8;
+initActiveSegments(imports);
+function __wasm_memory_size() {
+return buffer.byteLength / 65536 | 0;
+}
+function __wasm_memory_grow(pagesToAdd) {
+pagesToAdd = pagesToAdd | 0;
+var oldPages = __wasm_memory_size() | 0;
+var newPages = oldPages + pagesToAdd | 0;
+if ((oldPages < newPages) && (newPages < 65536)) {
+var newBuffer = new ArrayBuffer(Math_imul(newPages, 65536));
+var newHEAP8 = new Int8Array(newBuffer);
+newHEAP8.set(HEAP8);
+HEAP8 = new Int8Array(newBuffer);
+HEAP16 = new Int16Array(newBuffer);
+HEAP32 = new Int32Array(newBuffer);
+HEAPU8 = new Uint8Array(newBuffer);
+HEAPU16 = new Uint16Array(newBuffer);
+HEAPU32 = new Uint32Array(newBuffer);
+HEAPF32 = new Float32Array(newBuffer);
+HEAPF64 = new Float64Array(newBuffer);
+buffer = newBuffer;
+bufferView = HEAPU8;
+}
+return oldPages;
+}
+return {
+"memory": Object.create(Object.prototype, {
+"grow": {
+"value": __wasm_memory_grow
+},
+"buffer": {
+"get": function () {
+return buffer;
+}
+}
+}),
+"web_use": $0,
+"web_game": $1,
+"web_names": $2,
+"web_layout": $3,
+"web_const": $4,
+"web_version": $5,
+"tw_step": $6,
+"tw_init": $20,
+"tw_receive": $23,
+"tw_take_outgoing": $24,
+"tw_ai_init": $25,
+"tw_ai_think": $26
+};
+}
+var retasmFunc = asmFunc({
+});
+return retasmFunc;
+})();
 
 /* ---------- constants ---------- */
 const W = 160, H = 144, TS = 16, COLS = 6, ROWS = 8, FX = 8, FY = 8, PX = 112, PC = 136;
+const MX = 112, MY = 16; // top-left of the half-size field in the panel (versus)
 const C0 = '#a2a7af', C1 = '#8f8f8f', C2 = '#5d5e60', C3 = '#444444';
-const U = 1, R = 2, D = 4, L = 8;
-// Which sides each of the 16 rope tiles has an end on (the orange marks).
-const ENDS = [L|R, U|D, D|R, L|D, U|L, U|R, L|R|D, U|L|D, U|L|R, U|D|R, 15, L|R|D, U|L|D, U|L|R, U|D|R, 15];
-// Red / blue dot at each end, in U R D L order (r, b, or . for no end).
-const POL = ['.b.r','r.b.','.br.','..br','r..b','br..','.bbr','r.bb','br.b','bbr.','rbbr','.brr','r.br','rr.b','brr.','bbrr'];
-const ROT_CW = [1,0,3,4,5,2,7,8,9,6,15,12,13,14,11,10];
-const ROT_CCW = ROT_CW.map((_, i) => ROT_CW.indexOf(i));
-// Same shape, other red/blue layout (the two T sets and the two crosses).
-const ALT = [-1,-1,-1,-1,-1,-1,11,12,13,14,15,6,7,8,9,10];
-//            bit dr dc opp idx oppIdx
-const DIRS = [[U,-1,0,D,0,2],[R,0,1,L,1,3],[D,1,0,U,2,0],[L,0,-1,R,3,1]];
-const SRC = { bomb:[64,112], block:[32,128], fire:[0,152], corner:[0,144], hb:[8,144], vb:[16,144], thin:[24,144] };
-const BAG = 'SSSSCCCTTXBBFFF';
-const VERSION = '1.1';
-// Solid blocks: none in the first few pieces, then a short cooldown and a 1-in-16 roll (about one per 28 pieces).
-const BLOCK_FIRST = 6, BLOCK_GAP = 12, BLOCK_ODDS = 16, BLOCK_FADE = 18;
-const BLAST = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]; // cells a bomb can knock a solid block out of
-const SPREAD = 9, BURN = 22, BOOM_AT = 14, BOOM_END = 34, LOCK = 20, SPAWN_COL = 2;
+const SRC = { bomb:[64,112], block:[32,128], fire:[0,152], corner:[0,144], hb:[8,144], vb:[16,144], thin:[24,144], burst:[16,152], bigfire:[0,168], cannon:[112,112] };
+// 8x8 versions for the half-size field: the 16 rope tiles in a row, then the other pieces.
+const MINI = { rope:[0,184], bomb:[0,192], cannon:[8,192], block:[16,192], fire:[24,192], bigfire:[32,192] };
 const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- canvases ---------- */
@@ -139,6 +2112,7 @@ const cv = document.getElementById('lcd'), out = cv.getContext('2d');
 const buf = document.createElement('canvas'); buf.width = W; buf.height = H;
 const g = buf.getContext('2d'); g.imageSmoothingEnabled = false;
 const bg = document.createElement('canvas'); bg.width = W; bg.height = H;
+const bgVs = document.createElement('canvas'); bgVs.width = W; bgVs.height = H; // the versus layout
 const atlas = new Image();
 let K = 1;
 
@@ -174,39 +2148,27 @@ function textO(c, s, cx, y) { // dark text with a light outline, for popups over
   for (const [ox, oy] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]]) text(c, s, x + ox, y + oy, C0);
   text(c, s, x, y, C3);
 }
-function disc(cx, cy, r, col) {
-  if (r <= 0) return; g.fillStyle = col;
-  for (let dy = -r; dy < r; dy++) {
-    const w = Math.round(Math.sqrt(r * r - (dy + .5) * (dy + .5)));
-    if (w > 0) g.fillRect(cx - w, cy + dy, w * 2, 1);
-  }
-}
-function star(cx, cy, r, col, spin) { // spiky blob, plotted per pixel so it stays on-palette
-  if (r <= 0) return; g.fillStyle = col;
-  for (let dy = -r; dy < r; dy++) for (let dx = -r; dx < r; dx++) {
-    const x = dx + .5, y = dy + .5;
-    if (Math.hypot(x, y) <= r * (.62 + .38 * Math.abs(Math.cos(4 * Math.atan2(y, x) + spin)))) g.fillRect(cx + dx, cy + dy, 1, 1);
-  }
-}
+// Explosion: seven pre-drawn frames from the atlas (build.py draws them), two game frames each. A frame is
+// stored as one 16x16 quarter and mirrored four ways, which is what a console does with flipped sprites.
+const QUARTERS = [[1,1],[-1,1],[1,-1],[-1,-1]];
 function burst(cx, cy, t) { // t: 0..19
   if (t < 14) {
-    const r = Math.min(13, 6 + t), spin = (t >> 1 & 1) * .8;
-    star(cx, cy, r, C3, spin); star(cx, cy, r - 2, t < 9 ? C1 : C0, spin);
-    if (t < 9) star(cx, cy, r - 5, C0, spin);
+    const sx = SRC.burst[0] + (t >> 1) * 16, sy = SRC.burst[1];
+    for (const [mx, my] of QUARTERS) { g.save(); g.translate(cx, cy); g.scale(mx, my); g.drawImage(atlas, sx, sy, 16, 16, 0, 0, 16, 16); g.restore(); }
   }
-  if (t >= 4) { // sparks
-    const d = 7 + t; g.fillStyle = C3;
-    for (const [ax, ay] of [[1,0],[-1,0],[0,1],[0,-1],[.7,.7],[-.7,.7],[.7,-.7],[-.7,-.7]])
-      g.fillRect(Math.round(cx + ax * d) - 1, Math.round(cy + ay * d) - 1, 2, 2);
+  if (t >= 4) { // eight 2x2 sparks: the straight ones move 1 px a frame, the diagonal ones 45/64 of that
+    const d = 7 + t, e = (d * 45 + 32) >> 6; g.fillStyle = C3;
+    for (const [ax, ay] of [[d,0],[-d,0],[0,d],[0,-d],[e,e],[-e,e],[e,-e],[-e,-e]]) g.fillRect(cx + ax - 1, cy + ay - 1, 2, 2);
   }
 }
-function buildBg() {
-  const c = bg.getContext('2d'); c.imageSmoothingEnabled = false;
+function buildBg(canvas, duel) {
+  const c = canvas.getContext('2d'); c.imageSmoothingEnabled = false;
   c.fillStyle = C0; c.fillRect(0, 0, W, H);
   for (let x = 8; x < 104; x += 8) { spr(c, ...SRC.hb, x, 0, 8); spr(c, ...SRC.hb, x, 136, 8); }
   for (let y = 8; y < 136; y += 8) { spr(c, ...SRC.vb, 0, y, 8); spr(c, ...SRC.vb, 104, y, 8); }
   for (const [x, y] of [[0,0],[104,0],[0,136],[104,136]]) spr(c, ...SRC.corner, x, y, 8);
-  for (const y of [0, 42, 98, 136]) for (let x = PX; x < W; x += 8) spr(c, ...SRC.thin, x, y, 8);
+  for (const y of duel ? [0, 80, 136] : [0, 42, 98, 136]) for (let x = PX; x < W; x += 8) spr(c, ...SRC.thin, x, y, 8);
+  if (duel) { text(c, 'NEXT', 114, 95); text(c, 'POWER', 114, 110); return; }
   textC(c, 'NEXT', PC, 12);
   textC(c, 'SCORE', PC, 54);
   textC(c, 'BEST', PC, 77);
@@ -219,7 +2181,7 @@ function wake() {
   if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; } }
   if (ac && ac.state === 'suspended') ac.resume();
 }
-function beep(f, dur, vol, to) {
+function sndBeep(f, dur, vol, to) {
   if (!soundOn || !ac) return;
   const t = ac.currentTime, o = ac.createOscillator(), a = ac.createGain();
   o.type = 'square'; o.frequency.setValueAtTime(f, t);
@@ -227,7 +2189,7 @@ function beep(f, dur, vol, to) {
   a.gain.setValueAtTime(vol || .05, t); a.gain.exponentialRampToValueAtTime(.0001, t + dur);
   o.connect(a); a.connect(ac.destination); o.start(t); o.stop(t + dur + .02);
 }
-function noise(dur, vol) {
+function sndNoise(dur, vol) {
   if (!soundOn || !ac) return;
   if (!noiseBuf) {
     noiseBuf = ac.createBuffer(1, ac.sampleRate * .5, ac.sampleRate);
@@ -237,234 +2199,163 @@ function noise(dur, vol) {
   s.buffer = noiseBuf; a.gain.setValueAtTime(vol, t); a.gain.exponentialRampToValueAtTime(.0001, t + dur);
   s.connect(a); a.connect(ac.destination); s.start(t); s.stop(t + dur);
 }
-function jingle(notes, step) { notes.forEach((f, i) => setTimeout(() => beep(f, .09, .05), i * step)); }
+function sndJingle(notes, step) { notes.forEach((f, i) => setTimeout(() => sndBeep(f, .09, .05), i * step)); }
 
-/* ---------- game state ---------- */
-let state = 'title', paused = false, frame = 0;
-let grid, piece, next, bag, score, best = 0, level, placed, bestWick, wick;
-let phase, lockT, fallAcc, softOK, das, dasDir, fx, shake, overT, burnIdle, drawn, sinceBlock;
-try { best = parseInt(localStorage.getItem('tricky-wicks-best'), 10) || 0; } catch (e) { best = 0; }
+/* ---------- the rules ---------- */
+// The rules of the game live in one place: the C in port/core, which the console builds use as it is.
+// port/web/build_core.sh turns that C into plain JavaScript and build.py pastes it in as CORE (above).
+// What follows is only the layer between the two: it passes the buttons in, and copies the state the
+// rules hold in CORE's memory into the simple objects the drawing code below works with.
+const SEED = parseInt(new URLSearchParams(location.search).get('seed'), 10);
+const isFire = x => x.k === 'fire' || x.k === 'bigfire';
+const isBomb = x => x.k === 'bomb' || x.k === 'cannon';
+const KINDS = [null, 'rope', 'bomb', 'cannon', 'fire', 'bigfire', 'block'], PHASES = ['fall', 'resolve', 'settle', 'burn'];
+const BUTTONS = ['left', 'right', 'up', 'down', 'a', 'b']; // bit 0 upwards, as the rules number them
+const MEM8 = new Uint8Array(CORE.memory.buffer), MEM16 = new Uint16Array(CORE.memory.buffer), MEM32 = new Uint32Array(CORE.memory.buffer);
+function cString(p) { let s = ''; while (MEM8[p]) s += String.fromCharCode(MEM8[p++]); return s; }
+// Where each field of a game sits in memory, as the C side reports it: FIELD.kind = { at, size } and so on.
+const FIELD = {};
+cString(CORE.web_names()).split(',').filter(Boolean).forEach((name, i) => {
+  const p = (CORE.web_layout() >> 2) + i * 2;
+  FIELD[name] = { at: MEM32[p], size: MEM32[p + 1] };
+});
+const VERSION = cString(CORE.web_version());
+const [UNIT, MAX_SEND, METER_MAX, SPREAD, BURN, BOOM_AT] = [0, 1, 2, 3, 4, 5].map(i => CORE.web_const(i));
 
-const cell = (r, c) => (r >= 0 && r < ROWS && c >= 0 && c < COLS) ? grid[r][c] : null;
-const rnd = n => Math.floor(Math.random() * n);
+// One side's game. opts: seed, vs (versus rules: cannons and the power meter), sound (off for the CPU's
+// side), slot (0 or 1: which of the two games the rules keep; versus uses both).
+function makeGame(opts) {
+  const slot = opts.slot | 0, base = CORE.web_game(slot);
+  const rd = (name, i) => { const f = FIELD[name], a = base + f.at + (i | 0) * f.size; return f.size === 1 ? MEM8[a] : f.size === 2 ? MEM16[a >> 1] : MEM32[a >> 2]; };
+  let grid = [], piece = null, next = null, fx = [], serial = -1;
 
-function drawPiece() {
-  drawn++; sinceBlock++;
-  if (drawn > BLOCK_FIRST && sinceBlock > BLOCK_GAP && rnd(BLOCK_ODDS) === 0) { sinceBlock = 0; return { k: 'block' }; }
-  if (!bag.length) { bag = BAG.split(''); for (let i = bag.length - 1; i > 0; i--) { const j = rnd(i + 1); [bag[i], bag[j]] = [bag[j], bag[i]]; } }
-  switch (bag.pop()) {
-    case 'S': return { k: 'rope', t: rnd(2) };
-    case 'C': return { k: 'rope', t: 2 + rnd(4) };
-    case 'T': return { k: 'rope', t: 6 + rnd(4) };
-    case 'X': return { k: 'rope', t: 10 };
-    case 'B': return { k: 'bomb' };
-    default:  return { k: 'fire' };
-  }
-}
-function newGame() {
-  grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
-  bag = []; drawn = 0; sinceBlock = 0; score = 0; level = 1; placed = 0; bestWick = 0; wick = 0; fx = []; shake = 0; overT = 0;
-  next = drawPiece(); state = 'play'; paused = false;
-  jingle([330, 440, 660], 80);
-  spawn();
-}
-function spawn() {
-  if (grid[0][SPAWN_COL]) return gameOver();
-  piece = next; next = drawPiece();
-  piece.col = SPAWN_COL; piece.py = -TS;
-  lockT = 0; fallAcc = 0; softOK = false; das = 0; dasDir = 0; phase = 'fall';
-}
-function gameOver() {
-  state = 'over'; overT = 0; piece = null;
-  if (score > best) { best = score; try { localStorage.setItem('tricky-wicks-best', String(best)); } catch (e) {} }
-  jingle([440, 330, 247, 165], 140);
-}
-function free(col, py) {
-  if (col < 0 || col >= COLS) return false;
-  const rows = [Math.floor(py / TS), Math.ceil(py / TS)];
-  if (py < 0) rows.push(0);
-  for (const r of rows) { if (r >= ROWS) return false; if (r >= 0 && grid[r][col]) return false; }
-  return true;
-}
-function tryMove(d) { if (free(piece.col + d, piece.py)) { piece.col += d; beep(220, .03, .03); } }
-function rotate(dir) {
-  if (piece.k !== 'rope') return;
-  piece.t = (dir > 0 ? ROT_CW : ROT_CCW)[piece.t]; beep(330, .04, .03);
-}
-function speed() { return Math.min(2, .3 + .07 * (level - 1)); }
-
-function stepFall() {
-  if (pressed.a) rotate(1);
-  if (pressed.b) rotate(-1);
-  const dir = (held.right ? 1 : 0) - (held.left ? 1 : 0);
-  if (pressed.left) { tryMove(-1); das = 0; dasDir = -1; }
-  else if (pressed.right) { tryMove(1); das = 0; dasDir = 1; }
-  else if (dir && dir === dasDir) { if (++das >= 12 && (das - 12) % 4 === 0) tryMove(dir); }
-  else if (!dir) dasDir = 0;
-  if (pressed.down) softOK = true;
-  if (pressed.up) { while (free(piece.col, piece.py + 1)) piece.py++; return lock(); }
-  const soft = held.down && softOK;
-  fallAcc += soft ? 4 : speed();
-  while (fallAcc >= 1) {
-    fallAcc -= 1;
-    if (free(piece.col, piece.py + 1)) { piece.py++; lockT = 0; } else { fallAcc = 0; break; }
-  }
-  if (!free(piece.col, piece.py + 1)) { if (++lockT >= LOCK || soft) lock(); }
-}
-function lock() {
-  const r = Math.round(piece.py / TS);
-  if (r < 0) return gameOver();
-  grid[r][piece.col] = piece.k === 'rope' ? { k: 'rope', t: piece.t } : { k: piece.k };
-  piece = null; placed++; wick = 0;
-  const lv = 1 + Math.floor(placed / 12);
-  if (lv > level) { level = lv; jingle([523, 784], 90); } else beep(110, .07, .06);
-  phase = 'resolve';
-}
-
-// Twist matching. On the sheet a rope join is pixel-perfect exactly when a red end meets a blue end.
-// Straights and corners exist in one layout each; Ts and crosses come in two, so those are the tiles
-// the game can swap. seams() counts the same-colour (off by one pixel) joins a tile would have here.
-function seams(t, r, c) {
-  let m = 0;
-  for (const [bit, dr, dc, opp, i, oi] of DIRS) {
-    if (!(ENDS[t] & bit)) continue;
-    const n = cell(r + dr, c + dc);
-    if (n && n.k === 'rope' && (ENDS[n.t] & opp) && POL[t][i] === POL[n.t][oi]) m++;
-  }
-  return m;
-}
-function touching(a, b) {
-  for (const [bit, dr, dc, opp] of DIRS)
-    if (a.r + dr === b.r && a.c + dc === b.c) return !!(ENDS[a.x.t] & bit) && !!(ENDS[b.x.t] & opp);
-  return false;
-}
-function retile() {
-  const swap = [];
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-    const x = grid[r][c];
-    if (x && x.k === 'rope' && x.lit == null && ALT[x.t] >= 0) swap.push({ r, c, x });
-  }
-  const seen = new Set();
-  for (const s of swap) {
-    if (seen.has(s)) continue;
-    const grp = [], q = [s]; seen.add(s);
-    while (q.length) {
-      const a = q.pop(); grp.push(a);
-      for (const b of swap) if (!seen.has(b) && touching(a, b)) { seen.add(b); q.push(b); }
+  // Copy what the drawing code needs out of the rules' memory.
+  function sync() {
+    grid = [];
+    for (let r = 0, i = 0; r < ROWS; r++) {
+      const row = [];
+      for (let c = 0; c < COLS; c++, i++) {
+        const k = rd('kind', i);
+        if (!k) { row.push(null); continue; }
+        const x = { k: KINDS[k], off: rd('off', i) }, tm = rd('tm', i);
+        if (k === 1) x.t = rd('t', i);
+        if (tm !== 255) { // its timer is running: burning (rope, flame), lit (bomb, cannon) or crumbling (block)
+          if (k === 2 || k === 3) { x.boom = tm; x.mult = rd('mult', i); x.nth = rd('nth', i); x.chain = rd('chn', i); }
+          else if (k === 6) x.gone = tm;
+          else x.lit = tm;
+        }
+        row.push(x);
+      }
+      grid.push(row);
     }
-    settle(grp);
-  }
-}
-// Try every combination for a cluster of swappable tiles that share joins and keep the best one.
-function settle(grp) {
-  const cost = () => grp.reduce((n, s) => n + seams(s.x.t, s.r, s.c), 0);
-  if (grp.length > 12) { // too many to try them all: improve one tile at a time
-    for (let pass = 0, moved = true; moved && pass < 8; pass++) {
-      moved = false;
-      for (const s of grp) if (seams(ALT[s.x.t], s.r, s.c) < seams(s.x.t, s.r, s.c)) { s.x.t = ALT[s.x.t]; moved = true; }
+    const pk = rd('p_kind');
+    if (!pk) piece = null;
+    else {
+      if (!piece || serial !== rd('p_serial')) { piece = {}; serial = rd('p_serial'); } // the same object for as long as it is the same piece
+      piece.k = KINDS[pk]; piece.col = rd('p_col'); piece.py = rd('p_y') - TS;
+      if (pk === 1) piece.t = rd('p_t');
     }
-    return;
-  }
-  const base = grp.map(s => s.x.t);
-  let best = 0, bestCost = cost();
-  for (let m = 1; m < (1 << grp.length) && bestCost > 0; m++) {
-    grp.forEach((s, i) => { s.x.t = (m >> i) & 1 ? ALT[base[i]] : base[i]; });
-    const k = cost();
-    if (k < bestCost) { bestCost = k; best = m; }
-  }
-  grp.forEach((s, i) => { s.x.t = (best >> i) & 1 ? ALT[base[i]] : base[i]; });
-}
-function gravity() {
-  let moved = false;
-  for (let c = 0; c < COLS; c++) {
-    let w = ROWS - 1;
-    for (let r = ROWS - 1; r >= 0; r--) {
-      const x = grid[r][c]; if (!x) continue;
-      if (w !== r) { grid[w][c] = x; grid[r][c] = null; x.off = (w - r) * TS; moved = true; }
-      w--;
+    next = { k: KINDS[rd('n_kind')] };
+    if (next.k === 'rope') next.t = rd('n_t');
+    fx = [];
+    for (let i = 0, n = rd('n_booms'); i < n; i++) {
+      const r = rd('boom_r', i), c = rd('boom_c', i);
+      fx.push({ k: 'boom', x: FX + c * TS + 8, y: FY + r * TS + 8, r, c, t: rd('boom_t', i) });
+    }
+    for (let i = 0, n = rd('n_pops'); i < n; i++) {
+      const a = rd('pop_a', i), b = rd('pop_b', i);
+      const s = ['x' + b, a + ' BOMBS x' + b, 'CHAIN x' + b, 'SENT ' + a, '+' + a + (a > 1 ? ' BLOCKS' : ' BLOCK')][rd('pop_type', i)];
+      fx.push({ k: 'pop', x: rd('pop_x', i), y: rd('pop_y', i), t: rd('pop_t', i), s });
     }
   }
-  return moved;
-}
-// A resting flame lights any rope END pointing at it, or a bomb right next to it.
-function canLight(n, opp) { return n && ((n.k === 'rope' && n.lit == null && (ENDS[n.t] & opp)) || (n.k === 'bomb' && n.boom == null)); }
-function ignite() {
-  let any = false;
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-    const x = grid[r][c];
-    if (!x || x.k !== 'fire' || x.lit != null) continue;
-    if (DIRS.some(([, dr, dc, opp]) => canLight(cell(r + dr, c + dc), opp))) { x.lit = 0; any = true; }
-  }
-  if (any) { burnIdle = 0; noise(.12, .05); }
-  return any;
-}
-function resolve() {
-  if (gravity()) { phase = 'settle'; return; }
-  retile();
-  if (ignite()) { phase = 'burn'; return; }
-  spawn();
-}
-function stepSettle() {
-  let busy = false;
-  for (const row of grid) for (const x of row) if (x && x.off > 0) { x.off = Math.max(0, x.off - 4); if (x.off > 0) busy = true; }
-  if (!busy) { beep(110, .05, .05); phase = 'resolve'; }
-}
-function spreadFrom(r, c, x) {
-  const ends = x.k === 'fire' ? 15 : ENDS[x.t];
-  for (const [bit, dr, dc, opp] of DIRS) {
-    if (!(ends & bit)) continue;
-    const n = cell(r + dr, c + dc);
-    if (!n) continue;
-    if (n.k === 'rope' && n.lit == null && (ENDS[n.t] & opp)) { n.lit = 0; wick++; beep(500 + Math.min(wick, 16) * 45, .05, .03); }
-    else if (n.k === 'bomb' && n.boom == null) { n.boom = 0; n.mult = Math.max(1, wick); }
-  }
-}
-function stepBurn() {
-  const lit = [], booms = [], crumbs = [];
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
-    const x = grid[r][c]; if (!x) continue;
-    if (x.lit != null) lit.push([r, c, x]); else if (x.boom != null) booms.push([r, c, x]); else if (x.gone != null) crumbs.push([r, c, x]);
-  }
-  for (const [r, c, x] of lit) {
-    x.lit++;
-    if (x.lit === SPREAD) spreadFrom(r, c, x);
-    if (x.lit >= BURN) { grid[r][c] = null; if (x.k === 'rope') score += 10; }
-  }
-  for (const [r, c, x] of booms) {
-    x.boom++;
-    if (x.boom === BOOM_AT) {
-      score += 100 * x.mult; bestWick = Math.max(bestWick, x.mult);
-      const px = FX + c * TS + 8, py = FY + r * TS + 8;
-      fx.push({ k: 'boom', x: px, y: py, t: 0 }, { k: 'pop', x: px, y: py - 4, t: 0, s: 'x' + x.mult });
-      if (!reduce) shake = 8;
-      noise(.4, .16); beep(120, .3, .08, 40);
-      for (const [dr, dc] of BLAST) { // the blast leaves ropes, flames and other bombs alone
-        const n = cell(r + dr, c + dc);
-        if (n && n.k === 'block' && n.gone == null) { n.gone = 0; score += 50; }
+  // The sounds the rules asked for this frame.
+  function sounds() {
+    for (let i = 0, n = rd('n_sfx'); i < n; i++) {
+      const arg = rd('sfx_arg', i);
+      switch (rd('sfx', i)) {
+        case 1: sndBeep(220, .03, .03); break;                              // move
+        case 2: sndBeep(330, .04, .03); break;                              // turn
+        case 3: sndBeep(110, .07, .06); break;                              // land
+        case 4: sndJingle([523, 784], 90); break;                           // level up
+        case 5: sndBeep(110, .05, .05); break;                              // squares settle
+        case 6: sndNoise(.12, .05); break;                                  // a flame lights
+        case 7: sndBeep(500 + arg * 45, .05, .03); break;                   // a rope catches: higher with a longer wick
+        case 8: sndNoise(.4, .16); sndBeep(120, .3, .08, 40); break;        // explosion
+        case 9: sndJingle([660, 880, 1320], 60); break;                     // chain
+        case 10: sndJingle([392, 523, 784], 70); break;                     // a cannon's shot goes out
+        case 11: sndNoise(.25, .1); break;                                  // blocks arrive
       }
     }
-    if (x.boom >= BOOM_END) grid[r][c] = null;
   }
-  for (const [r, c, x] of crumbs) if (++x.gone >= BLOCK_FADE) grid[r][c] = null;
-  if (!lit.length && !booms.length && !crumbs.length) { if (++burnIdle > 6) phase = 'resolve'; } else burnIdle = 0;
+  const use = () => CORE.web_use(slot);
+  const bits = o => BUTTONS.reduce((m, k, i) => o[k] ? m | (1 << i) : m, 0);
+  // One frame. inp = { held, pressed }: the buttons this side sees (the player's, or the CPU's).
+  function step(inp) {
+    use(); CORE.tw_step(bits(inp.held), bits(inp.pressed));
+    sync();
+    if (opts.sound) sounds();
+  }
+  use(); CORE.tw_init(opts.seed & 0xFFFF, opts.vs ? 1 : 0);
+  sync();
+  return { step, use, sync, base,
+    get grid() { return grid; }, get piece() { return piece; }, get next() { return next; }, get fx() { return fx; },
+    get phase() { return PHASES[rd('phase')]; }, get score() { return rd('score'); }, get level() { return rd('level'); },
+    get placed() { return rd('placed'); }, get wick() { return rd('wick'); }, get bestWick() { return rd('best_wick'); },
+    get over() { return !!rd('over'); }, get shake() { return reduce ? 0 : rd('shake'); },
+    get power() { return rd('power'); }, get incoming() { return rd('incoming'); },
+    receive(n) { if (n) { use(); CORE.tw_receive(n); } }, takeOutgoing() { use(); return CORE.tw_take_outgoing(); } };
 }
 
+// The CPU player, also from the C rules. It presses buttons for game G; ask it once a frame.
+function makeAI(G, seed) {
+  const inp = { held: {}, pressed: {} };
+  G.use(); CORE.tw_ai_init(seed & 0xFFFF);
+  return { inp, think() {
+    G.use();
+    const b = CORE.tw_ai_think();
+    BUTTONS.forEach((k, i) => { inp.pressed[k] = !!(b & (1 << i)); });
+  } };
+}
+
+/* ---------- the app: title, one or two games, game over ---------- */
+let mode = 'title', paused = false, frame = 0, menu = 0, versus = false, overT = 0, won = false, best = 0;
+let P = null, Q = null, ai = null; // the player's game, the CPU's game, and the CPU
+try { best = parseInt(localStorage.getItem('tricky-wicks-best'), 10) || 0; } catch (e) { best = 0; }
+const held = {}, pressed = {}, pad = { held, pressed };
+
+function start(v) {
+  const seed = isNaN(SEED) ? frame & 0xFFFF : SEED;
+  versus = v;
+  P = makeGame({ seed, vs: v, sound: true, slot: 0 });
+  Q = v ? makeGame({ seed, vs: true, sound: false, slot: 1 }) : null;
+  ai = v ? makeAI(Q, seed) : null;
+  mode = 'play'; paused = false;
+  sndJingle([330, 440, 660], 80);
+}
+function finish() {
+  mode = 'over'; overT = 0; won = versus && !P.over;
+  if (!versus && P.score > best) { best = P.score; try { localStorage.setItem('tricky-wicks-best', String(best)); } catch (e) {} }
+  sndJingle(won ? [523, 659, 784, 1047] : [440, 330, 247, 165], 140);
+}
 function step() {
   frame++;
   if (pressed.sound) toggleSound();
-  if (state === 'title') { if (pressed.start || pressed.a) newGame(); }
-  else if (state === 'over') { overT++; if (overT > 50 && (pressed.start || pressed.a)) newGame(); }
-  else {
-    if (pressed.start) { paused = !paused; beep(paused ? 440 : 660, .08, .05); }
+  if (mode === 'title') {
+    if (pressed.up || pressed.down) { menu ^= 1; sndBeep(330, .04, .03); }
+    if (pressed.start || pressed.a) start(menu === 1);
+  } else if (mode === 'over') {
+    overT++;
+    if (overT > 50 && (pressed.start || pressed.a)) start(versus);
+    else if (overT > 50 && pressed.b) { mode = 'title'; P = Q = ai = null; }
+  } else {
+    if (pressed.start) { paused = !paused; sndBeep(paused ? 440 : 660, .08, .05); }
     if (!paused) {
-      if (phase === 'fall') stepFall();
-      else if (phase === 'burn') stepBurn();
-      else if (phase === 'settle') stepSettle();
-      if (phase === 'resolve') resolve();
-      for (const f of fx) f.t++;
-      fx = fx.filter(f => f.t < (f.k === 'boom' ? 20 : 60));
-      if (shake > 0) shake--;
-      if (score > 999999) score = 999999;
+      P.step(pad);
+      if (Q) { // the CPU's side runs the same rules; cannon shots cross over as solid blocks
+        ai.think(); Q.step(ai.inp);
+        Q.receive(P.takeOutgoing()); P.receive(Q.takeOutgoing());
+      }
+      if (P.over || (Q && Q.over)) finish();
     }
   }
   for (const k in pressed) pressed[k] = false;
@@ -476,13 +2367,42 @@ function drawCell(x, dx, dy) {
   if (x.k === 'rope') {
     rope(g, x.t, dx, dy);
     if (x.lit != null && ((x.lit >> 1) & 1) === 0) spr(g, ...SRC.fire, dx, dy, TS, (frame >> 2) & 1);
-  } else if (x.k === 'fire') spr(g, ...SRC.fire, dx, dy, TS, flick);
-  else if (x.k === 'bomb') {
-    if (x.boom == null) spr(g, ...SRC.bomb, dx, dy);
-    else if (x.boom < BOOM_AT && ((x.boom >> 1) & 1)) spr(g, ...SRC.bomb, dx, dy);
+  } else if (isFire(x)) spr(g, ...SRC[x.k], dx, dy, TS, flick);
+  else if (isBomb(x)) {
+    if (x.boom == null || (x.boom < BOOM_AT && ((x.boom >> 1) & 1))) spr(g, ...SRC[x.k], dx, dy);
   } else if (x.k === 'block') {
     if (x.gone == null || ((x.gone >> 1) & 1)) spr(g, ...SRC.block, dx, dy);
   }
+}
+// The same piece at half size, for the other side's field in the panel.
+function miniCell(x, dx, dy) {
+  const flick = (frame >> 3) & 1;
+  if (x.k === 'rope') {
+    spr(g, MINI.rope[0] + x.t * 8, MINI.rope[1], dx, dy, 8);
+    if (x.lit != null && ((x.lit >> 1) & 1) === 0) spr(g, ...MINI.fire, dx, dy, 8, (frame >> 2) & 1);
+  } else if (isFire(x)) spr(g, ...MINI[x.k], dx, dy, 8, flick);
+  else if (isBomb(x)) {
+    if (x.boom == null || (x.boom < BOOM_AT && ((x.boom >> 1) & 1))) spr(g, ...MINI[x.k], dx, dy, 8);
+  } else if (x.k === 'block') {
+    if (x.gone == null || ((x.gone >> 1) & 1)) spr(g, ...MINI.block, dx, dy, 8);
+  }
+}
+function drawMini(G) {
+  g.save(); g.beginPath(); g.rect(MX, MY - 8, COLS * 8, ROWS * 8 + 8); g.clip(); // one spare row on top, where pieces come in
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x = G.grid[r][c]; if (x) miniCell(x, MX + c * 8, MY + r * 8 - ((x.off || 0) >> 1));
+  }
+  if (G.piece) miniCell(G.piece, MX + G.piece.col * 8, MY + (G.piece.py >> 1));
+  for (const f of G.fx) if (f.k === 'boom' && f.t < 12) { // a small flash where a bomb went off
+    const cx = MX + f.c * 8 + 4, cy = MY + f.r * 8 + 4, s = f.t < 6 ? 5 : 7;
+    g.fillStyle = C3; g.fillRect(cx - s, cy - s, s * 2, s * 2);
+    g.fillStyle = C0; g.fillRect(cx - s + 2, cy - s + 2, s * 2 - 4, s * 2 - 4);
+  }
+  if (mode === 'over' && G.over) {
+    const rows = Math.min(ROWS, Math.floor(overT / 4));
+    for (let i = 0; i < rows; i++) for (let c = 0; c < COLS; c++) spr(g, ...MINI.block, MX + c * 8, MY + (ROWS - 1 - i) * 8, 8);
+  }
+  g.restore();
 }
 function box(x, y, w, h) {
   g.fillStyle = C3; g.fillRect(x, y, w, h);
@@ -491,9 +2411,9 @@ function box(x, y, w, h) {
 }
 function drawTitle() {
   const cx = FX + 48;
-  textC(g, 'TRICKY', cx, 24, C3, 2);
-  textC(g, 'WICKS', cx, 42, C3, 2);
-  const y = 70, x0 = FX + 8, t = reduce ? 0 : frame % 170;
+  textC(g, 'TRICKY', cx, 20, C3, 2);
+  textC(g, 'WICKS', cx, 38, C3, 2);
+  const y = 62, x0 = FX + 8, t = reduce ? 0 : frame % 170;
   const item = (i, start) => { // returns lit age or -1 if untouched, null if burned away
     if (t < start) return -1; if (t >= start + BURN) return null; return t - start;
   };
@@ -508,34 +2428,57 @@ function drawTitle() {
   const b0 = 30 + SPREAD * 4, bx = x0 + TS * 4;
   if (t < b0 || (t < b0 + BOOM_AT && ((t >> 1) & 1))) spr(g, ...SRC.bomb, bx, y);
   else if (t >= b0 + BOOM_AT && t < b0 + BOOM_AT + 20) burst(bx + 8, y + 8, t - b0 - BOOM_AT);
-  if (reduce || ((frame >> 5) & 1) === 0) textC(g, 'PRESS START', cx, 104);
+  // the menu: Up and Down choose, Start or A begins
+  const items = ['1 PLAYER', 'VS CPU'];
+  items.forEach((s, i) => {
+    text(g, s, FX + 30, 96 + i * 11);
+    if (i === menu && (reduce || ((frame >> 4) & 1) === 0)) text(g, '>', FX + 20, 96 + i * 11);
+  });
   textC(g, 'V' + VERSION, cx, 124, C2);
 }
 function render() {
-  g.drawImage(bg, 0, 0);
-  // right panel values
-  if (next && state !== 'title') { if (next.k === 'rope') rope(g, next.t, PC - 8, 22); else spr(g, ...SRC[next.k], PC - 8, 22); }
-  textC(g, String(score || 0).padStart(6, '0'), PC, 64);
-  textC(g, String(best).padStart(6, '0'), PC, 87);
-  textC(g, 'LV ' + String(level || 1).padStart(2, '0'), PC, 109);
-  textC(g, 'x' + String(bestWick || 0).padStart(2, '0'), PC, 129);
+  const duel = versus && mode !== 'title';
+  g.drawImage(duel ? bgVs : bg, 0, 0);
+  const nextPiece = (x, y) => { const n = P && P.next; if (n && mode !== 'title') { if (n.k === 'rope') rope(g, n.t, x, y); else spr(g, ...SRC[n.k], x, y); } };
+  if (duel) { // right panel in versus: the CPU's field, then the next piece, the power meter and the score
+    drawMini(Q);
+    nextPiece(141, 90);
+    const blocks = Math.min(MAX_SEND, Math.floor(P.power / UNIT));
+    text(g, String(blocks).padStart(2, '0'), 147, 110);
+    g.fillStyle = C3; g.fillRect(114, 119, 44, 6);
+    g.fillStyle = C0; g.fillRect(115, 120, 42, 4);
+    g.fillStyle = C2; g.fillRect(115, 120, Math.floor(42 * P.power / METER_MAX), 4);
+    textC(g, String(P.score).padStart(6, '0'), PC, 127);
+  } else {
+    nextPiece(PC - 8, 22);
+    textC(g, String(P ? P.score : 0).padStart(6, '0'), PC, 64);
+    textC(g, String(best).padStart(6, '0'), PC, 87);
+    textC(g, 'LV ' + String(P ? P.level : 1).padStart(2, '0'), PC, 109);
+    textC(g, 'x' + String(P ? P.bestWick : 0).padStart(2, '0'), PC, 129);
+  }
 
   g.save(); g.beginPath(); g.rect(FX, FY, COLS * TS, ROWS * TS); g.clip();
-  if (state === 'title') drawTitle();
+  if (mode === 'title') drawTitle();
   else {
+    const grid = P.grid, piece = P.piece;
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const x = grid[r][c]; if (x) drawCell(x, FX + c * TS, FY + r * TS - (x.off || 0));
     }
     if (piece) drawCell(piece, FX + piece.col * TS, FY + piece.py);
-    for (const f of fx) if (f.k === 'boom') burst(f.x, f.y, f.t);
-    for (const f of fx) if (f.k === 'pop' && f.t >= 8) { const hw = textW(f.s) / 2 + 2; textO(g, f.s, Math.max(FX + hw, Math.min(FX + COLS * TS - hw, f.x)), f.y - Math.min(14, f.t >> 1)); }
-    if (state === 'over') {
-      const rows = Math.min(ROWS, Math.floor(overT / 4));
-      for (let i = 0; i < rows; i++) for (let c = 0; c < COLS; c++) spr(g, ...SRC.block, FX + c * TS, FY + (ROWS - 1 - i) * TS);
+    for (const f of P.fx) if (f.k === 'boom') burst(f.x, f.y, f.t);
+    for (const f of P.fx) if (f.k === 'pop' && f.t >= 8) { const hw = textW(f.s) / 2 + 2; textO(g, f.s, Math.max(FX + hw, Math.min(FX + COLS * TS - hw, f.x)), Math.max(FY + 1, f.y - Math.min(14, f.t >> 1))); }
+    if (duel && P.incoming && mode === 'play' && ((frame >> 3) & 1)) textO(g, '+' + P.incoming, FX + 84, FY + 2); // blocks on their way, shown clear of the column pieces come in through
+    if (mode === 'over') {
+      if (P.over) {
+        const rows = Math.min(ROWS, Math.floor(overT / 4));
+        for (let i = 0; i < rows; i++) for (let c = 0; c < COLS; c++) spr(g, ...SRC.block, FX + c * TS, FY + (ROWS - 1 - i) * TS);
+      }
       if (overT > 40) {
-        box(FX + 8, 44, 80, 58);
-        textC(g, 'GAME', FX + 48, 50, C3, 2); textC(g, 'OVER', FX + 48, 67, C3, 2);
-        if (reduce || ((frame >> 5) & 1) === 0) textC(g, 'PRESS START', FX + 48, 89);
+        box(FX + 8, 40, 80, 66);
+        const top = versus ? 'YOU' : 'GAME', bottom = versus ? (won ? 'WIN' : 'LOSE') : 'OVER';
+        textC(g, top, FX + 48, 46, C3, 2); textC(g, bottom, FX + 48, 63, C3, 2);
+        if (reduce || ((frame >> 5) & 1) === 0) textC(g, 'PRESS START', FX + 48, 84);
+        textC(g, 'B - MENU', FX + 48, 94, C2);
       }
     } else if (paused) {
       box(FX + 16, 58, 64, 26); textC(g, 'PAUSE', FX + 48, 64, C3, 2);
@@ -543,13 +2486,12 @@ function render() {
   }
   g.restore();
 
-  const ox = shake > 0 && !paused ? ((shake & 2) ? 1 : -1) : 0;
+  const shake = P ? P.shake : 0, ox = shake > 0 && !paused ? ((shake & 2) ? 1 : -1) : 0;
   out.fillStyle = C0; out.fillRect(0, 0, cv.width, cv.height);
   out.drawImage(buf, 0, 0, W, H, ox * K, 0, W * K, H * K);
 }
 
 /* ---------- input ---------- */
-const held = {}, pressed = {};
 function down(k) { wake(); if (!held[k]) pressed[k] = true; held[k] = true; }
 function up(k) { held[k] = false; }
 const KEYS = { ArrowLeft:'left', ArrowRight:'right', ArrowDown:'down', ArrowUp:'up', Space:'up',
@@ -568,9 +2510,9 @@ for (const b of document.querySelectorAll('button[data-k]')) {
 function toggleSound() {
   soundOn = !soundOn;
   const b = document.getElementById('snd'); b.textContent = soundOn ? 'Sound on' : 'Sound off'; b.setAttribute('aria-pressed', String(soundOn));
-  if (soundOn) beep(660, .06, .05);
+  if (soundOn) sndBeep(660, .06, .05);
 }
-document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'play') paused = true; for (const k in held) held[k] = false; });
+document.addEventListener('visibilitychange', () => { if (document.hidden && mode === 'play') paused = true; for (const k in held) held[k] = false; });
 
 /* ---------- main loop (fixed 60 Hz, like the hardware) ---------- */
 let last = 0, acc = 0, hold = false;
@@ -583,7 +2525,7 @@ function loop(ts) {
   requestAnimationFrame(loop);
 }
 atlas.onload = () => {
-  buildBg(); fit();
+  buildBg(bg, false); buildBg(bgVs, true); fit();
   if (window.ResizeObserver) new ResizeObserver(fit).observe(document.getElementById('screen')); else addEventListener('resize', fit);
   requestAnimationFrame(loop);
 };

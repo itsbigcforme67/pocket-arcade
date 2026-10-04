@@ -2,8 +2,9 @@
    Copyright (C) 2026 the Pocket Arcade authors. GPL-3.0-or-later; see LICENSE.
 
    Each console's page sets window.ARCADE_SYSTEM and loads this file. It shows the list of games
-   (ones you opened from this device, kept in this browser, and any files in roms/<console>/),
-   and starts EmulatorJS from the copy in ../emulatorjs/data/. Nothing is fetched from another site. */
+   (the free ones that come with the site, in free/<console>/; ones you opened from this device,
+   kept in this browser; and any files in roms/<console>/), and starts EmulatorJS from the copy
+   in ../emulatorjs/data/. Nothing is fetched from another site. */
 (function () {
   'use strict';
 
@@ -11,6 +12,7 @@
   var ROOT = '../';
   var DATA = ROOT + 'emulatorjs/data/';
   var ROMS = ROOT + 'roms/' + SYS.id + '/';
+  var FREE = ROOT + 'free/' + SYS.id + '/';   // games published with the site; the console's page lists them in ARCADE_SYSTEM.free
   var D = document;
   var ROM_EXT = new RegExp('\\.(' + SYS.exts.join('|') + ')$', 'i');
   var ZIP_EXT = /\.(zip|7z)$/i;              // EmulatorJS unpacks these itself
@@ -66,6 +68,10 @@
   }
   function size(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB'; }
   function title(name) { return name.replace(/\.[^.]+$/, ''); }
+  var FREE_GAMES = (SYS.free || []).filter(function (g) { return g && ROM_EXT.test(g.file) && g.file.indexOf('/') < 0; });
+  function freeGame(file) { return FREE_GAMES.filter(function (g) { return g.file === file; })[0]; }
+  // What to call a game: a free one has a proper title, the rest go by their file name.
+  function nameOf(game) { var g = game.from === 'free' && freeGame(game.name); return g && g.title ? g.title : title(game.name); }
   function byTitle(x, y) { return title(x).localeCompare(title(y), undefined, { sensitivity: 'base', numeric: true }) || x.localeCompare(y); }
 
   /* ---------- games opened from this device, kept in this browser ---------- */
@@ -165,10 +171,13 @@
         ui.file = el('input', { type: 'file', multiple: '', class: 'file', onchange: picked })
       ]),
       ui.note = el('p', { class: 'note', role: 'status', text: 'Files ending in ' + SYS.exts.map(function (e) { return '.' + e; }).join(' or ') + ', or a zip of one. They stay in this browser and are not uploaded.' }),
-      ui.mine = el('section', { hidden: '' }, [el('h2', { text: 'On this device' }), ui.mineList = el('ul', { class: 'games' })]),
-      ui.site = el('section', { hidden: '' }, [el('h2', { text: 'On this site' }), ui.siteList = el('ul', { class: 'games' })]),
+      FREE_GAMES.length ? el('section', { id: 'free' }, [el('h2', { text: FREE_GAMES.length === 1 ? 'Free game' : 'Free games' }), el('ul', { class: 'games' }, FREE_GAMES.map(freeRow))]) : null,
+      ui.mine = el('section', { id: 'mine', hidden: '' }, [el('h2', { text: 'On this device' }), ui.mineList = el('ul', { class: 'games' })]),
+      ui.site = el('section', { id: 'site', hidden: '' }, [el('h2', { text: 'On this site' }), ui.siteList = el('ul', { class: 'games' })]),
       el('div', { class: 'fine', html:
-        '<p>No games are included. Saves and save states are kept in this browser; clearing its site data erases them, so export the ones you care about from the menu while playing.</p>' +
+        '<p>' + (FREE_GAMES.length ? 'The free game' + (FREE_GAMES.length === 1 ? ' above was' : 's above were') + ' made for this site and can be played here or downloaded. No other games are included.'
+                                   : 'No games are included.') +
+        ' Saves and save states are kept in this browser; clearing its site data erases them, so export the ones you care about from the menu while playing.</p>' +
         '<p>Emulation by <a href="https://emulatorjs.org/" rel="noopener">EmulatorJS</a> with the ' + SYS.coreName + ' core, both served from this site ' +
         '(<a href="' + ROOT + 'emulatorjs/README.md">licences and source</a>). ' +
         'Unofficial fan project; console names are trademarks of their owners.</p>' })
@@ -192,6 +201,21 @@
       } }));
     }
     return li;
+  }
+  // A game that comes with the site: its title and a line about it, and a link to download the file itself.
+  var ICON_GET = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>';
+  function freeRow(g) {
+    return el('li', {}, [
+      el('button', { class: 'pick', type: 'button', onclick: function () { play({ from: 'free', name: g.file }, true); } }, [
+        el('span', { class: 'words' }, [
+          el('span', { class: 'name', text: g.title || title(g.file) }),
+          g.about ? el('span', { class: 'about', text: g.about }) : null
+        ]),
+        el('span', { class: 'go', 'aria-hidden': 'true', text: '›' })
+      ]),
+      el('a', { class: 'get', href: FREE + encodeURIComponent(g.file), download: g.file, title: 'Download ' + g.file,
+                'aria-label': 'Download ' + (g.title || title(g.file)) + ' (' + g.file + ')', html: ICON_GET })
+    ]);
   }
   function refresh() {
     return Promise.all([Mine.all(), siteGames()]).then(function (r) {
@@ -224,7 +248,7 @@
 
   function bytesOf(game) {
     if (game.from === 'mine') return Mine.get(game.name);
-    return fetch(ROMS + encodeURIComponent(game.name)).then(function (r) { if (!r.ok) throw new Error('missing'); return r.arrayBuffer(); });
+    return fetch((game.from === 'free' ? FREE : ROMS) + encodeURIComponent(game.name)).then(function (r) { if (!r.ok) throw new Error('missing'); return r.arrayBuffer(); });
   }
 
   // A WonderSwan cartridge says in its last bytes whether it is played with the console held upright.
@@ -300,7 +324,7 @@
         history.pushState({ play: 1 }, '', '?play=' + encodeURIComponent(game.from + ':' + game.name));
         pushed = true;
       }
-      D.title = title(game.name) + ' – ' + SYS.name;
+      D.title = nameOf(game) + ' – ' + SYS.name;
       D.body.classList.add('playing');
       ui.stage.hidden = false;
 
@@ -310,7 +334,7 @@
     }).catch(function (e) {
       starting = false;
       if (!tapped) history.replaceState(null, '', location.pathname);
-      say(e && e.message === 'missing' ? '"' + title(game.name) + '" is no longer here.' : 'Could not start the game. ' + (e && e.message ? e.message : ''), true);
+      say(e && e.message === 'missing' ? '"' + nameOf(game) + '" is no longer here.' : 'Could not start the game. ' + (e && e.message ? e.message : ''), true);
     });
   }
 
@@ -406,8 +430,8 @@
   build();
   var asked = new URLSearchParams(location.search).get('play');
   refresh().then(function () {
-    var m = asked && /^(mine|site):(.+)$/.exec(asked);
-    if (m) play({ from: m[1], name: m[2] }, false);
+    var m = asked && /^(mine|site|free):(.+)$/.exec(asked);
+    if (m && (m[1] !== 'free' || freeGame(m[2]))) play({ from: m[1], name: m[2] }, false);
   });
 
   window.pocketArcade = { get emulator() { return ejs; }, layout: layout, turn: turn, flush: flush, Mine: Mine, refresh: refresh };   // for tests

@@ -39,6 +39,12 @@ ul.games button { font: inherit; color: inherit; background: none; border: 0; cu
 .pick .go { flex: none; color: var(--accent); font-weight: 800; }
 .drop { flex: none; width: 52px; color: var(--muted) !important; font-size: 18px !important; border-left: 1px solid var(--line) !important; }
 .drop:hover, .drop:focus-visible { color: var(--bad) !important; outline: none; }
+/* a free game: its title with a line about it underneath, and a link to download the file */
+.pick .words { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 4px 0; }
+.pick .about { font-size: 13px; line-height: 1.35; color: var(--muted); }
+.get { flex: none; width: 52px; display: flex; align-items: center; justify-content: center; color: var(--muted); border-left: 1px solid var(--line); }
+.get:hover, .get:focus-visible { color: var(--accent); background: rgba(255, 255, 255, .05); outline: none; }
+.get svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .fine { margin: 28px 2px 0; font-size: 13px; color: var(--muted); }
 .fine p { margin: 8px 0; }
 

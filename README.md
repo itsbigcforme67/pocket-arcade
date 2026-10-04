@@ -8,7 +8,7 @@ A one-page console picker that links to five browser emulators:
 * **Web VMU** (`../web-vmu/`): the Dreamcast Visual Memory Unit
 * **Web P/ECE** (`../web-piece/`): the Aquaplus P/ECE
 
-It also lists one game that needs no files: **Tricky Wicks** (`tricky-wicks.html`), a falling-block puzzle kept in this repo as a single self-contained page. To update it, replace that file with a newer build.
+It also lists one game that needs no files: **Tricky Wicks** (`tricky-wicks.html`), a falling-block puzzle kept in this repo as a single self-contained page. To update it, replace that file with a newer build. Its Game Boy version is the free game on the Game Boy page (`free/gb/tricky-wicks.gb`, see "Free games" below).
 
 Three more consoles live in this repo and run on [EmulatorJS](https://emulatorjs.org/), each on a page of its own:
 
@@ -27,22 +27,32 @@ The other emulators here each have a core written for the job in a repo of their
 | `gb/`, `ws/`, `ngp/` | one small page per console: its name, file types and which EmulatorJS system it is |
 | `play/player.js`, `play/player.css` | everything the three pages share: the list of games, starting EmulatorJS, the layout while playing |
 | `emulatorjs/data/` | EmulatorJS 4.2.3 and the three cores, unmodified |
+| `free/gb/` | the free game that comes with the Game Boy page (published, see below) |
 | `roms/gb/`, `roms/ws/`, `roms/ngp/` | games to list on the page (not published, see below) |
 | `tests/` | a browser test and the tiny test ROMs it boots |
 
 What a page does:
 
 * **Open a game from this device** takes a `.gb`/`.gbc` (or `.ws`/`.wsc`, `.ngp`/`.ngc`) file, or a zip of one. It is kept in the browser's storage and listed under *On this device* from then on.
+* **Free game** (Game Boy page) lists the games that come with the site, each with a line about it and a link to download the file.
 * **On this site** lists what is in `roms/<console>/`.
 * While playing, the picture is drawn at a whole-number multiple of the console's resolution, in the screen's own pixels, as large as fits next to the touch controls. **Games** goes back to the list; the menu button (top right) has EmulatorJS's own menu: save and load state, export and import the save file, settings.
 * **WonderSwan:** games that say they are played upright start that way, and **Rotate** switches by hand. The touch controls change with it, and the choice is remembered per game.
 * Battery saves are written to the browser's storage every 30 seconds and whenever the page is hidden or left. Save states are kept there too, one per game. Clearing the site's data erases both.
 
+### Free games (`free/`)
+
+Games in `free/<console>/` are part of the published site. A console's page lists them in the `free` list of its `ARCADE_SYSTEM` block (file name, title and a line about the game), and they show under **Free game** with a download link. They are fetched from the site when played, not copied into the browser's list.
+
+Only put a game here if it is yours to give away, or its licence allows it. So far there is one: **Tricky Wicks** for Game Boy (`free/gb/tricky-wicks.gb`), the same game as `tricky-wicks.html`, built from the Tricky Wicks project (`port/gb/` there). To update it, replace the file. Its best score is kept as a battery save like any other game's. Its 2P LINK mode needs two Game Boys and a link cable, so in the browser it answers NO REPLY.
+
+To add another: put the file in `free/<console>/`, add a line to the `free` list in that console's `index.html`, and commit.
+
 ### The `roms/` folders
 
 `.gitignore` keeps `roms/` out of the repo, so nothing you put there is published: a public page must not hand out games you do not have the right to share. On your own computer, `bash run.sh` serves the site and the pages read the folders directly.
 
-To publish games you may share (your own, or homebrew whose licence allows it): remove the `roms/` line from `.gitignore`, run `bash tools/roms-index.sh` to write the `index.json` lists (GitHub Pages cannot list a folder), and commit.
+To publish a game you may share (your own, or homebrew whose licence allows it), put it in `free/` instead (above); that keeps `roms/` private. To publish a whole `roms/` folder: remove the `roms/` line from `.gitignore`, run `bash tools/roms-index.sh` to write the `index.json` lists (GitHub Pages cannot list a folder), and commit.
 
 ### Trying and testing
 
@@ -51,7 +61,7 @@ bash run.sh                          # http://localhost:8770/  (it also prints t
 python3 tests/e2e.py                 # in another terminal; needs: pip install playwright pillow
 ```
 
-The test boots a ROM on each console in a phone-sized window and checks the list, the touch controls, the scaling, rotation, and that saves and save states survive a reload. `tests/probes/` holds the ROMs it uses; none is a game.
+The test boots a ROM on each console in a phone-sized window and checks the list, the touch controls, the scaling, rotation, and that saves and save states survive a reload. It also boots the free game and starts a round. `tests/probes/` holds the test ROMs it uses; none of those is a game.
 
 ## How the addresses fit together
 
