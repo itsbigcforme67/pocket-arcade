@@ -47,6 +47,7 @@
     .piece .stage svg { height: 118px; }
     .wicks { --s1: #4d3a2c; --s2: #2a201a; }
     .games { --s1: #6b3a1e; --s2: #3a1f10; }
+    .vmx { --s1: #2c4a24; --s2: #142112; }
     .flip { --s1: #6a5320; --s2: #3a2d10; }
     .gb { --s1: #3d4b41; --s2: #232c26; }
     .gba { --s1: #3c3566; --s2: #221d3d; }
@@ -418,6 +419,31 @@
         </div>
       </a>
 
+      <!-- VMX: the owner's ESP32 handheld (shaped like an Xbox Memory Unit), simulated in vmx/: its menus and games. -->
+      <a class="card vmx" href="vmx/">
+        <div class="stage">
+          <svg viewBox="0 0 180 230" role="img" aria-label="A black handheld with a green screen showing an X, a D-pad, and a green and a red button">
+            <path d="M34 8h112a26 26 0 0 1 26 26v170a18 18 0 0 1-18 18H26a18 18 0 0 1-18-18V34A26 26 0 0 1 34 8z" fill="#0c0d0c"/>
+            <path d="M34 4h112a26 26 0 0 1 26 26v170a18 18 0 0 1-18 18H26a18 18 0 0 1-18-18V30A26 26 0 0 1 34 4z" fill="#1f221f"/>
+            <rect x="174" y="96" width="5" height="26" rx="2.5" fill="#2b2e2b"/>
+            <rect x="26" y="20" width="128" height="112" rx="8" fill="#060706"/>
+            <rect x="40" y="26" width="100" height="100" fill="#0a1008"/>
+            <g class="bob" fill="#7dff3a">
+              <path d="M58 40l14 0 18 22 18-22 14 0-25 30 25 30-14 0-18-22-18 22-14 0 25-30z"/>
+            </g>
+            <rect class="blink" x="78" y="112" width="24" height="4" fill="#7dff3a" opacity=".7"/>
+            <g fill="#2e322e"><rect x="38" y="148" width="16" height="50" rx="5"/><rect x="21" y="165" width="50" height="16" rx="5"/></g>
+            <circle cx="148" cy="160" r="13" fill="#e2392f"/><circle cx="122" cy="186" r="13" fill="#2fbf4a"/>
+          </svg>
+        </div>
+        <div class="info">
+          <h2>VMX</h2>
+          <div class="meta"><span class="pill">original handheld</span><span class="pill">64 × 64, 1-bit</span><span class="pill">8 games</span></div>
+          <p>A pocket handheld in the works, shaped like an Xbox Memory Unit, with a tiny green OLED. Boot it, browse its menus and play its games: blocks, blobs, invaders, missile defence, blackjack, checkers, reversi and Tricky Wicks.</p>
+          <div class="go"><span class="btn">Play ›</span><span class="need">no files needed</span></div>
+        </div>
+      </a>
+
       <!-- Minigames: small touch games written for this site, each one file in minigames/. -->
       <a class="card games" href="minigames/">
         <div class="stage">
@@ -461,7 +487,7 @@
     </div>
 
     <div class="how">
-      <div><h3>Bring your own files</h3><p>No BIOS is included, and the only games are our own: Tricky Wicks and the minigames. Each console asks for your own dumps the first time.</p></div>
+      <div><h3>Bring your own files</h3><p>No BIOS is included, and the only games are our own: Tricky Wicks, the minigames and the VMX games. Each console asks for your own dumps the first time.</p></div>
       <div><h3>Nothing is uploaded</h3><p>Your files, saves and progress stay in this browser's storage on this device. QuickFlip only shares a note when you upload it to a server you set up.</p></div>
       <div><h3>Works like an app</h3><p>Most consoles here can be installed with your browser's “Add to Home Screen” and then played offline.</p></div>
     </div>
