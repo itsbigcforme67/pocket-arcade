@@ -70,8 +70,7 @@ const RECS = load("vmx-saves", {});
 const rec = id => (RECS[id] ||= {});
 
 // ---------------------------------------------------------------- games
-const EXTRA = new URLSearchParams(location.search).has("extra");     // Zork I and Star Raiders: owner's call pending
-const GAMES = ALL.filter(a => !a.extra || EXTRA);
+const GAMES = ALL;
 const ART = GAMES.map(a => { const s = new Surf(24, 24); a.art(s); return s; });
 const MAIN = ["GAMES", "SAVES", "SETTINGS", "???"];
 
@@ -439,12 +438,17 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
-// the screen: a whole number of device pixels per VMX pixel, as large as the bezel allows
+// the screen: a whole number of device pixels per VMX pixel, as large as fits. The device is sized from its screen
+// (the render's screen is 630.3 of its 1320 px width; the image is 1320 x 2090).
+const xvm = document.getElementById("xvm");
 function fit() {
-  const box = canvas.parentElement, cs = getComputedStyle(box);
-  const avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-  const dpr = window.devicePixelRatio || 1, k = Math.max(1, Math.floor(avail * dpr / 64));
+  const dpr = window.devicePixelRatio || 1;
+  const maxW = Math.min(xvm.parentElement.clientWidth, 420, (innerHeight - 70) * 1320 / 2090);
+  const k = Math.max(1, Math.floor(maxW * 630.3 / 1320 * dpr / 64));
+  const w = Math.round(k * 64 * 1320 / 630.3) / dpr, snap = v => Math.round(v * dpr) / dpr;   // whole device pixels
+  xvm.style.width = w + "px";
   canvas.style.width = canvas.style.height = (k * 64 / dpr) + "px";
+  canvas.style.left = snap(w * 0.26129) + "px"; canvas.style.top = snap(w * 2090 / 1320 * 0.13928) + "px";
 }
 addEventListener("resize", fit); fit();
 requestAnimationFrame(frame);

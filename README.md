@@ -83,7 +83,7 @@ The test boots a ROM on each console in a phone-sized window and checks the list
 
 | | |
 |---|---|
-| `vmx/index.html` | the page: the device front, the notes under it |
+| `vmx/index.html` | the page: the device front (the owner's render, `vmx-front.webp`, with the screen and buttons laid over it), the notes under it |
 | `vmx/vmx.js` | the firmware UI: boot, menus, saves, settings, the screen, input (touch, keys, pads), playing a game |
 | `vmx/games.js` | one adapter per game: how the VMX's buttons reach its core, its demo, its score, its card pictogram |
 | `vmx/cores/` | the games' cores, copied from `microgames` (do not edit here) |
@@ -98,10 +98,10 @@ The games are made in the `microgames` project (`ui/games/` there), which is the
 * **BLOX** (Klax-style), **BLOBS** (Puyo-style; the mechanics follow Sega's public booklet, the code is ours), **INTERCEPT** (Missile Command-style), **INVASION** (Space Invaders-style), **Blackjack** (Blackjack and Hookers, with fishing bait), **Checkers** and **Reversi**: written for the VMX, ours. The names are working names, chosen to stay clear of the originals' trademarks.
 * **Tricky Wicks**: the owner's game, its rules core unchanged from Tricky Wicks 1.5.
 
-Not published:
+* **Zork I** (owner's OK, 2026-10-18): the real game on our own Z-machine, with a word picker instead of a keyboard. Its code and story file (`vmx/cores/zork1.z3`) are MIT-licensed by Microsoft (2025); the licence is `vmx/cores/zork1.LICENSE`. "Zork" is a trademark of its owners; this is an unofficial fan project. Its SAVE command is the VMX save (`vmx-zork-save` in the browser's storage).
+* **Star Raiders** (owner's OK, 2026-10-18): the original 1979 Atari cartridge running on our own 6502 and a bare Atari machine (`cpu6502.js`, `starraiders_machine.js`), drawn natively at 64 × 64. The cartridge is Atari's and is **not** in this repo: the first time, the VMX asks for the player's own 8 KB cartridge file (`.rom`, or `.car` with its header), and keeps it in the browser's storage. B opens its command menu (the Atari's keyboard).
 
-* **Zork I** and **Star Raiders** are built in but hidden until the owner decides about them. Zork I's code and story file are MIT-licensed (Microsoft, 2025), but its name is a trademark. Star Raiders runs the original 1979 Atari cartridge on our 6502, and the cartridge is Atari's: it is never in this repo, and players open their own file. To try them locally: `bash tools/vmx-sync.sh --extra` (which copies them into `vmx/cores/extra/`, kept out of git through `.git/info/exclude`), then open `vmx/?extra`.
-* **STACKS** (it looks like Tetris, which is protected trade dress) and the captured footage of other companies' games stay in `microgames`.
+Not published: **STACKS** (it looks like Tetris, which is protected trade dress), and the captured footage of other companies' games; they stay in `microgames`.
 
 ### Updating the games
 
@@ -109,7 +109,7 @@ Not published:
 bash tools/vmx-sync.sh
 ```
 
-That copies the published cores from `../../microgames/ui/games/` (set `MICROGAMES=` if it lives elsewhere) into `vmx/cores/`. If a core's controls, demo or score changed, update its adapter in `vmx/games.js`; that game's own page in microgames (`ui/games/<game>.html`) shows how it's wired. When the files change, bump `CACHE` in `vmx/sw.js` so installed copies update. A new game: add its files to the list in `tools/vmx-sync.sh` and in `CORES` in `sw.js`, add an adapter, and check its rights first. Before committing, check `git status` yourself: no `.rom`, `.z3` or other game files you are not cleared to publish.
+That copies the cores from `../../microgames/ui/games/` (and Zork I's licence) (set `MICROGAMES=` if it lives elsewhere) into `vmx/cores/`. If a core's controls, demo or score changed, update its adapter in `vmx/games.js`; that game's own page in microgames (`ui/games/<game>.html`) shows how it's wired. When the files change, bump `CACHE` in `vmx/sw.js` so installed copies update. A new game: add its files to the list in `tools/vmx-sync.sh` and in `CORES` in `sw.js`, add an adapter, and check its rights first. Before committing, check `git status` yourself: no `.rom`, `.z3` or other game files you are not cleared to publish.
 
 ## How the addresses fit together
 

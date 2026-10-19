@@ -9,7 +9,7 @@
 // load() (the core module), start(mod, seed, demo), tick(g, inp), draw(g) (a 64x64 Uint8Array, 1 = lit),
 // usesB (false: B goes back to the menu), record(g, rec) (keeps the best score in rec, the saved object; true when
 // it changed), score(rec) (up to 3 lines of 7 or fewer for SAVES) and title (the full name).
-// extra: hidden unless the page is opened with ?extra (Zork I and Star Raiders, waiting on the owner's OK).
+// needsCart: the player opens the cartridge from their own file (Star Raiders: the cart is Atari's, never shipped).
 
 const wld = rec => ["WON " + (rec.w || 0), "LOST " + (rec.l || 0), "DRAWN " + (rec.d || 0)];
 const seedNow = () => Date.now() % 100000;
@@ -115,9 +115,9 @@ export const GAMES = [
       s.line(13, 16, 15, 16); s.disc(19, 16, 4); s.fill(18, 10, 2, 3); s.px(21, 9); },
   },
   {
-    id: "zork", name: ["ZORK I"], title: "ZORK I", usesB: true, extra: true,
+    id: "zork", name: ["ZORK I"], title: "ZORK I", usesB: true,
     load: async function () {
-      const [m, r] = await Promise.all([import("./cores/extra/zork_core.js"), fetch("cores/extra/zork1.z3")]);
+      const [m, r] = await Promise.all([import("./cores/zork_core.js"), fetch("cores/zork1.z3")]);
       if (!r.ok) throw new Error("no story file");
       this.story = new Uint8Array(await r.arrayBuffer()); return m;
     },
@@ -147,8 +147,8 @@ export const GAMES = [
       s.line(0, 23, 23, 23); },
   },
   {
-    id: "starraiders", name: ["STAR", "RAIDER"], title: "STAR RAIDERS", usesB: true, extra: true, needsCart: true,
-    load: () => import("./cores/extra/starraiders_core.js"),
+    id: "starraiders", name: ["STAR", "RAIDER"], title: "STAR RAIDERS", usesB: true, needsCart: true,
+    load: () => import("./cores/starraiders_core.js"),
     start(m, seed) { return this.cart ? m.newGame(seed, this.cart) : null; },
     tick(g, { held: h, demo }) { this.m.step(g, demo ? this.m.pilot(g) : h); },        // B is its command menu
     record: () => false,
