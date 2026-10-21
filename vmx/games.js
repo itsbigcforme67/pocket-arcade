@@ -100,6 +100,18 @@ export const GAMES = [
       s.disc(6, 6, 4); s.ring(18, 6, 4); s.ring(6, 18, 4); s.disc(18, 18, 4); },
   },
   {
+    id: "junction", name: ["JUNC", "TION"], usesB: false,
+    load: () => import("./cores/junction_core.js"),
+    start: (m, seed) => m.newGame(seed),
+    tick(g, { held: h, demo }) { this.m.step(g, demo ? this.m.demo(g) : h); },          // held: the turn is the direction held
+    record: (g, rec) => best(rec, g.best),
+    score: rec => ["BEST", (rec.best || 0) + "M"],
+    art(s) { s.line(8, 0, 8, 8); s.line(15, 0, 15, 8); s.line(0, 8, 8, 8); s.line(15, 8, 23, 8);
+      s.line(0, 15, 8, 15); s.line(15, 15, 23, 15); s.line(8, 15, 8, 23); s.line(15, 15, 15, 23);
+      s.fill(11, 2, 2, 2); s.fill(11, 5, 2, 2); s.px(11, 17); s.px(12, 18); s.px(11, 19);
+      s.fill(2, 11, 2, 2); s.fill(19, 11, 2, 2); },
+  },
+  {
     id: "tricky", name: ["TRICKY", "WICKS"], title: "TRICKY WICKS", usesB: true,
     load: () => import("./cores/tricky_core.js"),
     start(m, seed, demo) { const g = m.newGame(seed & 0xFFFF); if (demo) m.aiInit(g, g.seed); return g; },
