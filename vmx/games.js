@@ -112,6 +112,19 @@ export const GAMES = [
       s.fill(2, 11, 2, 2); s.fill(19, 11, 2, 2); },
   },
   {
+    id: "pool", name: ["9-", "BALL"], title: "9-BALL", usesB: true,
+    load: () => import("./cores/pool_core.js"),
+    start: (m, seed) => m.newGame(seed),
+    tick(g, { held: h, demo }) { this.m.step(g, demo ? this.m.demo(g) : h); },          // held: A is held for power
+    record(g, rec) {                                                                    // a rack won or lost, once
+      const over = g.phase === "over", was = g._over; g._over = over;
+      if (!over || was || g.auto) return false;
+      const k = g.msg === "YOU WIN" ? "w" : "l"; rec[k] = (rec[k] || 0) + 1; return true; },
+    score: rec => ["WON " + (rec.w || 0), "LOST " + (rec.l || 0)],
+    art(s) { s.ring(12, 4, 3); s.px(12, 4); s.ring(8, 10, 3); s.ring(16, 10, 3); s.ring(4, 16, 3); s.ring(12, 16, 3);
+      s.ring(20, 16, 3); s.line(0, 22, 22, 22); s.line(23, 23, 23, 23); },
+  },
+  {
     id: "tricky", name: ["TRICKY", "WICKS"], title: "TRICKY WICKS", usesB: true,
     load: () => import("./cores/tricky_core.js"),
     start(m, seed, demo) { const g = m.newGame(seed & 0xFFFF); if (demo) m.aiInit(g, g.seed); return g; },
