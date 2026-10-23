@@ -2,6 +2,9 @@
 // hookers are fishing hooks). Written from scratch. Rules: 4-deck shoe (reshuffled at 3/4 used), dealer stands on
 // all 17s, blackjack pays 3:2, double on the first two cards; no split / insurance (yet). You bet bait; the suits
 // are fish, hooks, shells and worms. Left/right set the bet and A deals; then A hits, B stands, Up doubles.
+// VMX CASINO: bait is this table's name for the casino's shared chips. newGame(seed, bank) plays from bank.chips
+// (the VMX's chip bank: { chips, bonus }, mutated here); bank.bonus = the daily chips given at launch. Broke
+// (under 5) = no more hands until the bank's daily top-up. With no bank, a private one of 100.
 // Pure logic + drawing into a 64x64 bit buffer, seeded, 30 Hz ticks.
 
 export const W = 64, H = 64;
@@ -24,10 +27,14 @@ const SUITS = [                                       // 5x5: fish, hook, shell,
 const RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
 
-export function newGame(seed = 1) {
-  const g = { rnd: rng(seed), t: 0, bait: 100, bet: 10, shoe: [], phase: "bet", dealer: [], player: [], msg: "",
+export function newGame(seed = 1, bank = { chips: 100, bonus: 0 }) {
+  const g = { rnd: rng(seed), t: 0, bank, bet: 10, shoe: [], phase: "bet", dealer: [], player: [], msg: "",
               msgT: 0, wait: 0, hands: 0, fish: [] };
-  shuffle(g); return g;
+  shuffle(g);
+  if (bank.bonus > 0) { g.msg = "DAILY BAIT +" + bank.bonus; g.msgT = 90; }
+  if (bank.chips < 5) g.phase = "broke";
+  g.bet = Math.max(5, Math.min(g.bet, bank.chips - bank.chips % 5));
+  return g;
 }
 function shuffle(g) {
   g.shoe = []; for (let d = 0; d < 4; d++) for (let s = 0; s < 4; s++) for (let r = 0; r < 13; r++) g.shoe.push({ r, s });
@@ -41,7 +48,7 @@ export function total(hand) {
 }
 function deal(g, hand, hidden = false) { if (g.shoe.length < 52) shuffle(g); hand.push({ ...g.shoe.pop(), hidden, age: 0 }); }
 function settle(g, msg, win) {                        // win: payout multiple of the bet back on top of the stake
-  g.bait += Math.round(g.bet * win); g.msg = msg; g.msgT = 75; g.phase = "done"; g.wait = 75; g.hands++;
+  g.bank.chips += Math.round(g.bet * win); g.msg = msg; g.msgT = 75; g.phase = "done"; g.wait = 75; g.hands++;
 }
 
 export function step(g, inp) {                        // inp: edge presses left/right/a/b/up
@@ -54,9 +61,9 @@ export function step(g, inp) {                        // inp: edge presses left/
   if (g.wait > 0) { g.wait--; if (g.wait) return; }
   if (g.phase === "bet") {
     if (inp.left) g.bet = Math.max(5, g.bet - 5);
-    if (inp.right) g.bet = Math.min(Math.min(50, g.bait), g.bet + 5);
+    if (inp.right) g.bet = Math.min(Math.min(50, g.bank.chips), g.bet + 5);
     if (inp.a) {
-      g.bet = Math.min(g.bet, g.bait); g.bait -= g.bet;
+      g.bet = Math.min(g.bet, g.bank.chips); g.bank.chips -= g.bet;
       g.dealer = []; g.player = []; deal(g, g.player); deal(g, g.dealer); deal(g, g.player); deal(g, g.dealer, true);
       g.phase = "deal"; g.wait = 20;
     }
@@ -70,8 +77,8 @@ export function step(g, inp) {                        // inp: edge presses left/
     } else g.phase = "play";
   } else if (g.phase === "play") {
     if (inp.a) { deal(g, g.player); g.wait = 8; if (total(g.player).t > 21) { g.dealer[1].hidden = false; settle(g, "SNAGGED!", 0); } }
-    else if (inp.up && g.player.length === 2 && g.bait >= g.bet) {
-      g.bait -= g.bet; g.bet *= 2; deal(g, g.player); g.wait = 10;
+    else if (inp.up && g.player.length === 2 && g.bank.chips >= g.bet) {
+      g.bank.chips -= g.bet; g.bet *= 2; deal(g, g.player); g.wait = 10;
       if (total(g.player).t > 21) { g.dealer[1].hidden = false; settle(g, "SNAGGED!", 0); } else g.phase = "dealer";
     } else if (inp.b) { g.phase = "dealer"; }
     if (g.phase === "dealer") { g.dealer[1].hidden = false; g.wait = 18; }
@@ -84,9 +91,9 @@ export function step(g, inp) {                        // inp: edge presses left/
     else if (p === d) settle(g, "SLACK LINE", 1);
     else settle(g, "THROWN BACK", 0);
   } else if (g.phase === "done") {
-    if (g.bet > 10 && g.bait > 0) g.bet = Math.max(10, Math.floor(g.bet / 2 / 5) * 5);   // doubled bets drop back
-    if (g.bait <= 0) { g.bait = 100; g.msg = "FRESH BAIT"; g.msgT = 60; }
-    g.bet = Math.min(g.bet, g.bait); g.phase = "bet";
+    if (g.bet > 10 && g.bank.chips > 0) g.bet = Math.max(10, Math.floor(g.bet / 2 / 5) * 5);   // doubled bets drop back
+    if (g.bank.chips < 5) { g.phase = "broke"; return; }
+    g.bet = Math.min(g.bet, g.bank.chips - g.bank.chips % 5); g.phase = "bet";
   }
 }
 
@@ -127,10 +134,11 @@ export function draw(g, b = new Uint8Array(W * H)) {
   if (g.player.length) { const p = total(g.player); text(b, 52, 34, String(p.t).padStart(2, " ")); }
   // bottom bar: bait and bet (a hook dangling over the bet)
   for (let x = 0; x < W; x++) px(b, x, 51);
-  text(b, 1, 53, "BAIT " + String(g.bait).padStart(3, " "));                       // bait | hook + bet
+  text(b, 1, 53, "BAIT " + String(g.bank.chips).padStart(3, " "));                       // bait | hook + bet
   HOOK.forEach((row, j) => { for (let i = 0; i < 3; i++) if (row[i] === "#") px(b, 45 + i, 52 + j); });
   text(b, 51, 53, String(g.bet).padStart(3, " ").slice(-3));
-  const hint = g.phase === "bet" ? ((g.t >> 4) & 1 ? "A: CAST" : "< BET >") : g.phase === "play" ? "A HIT B STAY" : "";
+  const hint = g.phase === "bet" ? ((g.t >> 4) & 1 ? "A: CAST" : "< BET >") : g.phase === "play" ? "A HIT B STAY" :
+    g.phase === "broke" ? ((g.t >> 5) & 1 ? "MORE TOMORROW" : "OUT OF BAIT") : "";
   if (hint) text(b, (W - tw(hint)) >> 1, 59, hint);
   if (g.msgT) {                                       // the call-out, boxed over the water
     const w = tw(g.msg) + 4, x = (W - w) >> 1;
@@ -162,7 +170,7 @@ export function demo(g) {
   if (g.phase === "bet") { const target = [10, 10, 15, 20, 25][Math.floor(g.rnd() * 5)]; if (g.bet < target) want.right = true; else want.a = true; return want; }
   if (g.phase !== "play") return want;
   const p = total(g.player), up = Math.min(10, g.dealer[0].r === 0 ? 11 : g.dealer[0].r + 1);
-  if (g.player.length === 2 && (p.t === 11 || (p.t === 10 && up <= 9)) && g.bait >= g.bet) { want.up = true; return want; }
+  if (g.player.length === 2 && (p.t === 11 || (p.t === 10 && up <= 9)) && g.bank.chips >= g.bet) { want.up = true; return want; }
   const hit = p.soft ? p.t <= 17 : p.t <= 11 || (p.t <= 16 && up >= 7) || (p.t === 12 && up <= 3);
   if (hit) want.a = true; else want.b = true;
   return want;

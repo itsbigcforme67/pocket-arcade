@@ -67,6 +67,22 @@ const load = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); re
 const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 const SET = Object.assign({ sound: true, bright: 2 }, load("vmx-settings", {}));
 const RECS = load("vmx-saves", {});
+// VMX CASINO's shared chip bank, as the firmware keeps it (core/game_vx.c): 100 to start; a casino game started with
+// under STIPEND chips tops it up to STIPEND once a day; demos play from a scratch bank
+const BANK = load("vmx-casino", { chips: 100, peak: 100, staked: 0, paid: 0, cashed: 0, day: -1 }), STIPEND = 25;
+function bankFor(a, demo) {
+  if (!a.casino) return undefined;
+  if (demo) return { chips: 100, bonus: 0 };
+  const day = Math.floor((Date.now() - Date.UTC(2001, 10, 15)) / 864e5); let bonus = 0;
+  if (BANK.day !== day && BANK.chips < STIPEND) { bonus = STIPEND - BANK.chips; BANK.chips = STIPEND; BANK.day = day; store("vmx-casino", BANK); }
+  return { chips: BANK.chips, bonus };
+}
+function bankSync(P) {                                  // the game's bank object -> the saved bank
+  if (!P.bank || P.demo || P.bank.chips === BANK.chips) return;
+  const d = P.bank.chips - BANK.chips;
+  if (d > 0) BANK.paid += d; else BANK.staked -= d;
+  BANK.chips = P.bank.chips; BANK.peak = Math.max(BANK.peak, BANK.chips); store("vmx-casino", BANK);
+}
 const rec = id => (RECS[id] ||= {});
 
 // ---------------------------------------------------------------- games
@@ -292,9 +308,9 @@ async function open(k, demo, attract = false) {
   if (token !== loadToken || S.screen !== "loading") return;
   if (a.needsCart && !a.cart) a.cart = cartFromStore();
   if (a.needsCart && !a.cart) { if (attract) { S.screen = "games"; return; } S.msg = "NEEDS YOUR\nCARTRIDGE\nFILE"; S.screen = "cart"; S.cartFor = k; return; }
-  const g = a.start(a.m, seedNow(), demo);
+  const bank = bankFor(a, demo), g = a.start(a.m, seedNow(), demo, bank);
   taps.length = 0; for (const b of BTN) held[b] = latch[b] = false;
-  S.play = { k, a, g, demo, attract, prev: {}, acc: 0, since: 0 };
+  S.play = { k, a, g, demo, attract, bank, prev: {}, acc: 0, since: 0 };
   S.screen = "play"; S.idle = 0;
 }
 function close() { S.play = null; S.screen = "games"; S.idle = 0; }
@@ -325,6 +341,7 @@ function tickGame() {
     if (BTN.some(b => e[b])) { backSnd(); close(); return; }
   } else if (e.b && !P.a.usesB) { backSnd(); close(); return; }
   P.a.tick(P.g, { held: h, edges: e, tap, demo: P.demo });
+  bankSync(P);
   if (!P.demo && P.a.record(P.g, rec(P.a.id))) store("vmx-saves", RECS);
   if (P.attract && (P.since += 1 / 30) > 25) {          // attract mode: the next game's demo
     const n = (P.k + 1) % GAMES.length; S.game = n; open(n, true, true);

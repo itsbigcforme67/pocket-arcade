@@ -10,6 +10,8 @@
 // usesB (false: B goes back to the menu), record(g, rec) (keeps the best score in rec, the saved object; true when
 // it changed), score(rec) (up to 3 lines of 7 or fewer for SAVES) and title (the full name).
 // needsCart: the player opens the cartridge from their own file (Star Raiders: the cart is Atari's, never shipped).
+// casino: a VMX CASINO game; start() also gets the shared chip bank { chips, bonus } (vmx.js keeps it, as the
+// firmware's core/game_vx.c does; vmx-world/docs/CASINO.md).
 
 const wld = rec => ["WON " + (rec.w || 0), "LOST " + (rec.l || 0), "DRAWN " + (rec.d || 0)];
 const seedNow = () => Date.now() % 100000;
@@ -68,15 +70,15 @@ export const GAMES = [
       s.fill(12, 13, 1, 3); s.fill(11, 19, 3, 1); s.fill(9, 20, 7, 3); },
   },
   {
-    id: "blackjack", name: ["BLACK", "JACK"], usesB: true,
+    id: "blackjack", name: ["BLACK", "JACK"], usesB: true, casino: true,
     load: () => import("./cores/blackjack_core.js"),
-    start: (m, seed) => Object.assign(m.newGame(seed), { title: true, titleT: 0 }),
+    start: (m, seed, demo, bank) => Object.assign(m.newGame(seed, bank), { title: true, titleT: 0 }),
     // its title screen waits for A (the demo skips it); then A hits, B stands, Up doubles, left/right bet
     tick(g, { edges: e, demo }) {
       if (g.title) { g.titleT++; if (e.a || demo) g.title = false; return; }
       this.m.step(g, demo ? this.m.demo(g) : e); },
     draw(g) { return g.title ? this.m.drawTitle(g.titleT) : this.m.draw(g); },
-    record: (g, rec) => best(rec, g.bait),
+    record: (g, rec) => best(rec, g.bank.chips),
     art(s) { s.fill(1, 4, 12, 17, 0); s.rrect(1, 4, 12, 17); s.text(3, 6, "A");
       s.fill(9, 2, 12, 17, 0); s.rrect(9, 2, 12, 17); s.text(11, 4, "J"); s.line(17, 9, 17, 15); s.ring(15, 15, 2); s.px(13, 14); },
   },
@@ -112,9 +114,9 @@ export const GAMES = [
       s.fill(2, 11, 2, 2); s.fill(19, 11, 2, 2); },
   },
   {
-    id: "pool", name: ["9-", "BALL"], title: "9-BALL", usesB: true,
+    id: "pool", name: ["9-", "BALL"], title: "9-BALL", usesB: true, casino: true,
     load: () => import("./cores/pool_core.js"),
-    start: (m, seed) => m.newGame(seed),
+    start: (m, seed, demo, bank) => m.newGame(seed, bank),
     tick(g, { held: h, demo }) { this.m.step(g, demo ? this.m.demo(g) : h); },          // held: A is held for power
     record(g, rec) {                                                                    // a rack won or lost, once
       const over = g.phase === "over", was = g._over; g._over = over;
