@@ -8,7 +8,7 @@ SRC="$MG/ui/games"
 [ -d "$SRC" ] || { echo "microgames not found at $SRC (set MICROGAMES=/path/to/microgames)"; exit 1; }
 
 CORES=(blox_core.js blobs_core.js intercept_core.js invasion_core.js blackjack_core.js checkers_core.js
-       reversi_core.js junction_core.js pool_core.js poker_core.js roulette_core.js slots_core.js tricky_core.js tricky_rules.js zork_core.js zmachine.js zork1.z3
+       reversi_core.js junction_core.js pool_core.js chuckaluck_core.js sicbo_core.js frogs_core.js letitride_core.js bigsix_core.js scratch_core.js craps_core.js threecard_core.js keno_core.js baccarat_core.js reddog_core.js war_core.js hilo_core.js poker_core.js roulette_core.js slots_core.js tricky_core.js tricky_rules.js zork_core.js zmachine.js zork1.z3
        starraiders_core.js starraiders_machine.js cpu6502.js)
 
 for f in "${CORES[@]}"; do cp "$SRC/$f" vmx/cores/; done

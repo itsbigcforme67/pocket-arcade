@@ -1,8 +1,8 @@
 // Offline cache for the VMX (only active on https or localhost).
 // Other apps live on the same site, so this only ever touches caches named vmx-*.
-const CACHE = 'vmx-v5';
+const CACHE = 'vmx-v18';
 const CORES = ['blox_core.js', 'blobs_core.js', 'intercept_core.js', 'invasion_core.js', 'blackjack_core.js',
-  'checkers_core.js', 'reversi_core.js', 'junction_core.js', 'pool_core.js', 'poker_core.js', 'roulette_core.js', 'slots_core.js', 'tricky_core.js', 'tricky_rules.js', 'zork_core.js', 'zmachine.js', 'zork1.z3',
+  'checkers_core.js', 'reversi_core.js', 'junction_core.js', 'pool_core.js', 'chuckaluck_core.js', 'sicbo_core.js', 'frogs_core.js', 'letitride_core.js', 'bigsix_core.js', 'scratch_core.js', 'craps_core.js', 'threecard_core.js', 'keno_core.js', 'baccarat_core.js', 'reddog_core.js', 'war_core.js', 'hilo_core.js', 'poker_core.js', 'roulette_core.js', 'slots_core.js', 'tricky_core.js', 'tricky_rules.js', 'zork_core.js', 'zmachine.js', 'zork1.z3',
   'starraiders_core.js', 'starraiders_machine.js', 'cpu6502.js'].map((f) => 'cores/' + f);
 const SHELL = ['./', 'index.html', 'vmx.js', 'games.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'apple-touch-icon.png', 'favicon.png', ...CORES];
