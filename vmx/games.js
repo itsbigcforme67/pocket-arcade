@@ -34,6 +34,57 @@ function bigWin(g, rec) {
   return g.auto ? false : best(rec, gain);
 }
 
+// a game built for the VMX itself (a GAME.VXP from vmx-firmware/build/games, copied by tools/vmx-sync.sh): the VMX
+// runtime runs it, compiled to WebAssembly (cores/vxrt.wasm + vxrt.js), so it plays exactly as on the device
+// (vmx-firmware tools/parity/wasm_check.sh checks the screens). Its save is the game's own bytes (vmx-g<id>); the
+// files the Xbox would put in its save folder (Storage.ReadData; FOLD ROOMS' made levels, LEVELS.BIN) are
+// vmx-g<id>-<NAME>, base64; its best score is what it reports (Microsoft.Vmx.Scores). a.tone is set by vmx.js.
+const VXBIT = { up: 1, down: 2, left: 4, right: 8, a: 16, b: 32 };
+const vxBits = o => Object.keys(VXBIT).reduce((m, k) => o[k] ? m | VXBIT[k] : m, 0);
+let vxRt;                                                  // the compiled runtime, shared by every VXP game
+const b64in = v => v ? Uint8Array.from(atob(v), c => c.charCodeAt(0)) : null;
+function vxp(file, a) {
+  const key = () => "vmx-g" + a.vxId.toString(16).padStart(8, "0");   // vxId: the game.ini id (core/game_vx.c's key)
+  return Object.assign(a, {
+    async load() {
+      const [m, r] = await Promise.all([import("./cores/vxrt.js"), fetch("cores/" + file)]);
+      if (!r.ok) throw new Error("no " + file);
+      this.bytes = new Uint8Array(await r.arrayBuffer());
+      if (m.readVxp(this.bytes)?.id !== this.vxId) throw new Error(file + " is not this VMX game");
+      this.rt = await (vxRt ||= m.vxRuntime(fetch("cores/vxrt.wasm")));
+      return m;
+    },
+    start(m, seed, demo, bank) {
+      const g = { best: 0, changed: false };
+      g.vm = m.vxGame(this.rt, this.bytes, {
+        tone: (hz, ms, vol) => this.tone?.(hz, ms, vol),
+        report(s) { if (s > g.best) { g.best = s; g.changed = true; } },
+        load(id) {                                     // 0: this game's own save (others' saves aren't kept here)
+          if (id !== 0) return null;
+          try { return b64in(localStorage.getItem(key())); } catch { return null; }
+        },
+        data(name) { try { return b64in(localStorage.getItem(key() + "-" + name)); } catch { return null; } },
+        save(d) { if (demo) return; let b = ""; for (const v of d) b += String.fromCharCode(v); try { localStorage.setItem(key(), btoa(b)); } catch {} },
+        chips(op, n) {                                 // as core/game_vx.c h_chips, on the shell's bank object
+          if (!bank) return 0;
+          if (op === 0) return bank.chips;
+          if (op === 3) return bank.bonus || 0;
+          if (op === 1) { if (n > bank.chips) return 0; bank.chips -= n; return 1; }
+          if (op === 2) bank.chips += Math.min(n, 0x3FFFFFFF - bank.chips);
+          return 0;
+        },
+      });
+      g.vm.start(seed, demo);
+      this.usesB = g.vm.usesB();                       // a game error: B goes back, as on the VMX
+      return g;
+    },
+    tick(g, { held: h, edges: e }) { if (g.vm.tick(vxBits(h), vxBits(e))) this.usesB = false; },
+    draw: g => g.vm.draw(),
+    record(g, rec) { if (!g.changed) return false; g.changed = false; return best(rec, g.best); },
+    erase() { try { localStorage.removeItem(key()); } catch {} },
+  });
+}
+
 export const GAMES = [
   {
     id: "blox", name: ["BLOX"], usesB: false,
@@ -121,6 +172,17 @@ export const GAMES = [
       s.fill(11, 2, 2, 2); s.fill(11, 5, 2, 2); s.px(11, 17); s.px(12, 18); s.px(11, 19);
       s.fill(2, 11, 2, 2); s.fill(19, 11, 2, 2); },
   },
+  vxp("FOLDROOM.VXP", {
+    id: "foldrooms", vxId: 0x56581010, name: ["FOLD", "ROOMS"], title: "FOLD ROOMS", usesB: true,
+    score: rec => ["CLEARED", String(rec.best || 0)],
+    art: rowsArt([".........#############..", ".......##..........###..", ".....##..........##..#..",
+      "...##############....#..", "...#..........#......#..", "...#..........#......#..", "...#..........#......#..",
+      "...#...####...#......#..", "...#...####...#......#..", "...#...####...#......#..", "...#...####...#......#..",
+      "...#..........#......#..", "...#..........#......#..", "...#..........#....##...", "...############..##.....",
+      "...............##.......", "........................", "............#####.......", "........#...#...#.......",
+      ".......#....#...#.......", "........#...#...#.......", "............#####.......", "........................",
+      "########################"]),
+  }),
   {
     id: "pool", name: ["9-", "BALL"], title: "9-BALL", usesB: true, casino: true,
     load: () => import("./cores/pool_core.js"),

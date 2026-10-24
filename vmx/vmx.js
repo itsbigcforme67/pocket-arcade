@@ -87,6 +87,8 @@ const rec = id => (RECS[id] ||= {});
 
 // ---------------------------------------------------------------- games
 const GAMES = ALL;
+// device builds (games.js vxp) sound as core/game_vx.c h_tone does
+for (const a of GAMES) a.tone = (hz, ms, vol) => tone(hz, 0, ms / 1000, 0.07 * Math.max(0, Math.min(100, vol)) / 100);
 const ART = GAMES.map(a => { const s = new Surf(24, 24); a.art(s); return s; });
 const MAIN = ["GAMES", "SAVES", "SETTINGS", "???"];
 

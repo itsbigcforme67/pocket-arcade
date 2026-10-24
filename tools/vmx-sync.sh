@@ -13,4 +13,9 @@ CORES=(blox_core.js blobs_core.js intercept_core.js invasion_core.js blackjack_c
 
 for f in "${CORES[@]}"; do cp "$SRC/$f" vmx/cores/; done
 cp "$MG/in/zork/LICENSE" vmx/cores/zork1.LICENSE        # Zork I's MIT licence travels with its story file
-echo "copied ${#CORES[@]} files (+ Zork's licence) to vmx/cores/"
+# games built for the VMX itself and the VMX runtime that runs them (vmx-firmware: make, runtime/wasm/build.sh)
+FW="${VMXFW:-../../vmx-firmware}"
+VXP=(FOLDROOM.VXP)
+for f in "${VXP[@]}"; do cp "$FW/build/games/$f" vmx/cores/; done
+cp "$FW/build/vxrt.wasm" "$FW/runtime/wasm/vxrt.js" vmx/cores/
+echo "copied ${#CORES[@]} files (+ Zork's licence), ${#VXP[@]} GAME.VXP and the VMX runtime to vmx/cores/"
