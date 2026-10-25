@@ -85,8 +85,8 @@ The test boots a ROM on each console in a phone-sized window and checks the list
 |---|---|
 | `vmx/index.html` | the page: the device front (the owner's render, `vmx-front.webp`, with the screen and buttons laid over it), the notes under it |
 | `vmx/vmx.js` | the firmware UI: boot, menus, saves, settings, the screen, input (touch, keys, pads), playing a game |
-| `vmx/games.js` | one adapter per game: how the VMX's buttons reach its core, its demo, its score, its card pictogram |
-| `vmx/cores/` | the games' cores, copied from `microgames` (do not edit here) |
+| `vmx/games.js` | the games: each one's card (name, pictogram), score lines and save; every game but Star Raiders is the device's own build, run by the VMX runtime in WebAssembly |
+| `vmx/cores/` | the games' device builds (`*.VXP`) and the runtime (`vxrt.wasm`, `vxrt.js`) from `vmx-firmware`, Star Raiders' core from `microgames`; copied by `tools/vmx-sync.sh` (do not edit here) |
 | `vmx/sw.js`, `manifest.webmanifest`, icons | the installable app, like the minigames; its cache is named `vmx-*` |
 
 How it plays: the screen is drawn at a whole number of device pixels per VMX pixel. **A** opens, **B** goes back. In GAMES, left/right picks a game, A plays it and Down shows its demo. In a game, the side button goes back to GAMES, and so does B in the games that don't use it (BLOX, INTERCEPT, INVASION, Reversi). Holding the side button for 0.7 s switches off and replays the boot. Left alone for 30 seconds in the menus, the games play their demos one after another until a button is pressed. Keys match the other consoles here: arrows, Z or Space = A, X = B, Esc or Backspace = side button; pads work (Select or Start = side button). SAVES lists each game's best score (or wins, losses and draws), kept in the browser's storage under `vmx-saves`; A on one offers to erase it. SETTINGS has sound and brightness (`vmx-settings`).

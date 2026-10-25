@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
-# Copy the VMX game cores from microgames (their home) into vmx/cores/. Run it after a game changes there; never
-# edit the copies here by hand. The Star Raiders cartridge is never copied: players open their own file.
+# Copy the VMX games into vmx/cores/: every device build (vmx-firmware) and the one JS core left (Star Raiders, from
+# microgames). Run it after a game changes there; never edit the copies here by hand. The Star Raiders cartridge is
+# never copied: players open their own file.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 MG="${MICROGAMES:-../../microgames}"
 SRC="$MG/ui/games"
 [ -d "$SRC" ] || { echo "microgames not found at $SRC (set MICROGAMES=/path/to/microgames)"; exit 1; }
 
-CORES=(blox_core.js blobs_core.js intercept_core.js invasion_core.js blackjack_core.js checkers_core.js
-       reversi_core.js junction_core.js pool_core.js chuckaluck_core.js sicbo_core.js frogs_core.js letitride_core.js bigsix_core.js scratch_core.js craps_core.js threecard_core.js keno_core.js baccarat_core.js reddog_core.js war_core.js hilo_core.js poker_core.js roulette_core.js slots_core.js tricky_core.js tricky_rules.js zork_core.js zmachine.js zork1.z3
-       starraiders_core.js starraiders_machine.js cpu6502.js)
+CORES=(starraiders_core.js starraiders_machine.js cpu6502.js)
 
 for f in "${CORES[@]}"; do cp "$SRC/$f" vmx/cores/; done
-cp "$MG/in/zork/LICENSE" vmx/cores/zork1.LICENSE        # Zork I's MIT licence travels with its story file
 # games built for the VMX itself and the VMX runtime that runs them (vmx-firmware: make, runtime/wasm/build.sh)
 FW="${VMXFW:-../../vmx-firmware}"
-VXP=(FOLDROOM.VXP)
+VXP=(3CARDPOK.VXP 9BALL.VXP BACCARAT.VXP BIGSIX.VXP BLACKJAC.VXP BLOBS.VXP BLOX.VXP CASINOWA.VXP CHECKERS.VXP CHUCKALU.VXP CRAPS.VXP FOLDROOM.VXP
+     FROGRACE.VXP HILO.VXP INTERCEP.VXP INVASION.VXP JUNCTION.VXP KENO.VXP LETITRID.VXP REDDOG.VXP REVERSI.VXP
+     ROULETTE.VXP SCRATCH.VXP SICBO.VXP SLOTS.VXP TRICKYWI.VXP VIDEOPOK.VXP ZORKI.VXP)
 for f in "${VXP[@]}"; do cp "$FW/build/games/$f" vmx/cores/; done
 cp "$FW/build/vxrt.wasm" "$FW/runtime/wasm/vxrt.js" vmx/cores/
-echo "copied ${#CORES[@]} files (+ Zork's licence), ${#VXP[@]} GAME.VXP and the VMX runtime to vmx/cores/"
+cp "$FW/games/zork/LICENSE" vmx/cores/zork1.LICENSE      # Zork I's MIT licence travels with its story (in ZORKI.VXP)
+echo "copied ${#CORES[@]} files, ${#VXP[@]} GAME.VXP and the VMX runtime to vmx/cores/"
