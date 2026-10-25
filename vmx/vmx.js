@@ -2,7 +2,7 @@
 // The 1-bit Surf, the 3x5 font, the beeper sounds and the boot are copied unchanged from the VMX mockup
 // (XMU GADGET/ui/mockup/xvm_menus.html, the film's reference); the menus follow it, with the real games in place of
 // its placeholders. The games are in games.js (one adapter per core in cores/).
-import { GAMES as ALL, seedNow } from "./games.js";
+import { GAMES as ALL, seedNow, FOLD_LEVELS, FOLD_PACK, foldFits, foldPack, foldUnpack } from "./games.js";
 
 "use strict";
 // ---------------------------------------------------------------- 1-bit surfaces (from the mockup)
@@ -332,6 +332,42 @@ cartInput.addEventListener("change", async () => {
   try { localStorage.setItem("vmx-starraiders-cart", btoa(bin)); } catch {}
   okSnd(); open(S.cartFor, false);
 });
+
+// FOLD ROOMS' made levels (the page's "Add levels"): .fold files from FOLD BUILDER, or a ready LEVELS.BIN, added to
+// the ones already here and packed into its DATA\LEVELS.BIN (games.js FOLD_LEVELS), as VMX World does on the Xbox.
+// The game reads it when it starts, and opens on its list of them.
+const foldInput = document.getElementById("foldfiles"), foldNote = document.getElementById("fold-status");
+const latin = b => { let s = ""; for (const v of b) s += String.fromCharCode(v); return s; };
+function foldHave() { try { return foldUnpack(Uint8Array.from(atob(localStorage.getItem(FOLD_LEVELS) || ""), c => c.charCodeAt(0))) || []; } catch { return []; } }
+function foldShow(m) {
+  const n = foldHave().length;
+  foldNote.textContent = ((m || "") + (n ? " " + n + (n > 1 ? " levels" : " level") + " in FOLD ROOMS." : "")).trim();
+  document.getElementById("fold-clear").hidden = !n;
+}
+foldInput.addEventListener("change", async () => {
+  const files = [...foldInput.files].sort((x, y) => x.name < y.name ? -1 : x.name > y.name ? 1 : 0); foldInput.value = "";
+  const texts = foldHave(), seen = new Set(texts.map(latin)), skip = [];
+  let size = foldPack(texts).length, added = 0;
+  for (const f of files) {
+    const b = new Uint8Array(await f.arrayBuffer());
+    for (const t of foldUnpack(b) || [b]) {
+      const s = latin(t);
+      if (!s.startsWith("fold ")) { skip.push(f.name + " isn't a FOLD level"); break; }
+      if (seen.has(s)) continue;
+      if (!foldFits(s, t.length)) { skip.push(f.name + " is too big for the VMX"); continue; }
+      if (size + 4 + t.length > FOLD_PACK) { skip.push(f.name + ": no room left (64 KB for all)"); continue; }
+      texts.push(t); seen.add(s); size += 4 + t.length; added++;
+    }
+  }
+  try { localStorage.setItem(FOLD_LEVELS, btoa(latin(foldPack(texts)))); } catch { skip.push("the browser wouldn't keep them"); }
+  foldShow((added ? "Added " + added + "." : "Nothing new added.") + (skip.length ? " " + skip.join("; ") + "." : ""));
+});
+document.getElementById("fold-add").addEventListener("click", () => foldInput.click());
+document.getElementById("fold-clear").addEventListener("click", () => {
+  try { localStorage.removeItem(FOLD_LEVELS); } catch {}
+  foldShow("Made levels cleared.");
+});
+foldShow();
 
 const BTN = ["up", "down", "left", "right", "a", "b"];
 function tickGame() {

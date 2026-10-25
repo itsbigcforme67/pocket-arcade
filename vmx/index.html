@@ -69,6 +69,11 @@
   .notes { width: 100%; display: grid; gap: 8px; font-size: 14px; color: var(--muted); }
   .notes p { margin: 0; }
   .notes b { color: var(--ink); font-weight: 600; }
+  .chip { font: 600 13px system-ui, sans-serif; color: var(--ink); background: transparent; border: 1px solid #3a4237;
+    border-radius: 999px; padding: 2px 10px; cursor: pointer; }
+  .chip:hover { border-color: var(--phos); }
+  .chip:focus-visible { outline: 2px solid var(--phos); outline-offset: 2px; }
+  code { font: 12px ui-monospace, monospace; color: var(--ink); }
   kbd { font: 12px ui-monospace, monospace; color: var(--ink); border: 1px solid #3a4237; border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; }
   @media (prefers-reduced-motion: reduce) { .btn.pressed { transform: none; } }
   </style>
@@ -92,9 +97,11 @@
     <p>The VMX is a pocket handheld shaped like an original Xbox Memory Unit: a 64 × 64 one-bit picture on a green OLED, a D-pad, A and B, and a beeper. Press any button to switch it on.</p>
     <p><b>Menus:</b> A opens, B goes back. <b>Games:</b> left/right picks, A plays, Down shows a demo. In a game, the <b>side button</b> (the small strip on the right edge) goes back to the games; so does B in games that don't use it. Hold the side button to switch off and on. Left alone in the menus, the games play themselves.</p>
     <p><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> D-pad &nbsp; <kbd>Z</kbd>/<kbd>Space</kbd> A &nbsp; <kbd>X</kbd> B &nbsp; <kbd>Esc</kbd> side button. Pads work too.</p>
+    <p><b>Your FOLD levels:</b> levels you made in FOLD BUILDER (its <code>.fold</code> files, or a VMX World <code>LEVELS.BIN</code>) play in FOLD ROOMS, which then opens on a list of them, as when VMX World puts them on a real VMX. <button class="chip" id="fold-add">Add levels…</button> <button class="chip" id="fold-clear" hidden>Clear them</button> <span id="fold-status" role="status"></span></p>
     <p>Best scores and saves stay in this browser. Works offline once loaded.</p>
   </div>
   <input type="file" id="cart" accept=".rom,.car,.bin" hidden>
+  <input type="file" id="foldfiles" accept=".fold,.bin" multiple hidden>
 </div>
 <script type="module" src="vmx.js"></script>
 <script>

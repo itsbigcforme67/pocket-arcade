@@ -85,6 +85,33 @@ function vxp(file, a) {
   });
 }
 
+// FOLD ROOMS' levels made in FOLD BUILDER: its DATA\LEVELS.BIN (vxp's data("LEVELS.BIN")), packed as vmx-firmware
+// games/fold/levels.py does: u16 count, count + 1 u32 offsets from the start of the file, the level texts as they are.
+// On the VMX, VMX World packs it on the Xbox; here vmx.js packs the .fold files the player picks. What fits is the
+// game's FoldRooms.FitsVmx (microgames/fold core/vmxfit.h): World leaves a level off when it doesn't, and so do we.
+export const FOLD_LEVELS = "vmx-g56581010-LEVELS.BIN", FOLD_PACK = 65536;
+export const foldSquares = t => t.split("\n").filter(l => /^[ \t\r]*square/.test(l)).length;
+export const foldFits = (t, n) => 1100 * foldSquares(t) + 2 * n <= 64000;
+export function foldPack(texts) {                      // texts: Uint8Arrays
+  const off = [2 + 4 * (texts.length + 1)];
+  for (const t of texts) off.push(off.at(-1) + t.length);
+  const b = new Uint8Array(off.at(-1)), v = new DataView(b.buffer);
+  v.setUint16(0, texts.length, true); off.forEach((o, i) => v.setUint32(2 + 4 * i, o, true));
+  texts.forEach((t, i) => b.set(t, off[i]));
+  return b;
+}
+export function foldUnpack(b) {                        // the texts, or null when b isn't a LEVELS.BIN
+  if (!b || b.length < 6) return null;
+  const v = new DataView(b.buffer, b.byteOffset, b.length), n = v.getUint16(0, true), out = [];
+  if (b.length < 2 + 4 * (n + 1) || v.getUint32(2, true) !== 2 + 4 * (n + 1)) return null;
+  for (let i = 0; i < n; i++) {
+    const a = v.getUint32(2 + 4 * i, true), e = v.getUint32(6 + 4 * i, true);
+    if (e < a || e > b.length) return null;
+    out.push(b.slice(a, e));
+  }
+  return out;
+}
+
 export const GAMES = [
   {
     id: "blox", name: ["BLOX"], usesB: false,
