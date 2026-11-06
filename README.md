@@ -16,7 +16,6 @@ It also lists one game that needs no files: **Tricky Wicks** (`tricky-wicks.html
 
 * **Wanted!** (`minigames/wanted/`; the old `minigames/wanted.html` address redirects there): find the face on the poster in a moving crowd and tap it. A catch adds 5 seconds (up to 50), a wrong tap takes 10, and the round ends when the clock hits zero. Its rules, timing and movement are ported line by line from the "Wanted!" minigame of Super Mario 64 DS, as decompiled by [sm64ds-decomp](https://github.com/tangosdev/sm64ds-decomp) (`src/actors/dScMgLuigi_c.cpp` there). No art, sound or data from the game is used: the four faces are emoji (🫒 🚕 🎳 🐱 by default, in Mario, Luigi, Wario and Yoshi's places), and players can pick their own under **Faces** (look-alike emoji make it harder). Version 1.2 added a **Hard** mode that is not in the original: a clock that runs 1.5 times as fast, 15 seconds off for a wrong tap, and faces that move 1.5 times as fast. Since 1.5 its six faces are all yellow smileys (81 of them, sorted into expression families such as grins, tongues or worried faces); the wanted face brings look-alikes from its family, one at first, two from level 6 and three from level 16, and the rest are any other smileys. Normal and Hard keep separate best scores. The game's data tables (the board for each level, the speeds and who gets picked as wanted) are not in the decomp; the block marked ROM TABLES at the top of the script holds those numbers, read from overlay 6 of the European cartridge (ASMP). Only these numbers are copied, nothing else from the ROM.
 
-**VMX** (`vmx/`) simulates the VMX, a pocket handheld still being built: an ESP32 in a case shaped like an original Xbox Memory Unit, with a 64 × 64 one-bit picture on a green OLED, a D-pad, A, B, a side button and a beeper. The page runs its firmware's menus and its games; see "VMX" below.
 
 Four more consoles live in this repo and run on [EmulatorJS](https://emulatorjs.org/), each on a page of its own:
 
@@ -76,40 +75,6 @@ python3 tests/e2e.py                 # in another terminal; needs: pip install p
 ```
 
 The test boots a ROM on each console in a phone-sized window and checks the list, the touch controls, the scaling, rotation, and that saves and save states survive a reload. It also boots the free games: a round of Tricky Wicks, and the dungeon demo moving. `tests/probes/` holds the test ROMs it uses; none of those is a game.
-
-## VMX
-
-`vmx/` is the VMX's front (screen, D-pad, A, B and the side button on the right edge) with its firmware UI: the boot (the goo, the X, the "VMX" wordmark and the five-note chime), the main menu (GAMES, SAVES, SETTINGS and a ??? for later), and the games. The look, the boot and the beeper sounds are copied from the VMX menu mockup in the XMU GADGET project (`ui/mockup/xvm_menus.html`), which stays the reference; change it there first.
-
-| | |
-|---|---|
-| `vmx/index.html` | the page: the device front (the owner's render, `vmx-front.webp`, with the screen and buttons laid over it), the notes under it |
-| `vmx/vmx.js` | the firmware UI: boot, menus, saves, settings, the screen, input (touch, keys, pads), playing a game |
-| `vmx/games.js` | the games: each one's card (name, pictogram), score lines and save; every game but Star Raiders is the device's own build, run by the VMX runtime in WebAssembly |
-| `vmx/cores/` | the games' device builds (`*.VXP`) and the runtime (`vxrt.wasm`, `vxrt.js`) from `vmx-firmware`, Star Raiders' core from `microgames`; copied by `tools/vmx-sync.sh` (do not edit here) |
-| `vmx/sw.js`, `manifest.webmanifest`, icons | the installable app, like the minigames; its cache is named `vmx-*` |
-
-How it plays: the screen is drawn at a whole number of device pixels per VMX pixel. **A** opens, **B** goes back. In GAMES, left/right picks a game, A plays it and Down shows its demo. In a game, the side button goes back to GAMES, and so does B in the games that don't use it (BLOX, INTERCEPT, INVASION, Reversi). Holding the side button for 0.7 s switches off and replays the boot. Left alone for 30 seconds in the menus, the games play their demos one after another until a button is pressed. Keys match the other consoles here: arrows, Z or Space = A, X = B, Esc or Backspace = side button; pads work (Select or Start = side button). SAVES lists each game's best score (or wins, losses and draws), kept in the browser's storage under `vmx-saves`; A on one offers to erase it. SETTINGS has sound and brightness (`vmx-settings`).
-
-### The games and their rights
-
-The games are made in the `microgames` project (`ui/games/` there), which is their home; every one runs at 64 × 64, 1-bit, 30 Hz. Published here:
-
-* **BLOX** (Klax-style), **BLOBS** (Puyo-style; the mechanics follow Sega's public booklet, the code is ours), **INTERCEPT** (Missile Command-style), **INVASION** (Space Invaders-style), **Blackjack** (Blackjack and Hookers, with fishing bait), **Checkers** and **Reversi**: written for the VMX, ours. The names are working names, chosen to stay clear of the originals' trademarks.
-* **Tricky Wicks**: the owner's game, its rules core unchanged from Tricky Wicks 1.5.
-
-* **Zork I** (owner's OK, 2026-10-18): the real game on our own Z-machine, with a word picker instead of a keyboard. Its code and story file (`vmx/cores/zork1.z3`) are MIT-licensed by Microsoft (2025); the licence is `vmx/cores/zork1.LICENSE`. "Zork" is a trademark of its owners; this is an unofficial fan project. Its SAVE command is the VMX save (`vmx-zork-save` in the browser's storage).
-* **Star Raiders** (owner's OK, 2026-10-18): the original 1979 Atari cartridge running on our own 6502 and a bare Atari machine (`cpu6502.js`, `starraiders_machine.js`), drawn natively at 64 × 64. The cartridge is Atari's and is **not** in this repo: the first time, the VMX asks for the player's own 8 KB cartridge file (`.rom`, or `.car` with its header), and keeps it in the browser's storage. B opens its command menu (the Atari's keyboard).
-
-Not published: **STACKS** (it looks like Tetris, which is protected trade dress), and the captured footage of other companies' games; they stay in `microgames`.
-
-### Updating the games
-
-```bash
-bash tools/vmx-sync.sh
-```
-
-That copies the cores from `../../microgames/ui/games/` (and Zork I's licence) (set `MICROGAMES=` if it lives elsewhere) into `vmx/cores/`. If a core's controls, demo or score changed, update its adapter in `vmx/games.js`; that game's own page in microgames (`ui/games/<game>.html`) shows how it's wired. When the files change, bump `CACHE` in `vmx/sw.js` so installed copies update. A new game: add its files to the list in `tools/vmx-sync.sh` and in `CORES` in `sw.js`, add an adapter, and check its rights first. Before committing, check `git status` yourself: no `.rom`, `.z3` or other game files you are not cleared to publish.
 
 ## How the addresses fit together
 
