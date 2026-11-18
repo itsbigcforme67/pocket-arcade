@@ -137,8 +137,8 @@ EmulatorJS. The SameBoy loop costs about 1.7 ms a frame for one Game Boy and 3.3
    the first target for every pairing whose two halves we can emulate.
 2. **Two tabs on one device:** built as input netplay over `BroadcastChannel` (2.4, last option): each tab
    runs both Game Boys and the tabs swap buttons. The alternative, a `SharedWorker` that runs the cores while
-   the tabs only draw, is not available in Safari on iOS before 16 and in some Android WebViews; netplay
-   reuses the code of case 3 and works everywhere.
+   the tabs only draw, depends on `SharedWorker`, whose support on phones is patchy (Chrome for Android went
+   without it for years); netplay reuses the code of case 3 and works wherever BroadcastChannel does.
 3. **Two phones:** built as input netplay over a WebRTC data channel, opt-in. Signalling is a code carried
    by hand (copy and paste, a link, or a QR code); no server of ours, and no third-party STUN server unless
    the player ticks a box. See 3.2.
@@ -316,7 +316,7 @@ smaller random id is Game Boy 1. A third tab is ignored.
   JS device on a `Timeline` see each other's pulses, the GBC's measured to 0.1 µs of what its code should
   produce (249.9 µs on, 497.8 µs off); a save state loaded into a fresh host runs on identically.
 * `node tests/link_dmcomm.mjs` (Node only): section 5.
-* `tests/make_irtest.py` writes `tests/probes/irtest.gbc`, a 100-byte GBC program of ours: it counts light
+* `tests/make_irtest.py` writes `tests/probes/irtest.gbc`, a GBC program of ours (94 bytes of code): it counts light
   reaching its sensor at `$C000`, and sends bursts of 8 pulses while A is held.
 
 **Not done yet:** rollback netplay; a link from the hub page or a "two players" button on `gb/`; real SameBoy
@@ -397,7 +397,7 @@ function frame() { tl.run(16742, (r) => { if (r[0]) draw(gbc.screen()); }); requ
 
 What the core must provide: a cycle counter, a callback when the LED changes (with the cycle), a way to
 queue a sensor change for a future cycle, and `runTo(cycle)`. `IrScriptDevice` in `bus.js` is a complete
-device in 30 lines and the place to start; `tests/link_ir.mjs` shows one on a Timeline with a GBC.
+device in about 25 lines and the place to start; `tests/link_ir.mjs` shows one on a Timeline with a GBC.
 
 Two more ends fit the same port without changes: a **recorder/replayer** (`IrScriptDevice` with a script),
 and later a **hardware bridge** (section 2.5): `onLed` collects edges for the dongle to replay, and what the
@@ -475,8 +475,10 @@ Next, cheapest valuable step first:
 
 1. **Finish `link/`:**
    * A card on the hub, or a "two players" button on the Tricky Wicks entry of `gb/`.
-   * Rollback instead of fixed delay over WebRTC (SameBoy save states take about 0.1 ms; ten frames of
-     rollback a frame is affordable).
+   * Rollback on top of the fixed delay over WebRTC. Saving and loading both Game Boys takes 0.08 ms, but
+     re-running a frame of both takes about 3 ms (Node, this machine; more on a phone), so a phone can
+     afford to re-run only two or three frames per frame shown. Plan: keep a delay of 3 and roll back at
+     most 2.
    * Real SameBoy boot ROMs, built by `build.sh` when RGBDS is installed.
 2. **Pocket Pikachu Color on the optical port** (private repository, section 4), checked against Mystery Gift.
 3. **Digimon pets** (section 5): pin port in web-brick, then pet ↔ script, pet ↔ pet, then the dmcomm dongle.
