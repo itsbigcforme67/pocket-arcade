@@ -8,9 +8,10 @@
 //   1. Tricky Wicks, both Game Boys on 2P LINK, START on one: bytes go over the cable and both
 //      leave the LINK screen for the same game (they show the same playfield);
 //   2. the same with the cable pulled out: no bytes, and the game answers NO REPLY;
-//   3. sound: Game Boy 1's samples reach the speaker (an AudioWorklet), and they are not silence;
-//   4. Save keeps a save state of both Game Boys and Load goes back to it;
-//   5. nothing is fetched from another site, and there are no page errors.
+//   3. two players touching their own pads at the same moment each press their own Game Boy;
+//   4. sound: Game Boy 1's samples reach the speaker (an AudioWorklet), and they are not silence;
+//   5. Save keeps a save state of both Game Boys and Load goes back to it;
+//   6. nothing is fetched from another site, and there are no page errors.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -94,6 +95,21 @@ await press(0, 'left'); await press(0, 'left');
 await frames(10);
 const moved = await page.evaluate(() => window.__link.bytes);
 check(moved > linked, `the cable keeps talking during play (${linked} -> ${moved})`);
+
+// Two fingers at once, one on each player's pad (Chromium touch events through CDP).
+{
+  const centre = (sel) => page.$eval(sel, (el) => { const r = el.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
+  const a1 = await centre('.gb.p0 .ab .a'), s2 = await centre('.gb.p1 .ss b[data-k="start"]');
+  const cdp = await ctx.newCDPSession(page);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ ...a1, id: 1 }, { ...s2, id: 2 }] });
+  await frames(2);
+  const held = await page.evaluate(() => [...window.__link.local]);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await frames(2);
+  const after = await page.evaluate(() => [...window.__link.local]);
+  check(held[0] === 16 && held[1] === 128, `two fingers: A on Game Boy 1 and START on Game Boy 2 at once (${held})`);
+  check(after[0] === 0 && after[1] === 0, 'and both let go');
+}
 
 // Sound: count what reaches the speaker over 60 frames.
 await page.evaluate(() => {

@@ -257,7 +257,7 @@
       layout();
       bytes = 0; acc = 0; last = performance.now();
       if (!running) { running = true; requestAnimationFrame(tick); }
-      window.__link = { host, gbs, net, me, get bytes() { return bytes; }, speaker };
+      window.__link = { host, gbs, net, me, local, get bytes() { return bytes; }, speaker };
     }
 
     async function start(rom) {
