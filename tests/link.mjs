@@ -8,7 +8,9 @@
 //   1. Tricky Wicks, both Game Boys on 2P LINK, START on one: bytes go over the cable and both
 //      leave the LINK screen for the same game (they show the same playfield);
 //   2. the same with the cable pulled out: no bytes, and the game answers NO REPLY;
-//   3. nothing is fetched from another site, and there are no page errors.
+//   3. sound: Game Boy 1's samples reach the speaker (an AudioWorklet), and they are not silence;
+//   4. Save keeps a save state of both Game Boys and Load goes back to it;
+//   5. nothing is fetched from another site, and there are no page errors.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -92,6 +94,28 @@ await press(0, 'left'); await press(0, 'left');
 await frames(10);
 const moved = await page.evaluate(() => window.__link.bytes);
 check(moved > linked, `the cable keeps talking during play (${linked} -> ${moved})`);
+
+// Sound: count what reaches the speaker over 60 frames.
+await page.evaluate(() => {
+  const sp = window.__link.speaker, play = sp.play.bind(sp);
+  window.__heard = { n: 0, peak: 0 };
+  sp.play = (bufs) => { for (const b of bufs) if (b) { window.__heard.n += b.length; for (const v of b) window.__heard.peak = Math.max(window.__heard.peak, Math.abs(v)); } play(bufs); };
+});
+await press(0, 'right'); await press(0, 'a'); await press(0, 'left'); await press(0, 'b'); await frames(20);   // the game's sounds
+const heard = await page.evaluate(() => ({ ...window.__heard, running: window.__link.speaker.running }));
+check(heard.running, 'the speaker started on the Play tap');
+check(heard.n > 48000 * 2 * 0.8 && heard.n < 48000 * 2 * 1.3, `about a second of stereo samples in 60 frames of play (${heard.n / 2})`);
+check(heard.peak > 500, `and they are not silence (peak ${heard.peak})`);
+
+// Save and load.
+await page.click('#save');
+const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('pa-link:TRICKY WICKS:state') || localStorage.getItem(Object.keys(localStorage).find((k) => k.endsWith(':state')))));
+await frames(90);
+await page.click('#load');
+const after = await page.evaluate(() => window.__link.gbs.map((g) => g.time));
+const back = saved && after.every((t, i) => Math.abs(t - saved.clocks[i] / 8388608) < 0.1);
+check(!!saved && saved.states.length === 2, 'Save keeps a state of both Game Boys');
+check(back, `Load goes back to it (${after.map((t) => t.toFixed(2))} vs ${saved ? saved.clocks.map((c) => (c / 8388608).toFixed(2)) : '-'})`);
 
 const unlinked = await round(false);
 check(unlinked === 0, `no bytes with the cable out (${unlinked})`);
