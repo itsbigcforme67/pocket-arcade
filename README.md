@@ -55,7 +55,7 @@ What a page does:
 
 Games in `free/<console>/` are part of the published site. A console's page lists them in the `free` list of its `ARCADE_SYSTEM` block (file name, title and a line about the game), and they show under **Free game** with a download link. They are fetched from the site when played, not copied into the browser's list.
 
-Only put a game here if it is yours to give away, or its licence allows it. So far there are two. **Tricky Wicks** for Game Boy (`free/gb/tricky-wicks.gb`), the same game as `tricky-wicks.html`, built from the Tricky Wicks project (`port/gb/` there). To update it, replace the file. Its best score is kept as a battery save like any other game's. Its 2P LINK mode needs two Game Boys and a link cable, so in the browser it answers NO REPLY.
+Only put a game here if it is yours to give away, or its licence allows it. So far there are two. **Tricky Wicks** for Game Boy (`free/gb/tricky-wicks.gb`), the same game as `tricky-wicks.html`, built from the Tricky Wicks project (`port/gb/` there). To update it, replace the file. Its best score is kept as a battery save like any other game's. Its 2P LINK mode needs two Game Boys and a link cable: on the Game Boy page it answers NO REPLY, but on the **Link Cable** page (`link/`, below) it connects.
 
 **Two-Floor Dungeon** for Game Boy Advance (`free/gba/dungeon.gba`) is a tech demo from the GBA two-floor engine project (`rom-c/dungeon-c.gba` there): a dungeon on two floor heights, drawn with the two affine background layers and skewed sprites for the walls, with a player who walks, jumps onto platforms and goes over or under the bridges. It orbits by itself until a button is pressed. To update it, replace the file.
 
@@ -75,6 +75,10 @@ python3 tests/e2e.py                 # in another terminal; needs: pip install p
 ```
 
 The test boots a ROM on each console in a phone-sized window and checks the list, the touch controls, the scaling, rotation, and that saves and save states survive a reload. It also boots the free games: a round of Tricky Wicks, and the dungeon demo moving. `tests/probes/` holds the test ROMs it uses; none of those is a game.
+
+### Link Cable (`link/`)
+
+`link/index.html` puts two Game Boys on one screen, joined by a link cable, each with its own touch controls and keys, so two people can play Tricky Wicks' 2P LINK mode (or any linkable `.gb`/`.gbc` they open) on one phone or computer. It does not use EmulatorJS: none of its cores can link. It runs [SameBoy](https://github.com/LIJI32/SameBoy) (MIT), built for the browser with plain clang by `link/core/build.sh`, with the cable wired in JavaScript (`link/bus.js`). It is the first piece of a plan for connecting devices to each other and to real hardware: see `docs/DEVICE_LINKS.md`. Test: `node tests/link.mjs` (needs Playwright).
 
 ## How the addresses fit together
 
