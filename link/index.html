@@ -1,0 +1,253 @@
+<!doctype html>
+<!-- Pocket Arcade - two Game Boys and a link cable. Copyright (C) 2026 the Pocket Arcade authors. GPL-3.0-or-later; see ../LICENSE. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14161b">
+  <meta name="description" content="Two Game Boys on one screen, joined by a link cable. Comes with Tricky Wicks for two players; bring your own files for the rest. Nothing is uploaded.">
+  <title>Link Cable – Pocket Arcade</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314161b'/%3E%3Crect x='2' y='6' width='12' height='20' rx='3' fill='%23ffcb3d'/%3E%3Crect x='18' y='6' width='12' height='20' rx='3' fill='%23ffcb3d'/%3E%3Cpath d='M8 6V3h16v3' stroke='%23eceef3' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #14161b; --panel: #1e2128; --line: #323744; --text: #eceef3; --muted: #9aa1b2;
+      --accent: #ffcb3d; --accent-ink: #2a1f00; --bad: #ff8f7d; --ok: #8fe3a0;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    body { min-height: 100dvh; }
+    a { color: var(--accent); }
+    [hidden] { display: none !important; }
+
+    #library { max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 28px); }
+    .back { display: inline-block; padding: 8px 0; text-decoration: none; font-weight: 600; }
+    h1 { font-size: clamp(28px, 7vw, 38px); line-height: 1.1; margin: 14px 0 4px; letter-spacing: -.02em; }
+    .sub { margin: 0 0 20px; color: var(--muted); }
+    .btn { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; padding: 12px 20px;
+      background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 800; border: 0; border-radius: 14px; cursor: pointer; margin-top: 10px; }
+    .btn.alt { background: var(--panel); color: var(--text); border: 1px solid var(--line); }
+    .btn input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .btn:focus-within { outline: 2px solid var(--text); outline-offset: 2px; }
+    .opt { display: flex; gap: 10px; align-items: flex-start; margin: 16px 2px 0; color: var(--muted); font-size: 15px; }
+    .opt input { margin-top: 5px; accent-color: var(--accent); }
+    .note { margin: 10px 2px 0; font-size: 14px; color: var(--muted); }
+    .note.bad { color: var(--bad); }
+    .fine { margin: 28px 2px 0; font-size: 13px; color: var(--muted); }
+    .fine p { margin: 8px 0; }
+    kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+
+    /* ---- playing ---- */
+    body.playing { overflow: hidden; background: #000; }
+    body.playing #library { display: none; }
+    #stage { position: fixed; inset: 0; display: flex; flex-direction: column; background: #000;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+    #bar { flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--bg); border-bottom: 1px solid var(--line); font-size: 14px; }
+    #bar button { font: inherit; font-weight: 700; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; cursor: pointer; }
+    #bar button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    #bar .grow { flex: 1; }
+    #traffic { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    #consoles { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    @media (min-aspect-ratio: 1/1) { #consoles { flex-direction: row; } }
+    .gb { flex: 1; min-width: 0; min-height: 0; display: grid; grid-template-rows: 1fr auto; place-items: center; padding: 8px; border-top: 1px solid #222; }
+    .gb:first-child { border-top: 0; }
+    body.face .gb.p1 { transform: rotate(180deg); }
+    .view { width: 100%; height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .screen { display: block; width: 160px; height: 144px; image-rendering: pixelated; background: #cfd2c4; }
+    .who { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .pad { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: 100%; max-width: 420px; padding-top: 6px; user-select: none; -webkit-user-select: none; touch-action: none; }
+    .dpad { display: grid; grid-template-columns: repeat(3, 40px); grid-template-rows: repeat(3, 40px); }
+    .dpad b, .ab b, .ss b { display: flex; align-items: center; justify-content: center; background: #2a2e38; color: var(--muted); border-radius: 8px; font-weight: 800; font-size: 13px; }
+    .dpad b.on, .ab b.on, .ss b.on { background: var(--accent); color: var(--accent-ink); }
+    .dpad .u { grid-area: 1 / 2; } .dpad .l { grid-area: 2 / 1; } .dpad .r { grid-area: 2 / 3; } .dpad .d { grid-area: 3 / 2; }
+    .mid { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .ss { display: flex; gap: 8px; } .ss b { width: 56px; height: 24px; border-radius: 12px; font-size: 10px; }
+    .ab { display: flex; gap: 12px; } .ab b { width: 52px; height: 52px; border-radius: 50%; font-size: 16px; }
+    .ab .a { transform: translateY(-14px); }
+    @media (max-height: 640px) and (max-aspect-ratio: 1/1) { .dpad { grid-template-columns: repeat(3, 32px); grid-template-rows: repeat(3, 32px); } .ab b { width: 42px; height: 42px; } }
+  </style>
+</head>
+<body>
+  <noscript><p style="padding:20px">This page needs JavaScript to run the emulator.</p></noscript>
+
+  <main id="library">
+    <a class="back" href="../">‹ All consoles</a>
+    <h1>Link Cable</h1>
+    <p class="sub">Two Game Boys on one screen, joined by a link cable. Each half has its own controls, so two people can play on one phone or tablet.</p>
+    <button class="btn" id="play-free" type="button">Play Tricky Wicks, 2 players</button>
+    <label class="btn alt">Open a .gb or .gbc file for both<input type="file" id="file" accept=".gb,.gbc"></label>
+    <label class="opt"><input type="checkbox" id="face"> <span><b>Face to face:</b> on a phone held upright, turn the top Game Boy round for the player sitting opposite.</span></label>
+    <p class="note" id="msg" role="status"></p>
+    <div class="fine">
+      <p><b>Tricky Wicks:</b> on both Game Boys choose <b>2P LINK</b> and press A, then press START on one of them.</p>
+      <p><b>Keys:</b> left Game Boy <kbd>←↑→↓</kbd> <kbd>X</kbd> A <kbd>Z</kbd> B <kbd>Enter</kbd> Start <kbd>Backspace</kbd> Select;
+        right Game Boy <kbd>W A S D</kbd> <kbd>G</kbd> A <kbd>F</kbd> B <kbd>T</kbd> Start <kbd>R</kbd> Select.</p>
+      <p>Games you open stay on this device; nothing is uploaded. Battery saves are kept in this browser, one per Game Boy. There is no sound yet.</p>
+      <p>This page runs <a href="https://github.com/LIJI32/SameBoy">SameBoy</a> (MIT licence) built for the browser by Pocket Arcade, with its link cable wired up. It is the first piece of a plan to connect devices to each other: see <a href="../docs/DEVICE_LINKS.md">DEVICE_LINKS.md</a>.</p>
+    </div>
+  </main>
+
+  <div id="stage" hidden>
+    <div id="bar">
+      <button id="games" type="button">‹ Games</button>
+      <button id="cable" type="button" aria-pressed="true" title="Plug the cable in or pull it out">Cable</button>
+      <button id="ir" type="button" aria-pressed="true" title="Let the two infrared ports see each other (Game Boy Color games)" hidden>IR</button>
+      <span class="grow"></span>
+      <span id="traffic" title="Bytes sent over the cable"></span>
+    </div>
+    <div id="consoles"></div>
+  </div>
+
+  <script type="module">
+    import { GameBoyHost, linkCable, irBeam } from './bus.js';
+
+    const $ = (id) => document.getElementById(id);
+    const FRAME = 1000 / 59.7275;
+    const KEYMAP = [
+      { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down', KeyX: 'a', KeyZ: 'b', Enter: 'start', Backspace: 'select' },
+      { KeyA: 'left', KeyD: 'right', KeyW: 'up', KeyS: 'down', KeyG: 'a', KeyF: 'b', KeyT: 'start', KeyR: 'select' },
+    ];
+    const store = {
+      get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+    };
+    try { $('face').checked = store.get('pa-link:face') === '1'; } catch {}
+    $('face').onchange = () => store.set('pa-link:face', $('face').checked ? '1' : '0');
+
+    let host = null, gbs = [], unplug = null, unbeam = null, title = '', running = false, bytes = 0, last = 0, acc = 0;
+
+    function say(text, bad) { $('msg').textContent = text; $('msg').className = bad ? 'note bad' : 'note'; }
+
+    function romTitle(rom) {
+      let t = ''; for (let i = 0x134; i < 0x143; i++) { if (!rom[i]) break; t += String.fromCharCode(rom[i]); }
+      return t.trim() || 'game';
+    }
+
+    function makePanel(i) {
+      const el = document.createElement('section');
+      el.className = 'gb p' + i;
+      el.innerHTML = `<div class="view"><canvas class="screen" width="160" height="144" aria-label="Game Boy ${i + 1} screen"></canvas></div>
+        <div class="pad" aria-hidden="true">
+          <div class="dpad"><b class="u" data-k="up">▲</b><b class="l" data-k="left">◀</b><b class="r" data-k="right">▶</b><b class="d" data-k="down">▼</b></div>
+          <div class="mid"><span class="who">Game Boy ${i + 1}</span><div class="ss"><b data-k="select">SELECT</b><b data-k="start">START</b></div></div>
+          <div class="ab"><b class="b" data-k="b">B</b><b class="a" data-k="a">A</b></div>
+        </div>`;
+      // Touch: each finger presses the button under it, sliding between buttons works.
+      const pad = el.querySelector('.pad'), held = new Map();
+      const keyAt = (e) => { const t = document.elementFromPoint(e.clientX, e.clientY); return t && pad.contains(t) && t.dataset.k ? t : null; };
+      const set = (id, btn) => {
+        const old = held.get(id);
+        if (old === btn) return;
+        if (old) { old.classList.remove('on'); gbs[i].key(old.dataset.k, false); }
+        if (btn) { btn.classList.add('on'); gbs[i].key(btn.dataset.k, true); held.set(id, btn); } else held.delete(id);
+      };
+      pad.addEventListener('pointerdown', (e) => { pad.setPointerCapture(e.pointerId); set(e.pointerId, keyAt(e)); e.preventDefault(); });
+      pad.addEventListener('pointermove', (e) => { if (held.has(e.pointerId) || e.buttons) set(e.pointerId, keyAt(e)); });
+      for (const t of ['pointerup', 'pointercancel']) pad.addEventListener(t, (e) => set(e.pointerId, null));
+      return el;
+    }
+
+    async function start(rom) {
+      if (!host) host = await GameBoyHost.load(new URL('sameboy-link.wasm', import.meta.url));
+      title = romTitle(rom);
+      const color = !!(rom[0x143] & 0x80);
+      if (!gbs.length) { gbs = [host.add({ color }), host.add({ color })]; }
+      $('consoles').replaceChildren();
+      gbs.forEach((gb, i) => {
+        host.x.pa_create(i, color ? 1 : 0);
+        gb.color = color;
+        gb.loadRom(rom);
+        const save = store.get(`pa-link:${title}:${i}`);
+        if (save) gb.loadSaveRam(Uint8Array.from(atob(save), (c) => c.charCodeAt(0)));
+        $('consoles').append(makePanel(i));
+      });
+      gbs[0].ports.serial.onByte = () => { bytes++; };
+      plug(true);
+      $('ir').hidden = !color;
+      if (color) beam(true);
+      document.body.classList.toggle('face', $('face').checked);
+      document.body.classList.add('playing');
+      $('stage').hidden = false;
+      layout();
+      bytes = 0; acc = 0; last = performance.now();
+      if (!running) { running = true; requestAnimationFrame(tick); }
+      window.__link = { host, gbs, get bytes() { return bytes; } };
+    }
+
+    function plug(on) {
+      if (unplug) { unplug(); unplug = null; }
+      if (on) unplug = linkCable(gbs[0], gbs[1]);
+      $('cable').setAttribute('aria-pressed', on);
+      $('cable').textContent = on ? 'Cable in' : 'Cable out';
+    }
+    function beam(on) {
+      if (unbeam) { unbeam(); unbeam = null; }
+      if (on) unbeam = irBeam(gbs[0], gbs[1]);
+      $('ir').setAttribute('aria-pressed', on);
+    }
+
+    // Each screen at the largest size that fits its half, in whole device pixels per Game Boy pixel.
+    function layout() {
+      const dpr = devicePixelRatio || 1;
+      document.querySelectorAll('#consoles .gb').forEach((g) => {
+        const w = g.clientWidth - 16, h = g.clientHeight - g.querySelector('.pad').offsetHeight - 22;
+        const k = Math.max(1, Math.floor(Math.min(w / 160, h / 144) * dpr));
+        const c = g.querySelector('canvas');
+        c.style.width = (160 * k / dpr) + 'px'; c.style.height = (144 * k / dpr) + 'px';
+      });
+    }
+    addEventListener('resize', layout);
+
+    function draw() {
+      document.querySelectorAll('#consoles canvas').forEach((c, i) => {
+        c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(gbs[i].screen()), 160, 144), 0, 0);
+      });
+      $('traffic').textContent = bytes ? `${bytes} bytes over the cable` : '';
+    }
+
+    function tick(now) {
+      if (!document.body.classList.contains('playing')) { running = false; return; }
+      acc = Math.min(acc + (now - last), FRAME * 4); last = now;
+      let ran = false;
+      while (acc >= FRAME) { host.runFrame(); acc -= FRAME; ran = true; }
+      if (ran) draw();
+      requestAnimationFrame(tick);
+    }
+
+    function saveAll() {
+      for (const [i, gb] of gbs.entries()) {
+        const ram = gb.saveRam();
+        if (ram) store.set(`pa-link:${title}:${i}`, btoa(String.fromCharCode(...ram)));
+      }
+    }
+    setInterval(() => { if (document.body.classList.contains('playing')) saveAll(); }, 30000);
+    addEventListener('pagehide', () => { if (gbs.length) saveAll(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden && gbs.length) saveAll(); });
+
+    for (const [type, down] of [['keydown', true], ['keyup', false]]) {
+      addEventListener(type, (e) => {
+        if (!document.body.classList.contains('playing')) return;
+        for (const [i, map] of KEYMAP.entries()) {
+          if (map[e.code]) { gbs[i].key(map[e.code], down); e.preventDefault(); }
+        }
+      });
+    }
+
+    $('games').onclick = () => { saveAll(); document.body.classList.remove('playing'); $('stage').hidden = true; };
+    $('cable').onclick = () => plug($('cable').getAttribute('aria-pressed') !== 'true');
+    $('ir').onclick = () => beam($('ir').getAttribute('aria-pressed') !== 'true');
+    $('play-free').onclick = async () => {
+      say('Loading…');
+      try { await start(new Uint8Array(await (await fetch('../free/gb/tricky-wicks.gb')).arrayBuffer())); say(''); }
+      catch (e) { say('Could not start: ' + e.message, true); }
+    };
+    $('file').onchange = async () => {
+      const f = $('file').files[0]; if (!f) return;
+      try { await start(new Uint8Array(await f.arrayBuffer())); say(''); }
+      catch (e) { say('Could not open that file: ' + e.message, true); }
+      $('file').value = '';
+    };
+  </script>
+</body>
+</html>
